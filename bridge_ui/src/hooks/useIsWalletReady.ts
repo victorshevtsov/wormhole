@@ -1,5 +1,6 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
 } from "@certusone/wormhole-sdk";
@@ -7,6 +8,7 @@ import { hexlify, hexStripZeros } from "@ethersproject/bytes";
 import { useConnectedWallet } from "@terra-money/wallet-provider";
 import { useCallback, useMemo } from "react";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import { CLUSTER, getEvmChainId } from "../utils/consts";
 import { isEVMChain } from "../utils/ethereum";
@@ -33,6 +35,8 @@ function useIsWalletReady(
   forceNetworkSwitch: () => void;
 } {
   const autoSwitch = enableNetworkAutoswitch;
+  // const safecoinWallet = useSafecoinWallet();
+  // const safecoinPK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const terraWallet = useConnectedWallet();
@@ -73,6 +77,14 @@ function useIsWalletReady(
         terraWallet.walletAddress
       );
     }
+    // if (chainId === CHAIN_ID_SAFECOIN && safecoinPK) {
+    //   return createWalletStatus(
+    //     true,
+    //     undefined,
+    //     forceNetworkSwitch,
+    //     safecoinPK.toString()
+    //   );
+    // }
     if (chainId === CHAIN_ID_SOLANA && solPK) {
       return createWalletStatus(
         true,
@@ -113,6 +125,7 @@ function useIsWalletReady(
     autoSwitch,
     forceNetworkSwitch,
     hasTerraWallet,
+    // safecoinPK,
     solPK,
     hasEthInfo,
     correctEvmNetwork,

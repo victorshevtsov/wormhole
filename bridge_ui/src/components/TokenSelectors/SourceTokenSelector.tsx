@@ -1,5 +1,5 @@
 //import Autocomplete from '@material-ui/lab/Autocomplete';
-import { CHAIN_ID_SOLANA, CHAIN_ID_TERRA } from "@certusone/wormhole-sdk";
+import { CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA, CHAIN_ID_TERRA } from "@certusone/wormhole-sdk";
 import { TextField, Typography } from "@material-ui/core";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +23,7 @@ import {
 import { isEVMChain } from "../../utils/ethereum";
 import EvmTokenPicker from "./EvmTokenPicker";
 import RefreshButtonWrapper from "./RefreshButtonWrapper";
+import SafecoinTokenPicker from "./SafecoinTokenPicker";
 import SolanaTokenPicker from "./SolanaTokenPicker";
 import TerraTokenPicker from "./TerraTokenPicker";
 
@@ -79,10 +80,20 @@ export const TokenSelector = (props: TokenSelectorProps) => {
     lookupChain !== CHAIN_ID_TERRA &&
     maps?.tokenAccounts?.error; //Terra & ETH can proceed because it has advanced mode
 
-  const content = fatalError ? (
+    const content = fatalError ? (
     <RefreshButtonWrapper callback={resetAccountWrapper}>
       <Typography>{fatalError}</Typography>
     </RefreshButtonWrapper>
+  ) : lookupChain === CHAIN_ID_SAFECOIN ? (
+    <SafecoinTokenPicker
+      value={sourceParsedTokenAccount || null}
+      onChange={handleOnChange}
+      disabled={disabled}
+      accounts={maps?.tokenAccounts}
+      mintAccounts={maps?.mintAccounts}
+      resetAccounts={maps?.resetAccounts}
+      nft={nft}
+    />
   ) : lookupChain === CHAIN_ID_SOLANA ? (
     <SolanaTokenPicker
       value={sourceParsedTokenAccount || null}
