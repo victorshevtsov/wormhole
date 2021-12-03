@@ -7,7 +7,8 @@ sudo apt install libatomic1 -y && \
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ```
 
-NOTE: Restart the terminal before the next step
+NOTE:
+- Restart the terminal before the next step
 
 ## Install Node.js v16
 
@@ -20,11 +21,14 @@ npm i -g yarn
 
 ```bash
 git clone https://github.com/Fair-Exchange/safecoin-web3.js.git && \
-pushd safecoin-web3.js && \
+cd safecoin-web3.js && \
 npm install && \
-npm run build && \
-popd
+npm run build
 ```
+
+NOTE:
+- At the previous step `npm run build` finishes with non-zero exit code. That's a something we can deal with later. 
+- Make sure you are out of the `safecoin-web3.js` folder - just execute `cd ..`
 
 ## Prepare safecoin-program-library
 
@@ -59,10 +63,16 @@ npm ci --prefix sdk/js && \
 npm run build --prefix sdk/js && \
 popd
 ```
-## Run wormhole 
+## Install dependencies for wormhole 
 
 ```bash
-cd wormhole/bridge_ui
+cd wormhole/bridge_ui && \
 npm ci
+```
+
+## Finally start the dev server
+```bash
 npm start
 ```
+
+Happy hacking!
