@@ -4,7 +4,8 @@
 ```bash
 sudo apt update && sudo apt upgrade -y && \
 sudo apt install libatomic1 -y && \
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash && \
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
 NOTE:
