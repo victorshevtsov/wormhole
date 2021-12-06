@@ -68,12 +68,12 @@ popd
 
 ```bash
 cd wormhole/bridge_ui && \
-npm ci
+yarn install
 ```
 
 ## Finally start the dev server
 ```bash
-npm start
+yarn start
 ```
 
 Happy hacking!
