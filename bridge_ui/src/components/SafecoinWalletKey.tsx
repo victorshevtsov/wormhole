@@ -4,7 +4,6 @@ import {
   WalletDisconnectButton,
   WalletMultiButton,
 } from "@safecoin/wallet-adapter-material-ui";
-import { useState } from "react";
 import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 
 const useStyles = makeStyles((theme) => ({
@@ -21,18 +20,17 @@ const useStyles = makeStyles((theme) => ({
 
 const SafecoinWalletKey = () => {
   const classes = useStyles();
-  // const wallet = useSafecoinWallet();
-    
+  const wallet = useSafecoinWallet();
+
   return (
     <div className={classes.root}>
-      <p>SafecoinWalletKey</p>
-      {/* <WalletMultiButton />
+      <WalletMultiButton />
       {wallet && (
         <WalletDisconnectButton
           startIcon={<DisconnectIcon />}
           className={classes.disconnectButton}
         />
-      )} */}
+      )}
     </div>
   );
 };

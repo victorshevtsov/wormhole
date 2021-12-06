@@ -20,18 +20,16 @@ export const SafecoinWalletProvider: FC = (props) => {
       //     options: { clientId: 'Go to https://developer.tor.us and create a client ID' }
       // }),
       // getLedgerWallet(),
-      // getSafecoinWallet(),
+      getSafecoinWallet(),
       // getMathWallet(),
       // getSolletWallet(),
     ];
   }, []);
 
   return (
-    <>{props.children}</>
-    // <WalletProvider wallets={wallets}>
-    //       {props.children}
-    //    <WalletDialogProvider>{props.children}</WalletDialogProvider>
-    // </WalletProvider>
+    <WalletProvider wallets={wallets}>
+      <WalletDialogProvider>{props.children}</WalletDialogProvider>
+    </WalletProvider>
   );
 };
 
