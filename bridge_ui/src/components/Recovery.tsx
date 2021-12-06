@@ -133,30 +133,32 @@ async function solana(tx: string, enqueueSnackbar: any, nft: boolean) {
 }
 
 async function terra(tx: string, enqueueSnackbar: any) {
-  try {
-    const lcd = new LCDClient(TERRA_HOST);
-    const info = await lcd.tx.txInfo(tx);
-    const sequence = parseSequenceFromLogTerra(info);
-    if (!sequence) {
-      throw new Error("Sequence not found");
-    }
-    const emitterAddress = await getEmitterAddressTerra(
-      TERRA_TOKEN_BRIDGE_ADDRESS
-    );
-    const { vaaBytes } = await getSignedVAAWithRetry(
-      CHAIN_ID_TERRA,
-      emitterAddress,
-      sequence,
-      WORMHOLE_RPC_HOSTS.length
-    );
-    return { vaa: uint8ArrayToHex(vaaBytes), error: null };
-  } catch (e) {
-    console.error(e);
-    enqueueSnackbar(null, {
-      content: <Alert severity="error">{parseError(e)}</Alert>,
-    });
-    return { vaa: null, error: parseError(e) };
-  }
+  // TODO(Victor): Fix or get rid
+  return { vaa: null, error: "" };
+  // try {
+  //   const lcd = new LCDClient(TERRA_HOST);
+  //   const info = await lcd.tx.txInfo(tx);
+  //   const sequence = parseSequenceFromLogTerra(info);
+  //   if (!sequence) {
+  //     throw new Error("Sequence not found");
+  //   }
+  //   const emitterAddress = await getEmitterAddressTerra(
+  //     TERRA_TOKEN_BRIDGE_ADDRESS
+  //   );
+  //   const { vaaBytes } = await getSignedVAAWithRetry(
+  //     CHAIN_ID_TERRA,
+  //     emitterAddress,
+  //     sequence,
+  //     WORMHOLE_RPC_HOSTS.length
+  //   );
+  //   return { vaa: uint8ArrayToHex(vaaBytes), error: null };
+  // } catch (e) {
+  //   console.error(e);
+  //   enqueueSnackbar(null, {
+  //     content: <Alert severity="error">{parseError(e)}</Alert>,
+  //   });
+  //   return { vaa: null, error: parseError(e) };
+  // }
 }
 
 export default function Recovery() {

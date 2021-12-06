@@ -214,36 +214,37 @@ function useFetchTargetAsset(nft?: boolean) {
           }
         }
       }
-      if (targetChain === CHAIN_ID_TERRA && originChain && originAsset) {
-        dispatch(setTargetAsset(fetchDataWrapper()));
-        try {
-          const lcd = new LCDClient(TERRA_HOST);
-          const asset = await getForeignAssetTerra(
-            TERRA_TOKEN_BRIDGE_ADDRESS,
-            lcd,
-            originChain,
-            hexToUint8Array(originAsset)
-          );
-          if (!cancelled) {
-            dispatch(
-              setTargetAsset(
-                receiveDataWrapper({ doesExist: !!asset, address: asset })
-              )
-            );
-            setArgs();
-          }
-        } catch (e) {
-          if (!cancelled) {
-            dispatch(
-              setTargetAsset(
-                errorDataWrapper(
-                  "Unable to determine existence of wrapped asset"
-                )
-              )
-            );
-          }
-        }
-      }
+      // TODO(Victor): Fix or get rid
+      // if (targetChain === CHAIN_ID_TERRA && originChain && originAsset) {
+      //   dispatch(setTargetAsset(fetchDataWrapper()));
+      //   try {
+      //     const lcd = new LCDClient(TERRA_HOST);
+      //     const asset = await getForeignAssetTerra(
+      //       TERRA_TOKEN_BRIDGE_ADDRESS,
+      //       lcd,
+      //       originChain,
+      //       hexToUint8Array(originAsset)
+      //     );
+      //     if (!cancelled) {
+      //       dispatch(
+      //         setTargetAsset(
+      //           receiveDataWrapper({ doesExist: !!asset, address: asset })
+      //         )
+      //       );
+      //       setArgs();
+      //     }
+      //   } catch (e) {
+      //     if (!cancelled) {
+      //       dispatch(
+      //         setTargetAsset(
+      //           errorDataWrapper(
+      //             "Unable to determine existence of wrapped asset"
+      //           )
+      //         )
+      //       );
+      //     }
+      //   }
+      // }
     })();
     return () => {
       cancelled = true;

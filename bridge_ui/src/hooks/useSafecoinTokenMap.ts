@@ -3,18 +3,18 @@ import { ENV, TokenInfo, TokenListProvider } from "@safecoin/safe-token-registry
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DataWrapper } from "../store/helpers";
-import { selectSolanaTokenMap } from "../store/selectors";
+import { selectSafecoinTokenMap } from "../store/selectors";
 import {
   errorSafecoinTokenMap,
   fetchSafecoinTokenMap,
   receiveSafecoinTokenMap,
-} from "../store/safecoinTokenSlice";
+} from "../store/tokenSlice";
 import { CLUSTER } from "../utils/consts";
 
 const environment = CLUSTER === "testnet" ? ENV.Testnet : ENV.MainnetBeta;
 
 const useSafecoinTokenMap = (): DataWrapper<TokenInfo[]> => {
-  const tokenMap = useSelector(selectSolanaTokenMap);
+  const tokenMap = useSelector(selectSafecoinTokenMap);
   const dispatch = useDispatch();
   const shouldFire =
     tokenMap.data === undefined ||
@@ -22,14 +22,14 @@ const useSafecoinTokenMap = (): DataWrapper<TokenInfo[]> => {
 
   useEffect(() => {
     if (shouldFire) {
-      getSolanaTokenMap(dispatch);
+      getSafecoinTokenMap(dispatch);
     }
   }, [dispatch, shouldFire]);
 
   return tokenMap;
 };
 
-const getSolanaTokenMap = (dispatch: Dispatch) => {
+const getSafecoinTokenMap = (dispatch: Dispatch) => {
   dispatch(fetchSafecoinTokenMap());
 
   new TokenListProvider().resolve().then(

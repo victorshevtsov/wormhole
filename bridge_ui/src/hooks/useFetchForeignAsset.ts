@@ -107,16 +107,17 @@ function useFetchForeignAsset(
               originChain,
               hexToUint8Array(originAssetHex)
             )
-        : foreignChain === CHAIN_ID_TERRA
-        ? () => {
-            const lcd = new LCDClient(TERRA_HOST);
-            return getForeignAssetTerra(
-              TERRA_TOKEN_BRIDGE_ADDRESS,
-              lcd,
-              originChain,
-              hexToUint8Array(originAssetHex)
-            );
-          }
+        // TODO(Victor): Fix or get rid
+        // : foreignChain === CHAIN_ID_TERRA
+        // ? () => {
+        //     const lcd = new LCDClient(TERRA_HOST);
+        //     return getForeignAssetTerra(
+        //       TERRA_TOKEN_BRIDGE_ADDRESS,
+        //       lcd,
+        //       originChain,
+        //       hexToUint8Array(originAssetHex)
+        //     );
+        //   }
         : () => {
             const connection = new Connection(SOLANA_HOST, "confirmed");
             return getForeignAssetSolana(

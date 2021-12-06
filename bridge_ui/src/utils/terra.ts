@@ -68,31 +68,32 @@ export async function postWithFees(
   msgs: any[],
   memo: string
 ) {
-  // don't try/catch, let errors propagate
-  const lcd = new LCDClient(TERRA_HOST);
-  //let gasPrices = await lcd.config.gasPrices //Unsure if the values returned from this are hardcoded or not.
-  //Thus, we are going to pull it directly from the current FCD.
-  let gasPrices = await axios
-    .get(TERRA_GAS_PRICES_URL)
-    .then((result) => result.data);
+  // TODO(Victor): Fix or get rid
+  // // don't try/catch, let errors propagate
+  // const lcd = new LCDClient(TERRA_HOST);
+  // //let gasPrices = await lcd.config.gasPrices //Unsure if the values returned from this are hardcoded or not.
+  // //Thus, we are going to pull it directly from the current FCD.
+  // let gasPrices = await axios
+  //   .get(TERRA_GAS_PRICES_URL)
+  //   .then((result) => result.data);
 
-  const feeEstimate = await lcd.tx.estimateFee(
-    wallet.walletAddress,
-    [...msgs],
-    {
-      memo,
-      feeDenoms: ["uluna"],
-      gasPrices,
-    }
-  );
+  // const feeEstimate = await lcd.tx.estimateFee(
+  //   wallet.walletAddress,
+  //   [...msgs],
+  //   {
+  //     memo,
+  //     feeDenoms: ["uluna"],
+  //     gasPrices,
+  //   }
+  // );
 
-  const result = await wallet.post({
-    msgs: [...msgs],
-    memo,
-    feeDenoms: ["uluna"],
-    gasPrices,
-    fee: feeEstimate,
-  });
+  // const result = await wallet.post({
+  //   msgs: [...msgs],
+  //   memo,
+  //   feeDenoms: ["uluna"],
+  //   gasPrices,
+  //   fee: feeEstimate,
+  // });
 
-  return result;
+  // return result;
 }

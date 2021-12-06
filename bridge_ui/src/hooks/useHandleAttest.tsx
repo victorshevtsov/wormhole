@@ -158,45 +158,46 @@ async function terra(
   wallet: ConnectedWallet,
   asset: string
 ) {
-  dispatch(setIsSending(true));
-  try {
-    const msg = await attestFromTerra(
-      TERRA_TOKEN_BRIDGE_ADDRESS,
-      wallet.terraAddress,
-      asset
-    );
-    const result = await postWithFees(wallet, [msg], "Create Wrapped");
-    const info = await waitForTerraExecution(result);
-    dispatch(setAttestTx({ id: info.txhash, block: info.height }));
-    enqueueSnackbar(null, {
-      content: <Alert severity="success">Transaction confirmed</Alert>,
-    });
-    const sequence = parseSequenceFromLogTerra(info);
-    if (!sequence) {
-      throw new Error("Sequence not found");
-    }
-    const emitterAddress = await getEmitterAddressTerra(
-      TERRA_TOKEN_BRIDGE_ADDRESS
-    );
-    enqueueSnackbar(null, {
-      content: <Alert severity="info">Fetching VAA</Alert>,
-    });
-    const { vaaBytes } = await getSignedVAAWithRetry(
-      CHAIN_ID_TERRA,
-      emitterAddress,
-      sequence
-    );
-    dispatch(setSignedVAAHex(uint8ArrayToHex(vaaBytes)));
-    enqueueSnackbar(null, {
-      content: <Alert severity="success">Fetched Signed VAA</Alert>,
-    });
-  } catch (e) {
-    console.error(e);
-    enqueueSnackbar(null, {
-      content: <Alert severity="error">{parseError(e)}</Alert>,
-    });
-    dispatch(setIsSending(false));
-  }
+  // TODO(Victor): Fix or get rid
+  // dispatch(setIsSending(true));
+  // try {
+  //   const msg = await attestFromTerra(
+  //     TERRA_TOKEN_BRIDGE_ADDRESS,
+  //     wallet.terraAddress,
+  //     asset
+  //   );
+  //   const result = await postWithFees(wallet, [msg], "Create Wrapped");
+  //   const info = await waitForTerraExecution(result);
+  //   dispatch(setAttestTx({ id: info.txhash, block: info.height }));
+  //   enqueueSnackbar(null, {
+  //     content: <Alert severity="success">Transaction confirmed</Alert>,
+  //   });
+  //   const sequence = parseSequenceFromLogTerra(info);
+  //   if (!sequence) {
+  //     throw new Error("Sequence not found");
+  //   }
+  //   const emitterAddress = await getEmitterAddressTerra(
+  //     TERRA_TOKEN_BRIDGE_ADDRESS
+  //   );
+  //   enqueueSnackbar(null, {
+  //     content: <Alert severity="info">Fetching VAA</Alert>,
+  //   });
+  //   const { vaaBytes } = await getSignedVAAWithRetry(
+  //     CHAIN_ID_TERRA,
+  //     emitterAddress,
+  //     sequence
+  //   );
+  //   dispatch(setSignedVAAHex(uint8ArrayToHex(vaaBytes)));
+  //   enqueueSnackbar(null, {
+  //     content: <Alert severity="success">Fetched Signed VAA</Alert>,
+  //   });
+  // } catch (e) {
+  //   console.error(e);
+  //   enqueueSnackbar(null, {
+  //     content: <Alert severity="error">{parseError(e)}</Alert>,
+  //   });
+  //   dispatch(setIsSending(false));
+  // }
 }
 
 export function useHandleAttest() {

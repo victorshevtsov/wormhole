@@ -35,8 +35,8 @@ function useIsWalletReady(
   forceNetworkSwitch: () => void;
 } {
   const autoSwitch = enableNetworkAutoswitch;
-  // const safecoinWallet = useSafecoinWallet();
-  // const safecoinPK = safecoinWallet?.publicKey;
+  const safecoinWallet = useSafecoinWallet();
+  const safecoinPK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const terraWallet = useConnectedWallet();
@@ -59,7 +59,7 @@ function useIsWalletReady(
         provider.send("wallet_switchEthereumChain", [
           { chainId: hexStripZeros(hexlify(correctEvmNetwork)) },
         ]);
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [provider, correctEvmNetwork, chainId]);
 
@@ -77,14 +77,14 @@ function useIsWalletReady(
         terraWallet.walletAddress
       );
     }
-    // if (chainId === CHAIN_ID_SAFECOIN && safecoinPK) {
-    //   return createWalletStatus(
-    //     true,
-    //     undefined,
-    //     forceNetworkSwitch,
-    //     safecoinPK.toString()
-    //   );
-    // }
+    if (chainId === CHAIN_ID_SAFECOIN && safecoinPK) {
+      return createWalletStatus(
+        true,
+        undefined,
+        forceNetworkSwitch,
+        safecoinPK.toString()
+      );
+    }
     if (chainId === CHAIN_ID_SOLANA && solPK) {
       return createWalletStatus(
         true,
@@ -125,7 +125,7 @@ function useIsWalletReady(
     autoSwitch,
     forceNetworkSwitch,
     hasTerraWallet,
-    // safecoinPK,
+    safecoinPK,
     solPK,
     hasEthInfo,
     correctEvmNetwork,

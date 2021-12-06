@@ -285,6 +285,10 @@ export const selectTransferShouldLockFields = (state: RootState) =>
 export const selectTransferIsRecovery = (state: RootState) =>
   state.transfer.isRecovery;
 
+export const selectSafecoinTokenMap = (state: RootState) => {
+  return state.tokens.safecoinTokenMap;
+};
+  
 export const selectSolanaTokenMap = (state: RootState) => {
   return state.tokens.solanaTokenMap;
 };
