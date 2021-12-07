@@ -14,7 +14,7 @@ export const COLORS = {
   darkRed: "#810612",
 };
 
-export const theme = responsiveFontSizes(
+export const themelight = responsiveFontSizes(
   createTheme({
     palette: {
       type: "dark",

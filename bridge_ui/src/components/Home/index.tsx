@@ -6,7 +6,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import { BETA_CHAINS, CHAINS } from "../../utils/consts";
 import HeaderText from "../HeaderText";
 

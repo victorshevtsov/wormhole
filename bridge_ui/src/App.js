@@ -38,7 +38,7 @@ import NFTOriginVerifier from "./components/NFTOriginVerifier";
 import Recovery from "./components/Recovery";
 import Transfer from "./components/Transfer";
 import { useBetaContext } from "./contexts/BetaContext";
-import { COLORS } from "./muiTheme";
+import { COLORS } from "./muiThemeLight";
 import { CLUSTER } from "./utils/consts";
 import Stats from "./components/Stats";
 import TokenOriginVerifier from "./components/TokenOriginVerifier";
