@@ -112,11 +112,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearBlack}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearBlack}50  120%)`,
     transition: "0.75s",
     backgroundSize: "200% auto",
-    boxShadow: "0 0 20px #222",
+    /*boxShadow: "0 0 20px #222",
     "&:hover": {
       backgroundPosition:
-        "right center" /* change the direction of the change here */,
-    },
+        "right center",
+    },*/
   },
   betaBanner: {
     background: `linear-gradient(to left, ${COLORS.blue}40, ${COLORS.green}40);`,
@@ -138,7 +138,7 @@ function App() {
   );
   return (
     <div className={classes.bg}>
-      <AppBar position="static" color="inherit" className={classes.appBar}>
+      <AppBar position="static" color="inherit" className={classes.appBar} elevation={0}>
         <Toolbar>
           <Link
             component={RouterLink}

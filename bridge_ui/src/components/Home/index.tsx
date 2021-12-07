@@ -94,40 +94,14 @@ function Home() {
   return (
     <div>
       <Container maxWidth="md">
-        <div className={classes.header}>
-          <HeaderText>The Portal is Open</HeaderText>
-        </div>
+      <Typography variant="h2" className={classes.description}>
+        Converts your Safe ERC20 to SPL, seamlessly
+      </Typography>
       </Container>
       <Container maxWidth="md">
-        <div className={classes.chainList}>
-          {CHAINS.filter(({ id }) => !BETA_CHAINS.includes(id)).map((chain) => (
-            <div key={chain.id} className={classes.chainCard}>
-              <div className={classes.chainLogoWrapper}>
-                <img
-                  src={chain.logo}
-                  alt={chain.name}
-                  className={classes.chainLogo}
-                />
-              </div>
-              <Typography
-                variant="body2"
-                component="div"
-                className={classes.chainName}
-              >
-                <div>{chain.name}</div>
-              </Typography>
-            </div>
-          ))}
-        </div>
-      </Container>
-      <Container maxWidth="md">
-        <Card className={classes.mainCard}>
-          <Typography variant="h4" className={classes.description}>
-            Wormhole v2 is here!
-          </Typography>
+    
           <Typography variant="h6" className={classes.description}>
-            The Wormhole Token Bridge allows you to seamlessly transfer
-            tokenized assets across Solana, Ethereum, BSC, Terra, and Polygon.
+            Converts your Safe ERC20 to SPL.
           </Typography>
           <div className={classes.spacer} />
           <Typography variant="subtitle1" className={classes.description}>
@@ -145,13 +119,6 @@ function Home() {
               v1.wormholebridge.com
             </Link>
           </Typography>
-          <Typography variant="subtitle1" className={classes.description}>
-            To learn more about the Wormhole Protocol that powers it, visit{" "}
-            <Link href="https://wormholenetwork.com/en/">
-              wormholenetwork.com
-            </Link>
-          </Typography>
-        </Card>
       </Container>
     </div>
   );

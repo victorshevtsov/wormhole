@@ -3,13 +3,13 @@ import { createTheme, responsiveFontSizes } from "@material-ui/core";
 export const COLORS = {
   blue: "#1975e6",
   blueWithTransparency: "rgba(25, 117, 230, 0.8)",
-  gray: "#4e4e54",
+  gray: "#ffffff",
   green: "#0ac2af",
   greenWithTransparency: "rgba(10, 194, 175, 0.8)",
   lightGreen: "rgba(51, 242, 223, 1)",
   lightBlue: "#83b9fc",
-  nearBlack: "#000008",
-  nearBlackWithMinorTransparency: "rgba(0,0,0,.25)",
+  nearBlack: "#f3f6ff",
+  nearBlackWithMinorTransparency: "rgba(255,255,255,.65)",
   red: "#aa0818",
   darkRed: "#810612",
 };
@@ -17,14 +17,14 @@ export const COLORS = {
 export const themelight = responsiveFontSizes(
   createTheme({
     palette: {
-      type: "dark",
+      type: "light",
       background: {
         default: COLORS.nearBlack,
         paper: COLORS.nearBlack,
       },
       divider: COLORS.gray,
       text: {
-        primary: "rgba(255,255,255,0.98)",
+        primary: "rgba(8,8,8,0.98)",
       },
       primary: {
         main: COLORS.blueWithTransparency, // #0074FF
@@ -39,12 +39,23 @@ export const themelight = responsiveFontSizes(
       },
     },
     typography: {
-      fontFamily: "'Sora', sans-serif",
+      fontFamily: [
+        '-apple-system',
+        'BlinkMacSystemFont',
+        '"Segoe UI"',
+        'Roboto',
+        '"Helvetica Neue"',
+        'Arial',
+        'sans-serif',
+        '"Apple Color Emoji"',
+        '"Segoe UI Emoji"',
+        '"Segoe UI Symbol"',
+      ].join(','),
       h1: {
-        fontWeight: "200",
+        fontWeight: "700",
       },
       h2: {
-        fontWeight: "200",
+        fontWeight: "700",
       },
       h4: {
         fontWeight: "500",
