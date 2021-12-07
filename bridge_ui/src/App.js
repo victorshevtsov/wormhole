@@ -145,8 +145,13 @@ function App() {
             to="/"
             className={clsx(classes.link, classes.brandText)}
           >
-            wormhole
+            portal
           </Link>
+          {CLUSTER === "mainnet" ? null : (
+                <Typography style={{ textAlign: "center" }}>
+                  {CLUSTER} build 
+                </Typography>
+            )}
           <div className={classes.spacer} />
           <Hidden implementation="css" xsDown>
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -228,13 +233,13 @@ function App() {
           </Hidden>
         </Toolbar>
       </AppBar>
-      {CLUSTER === "mainnet" ? null : (
+      {/*CLUSTER === "mainnet" ? null : (
         <AppBar position="static" className={classes.betaBanner}>
           <Typography style={{ textAlign: "center" }}>
             Caution! You are using the {CLUSTER} build of this app.
           </Typography>
         </AppBar>
-      )}
+      )*/}
       {isBeta ? (
         <AppBar position="static" className={classes.betaBanner}>
           <Typography style={{ textAlign: "center" }}>
