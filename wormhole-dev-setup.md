@@ -3,7 +3,6 @@
 ## Prerequisites
 ```bash
 sudo apt update && sudo apt upgrade -y && \
-sudo apt install libatomic1 -y && \
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash && \
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
@@ -16,30 +15,6 @@ NOTE:
 ```bash
 nvm install --lts && \
 npm i -g yarn
-```
-
-## Prepare safecoin-web3.js
-
-```bash
-git clone https://github.com/Fair-Exchange/safecoin-web3.js.git && \
-cd safecoin-web3.js && \
-npm install && \
-npm run build
-```
-
-NOTE:
-- At the previous step `npm run build` finishes with non-zero exit code. That's a something we can deal with later. 
-- Make sure you are out of the `safecoin-web3.js` folder - just execute `cd ..`
-
-## Prepare safecoin-program-library
-
-```bash
-git clone https://github.com/Fair-Exchange/safecoin-program-library.git && \
-pushd safecoin-program-library/token/js && \
-rm package-lock.json && \
-npm install && \
-npm run build && \
-popd
 ```
 
 ## Prepare wallet-adapter
@@ -69,6 +44,14 @@ popd
 ```bash
 cd wormhole/bridge_ui && \
 yarn install
+```
+
+## Cinfugure Connection
+To make Wormhole UI connecting to Solana and Safecoin dev networks create a file `.env` in the `bridge_ui` dir with the following rows in it:
+
+```
+REACT_APP_SAFECOIN_API_URL=https://api.devnet.safecoin.org/
+REACT_APP_SOLANA_API_URL=https://api.devnet.solana.com/
 ```
 
 ## Finally start the dev server
