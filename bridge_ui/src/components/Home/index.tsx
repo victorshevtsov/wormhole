@@ -8,18 +8,22 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import { COLORS } from "../../muiThemeLight";
 import { BETA_CHAINS, CHAINS } from "../../utils/consts";
-import HeaderText from "../HeaderText";
 
 const useStyles = makeStyles((theme) => ({
   header: {
+    textAlign: "center",
     marginTop: theme.spacing(12),
     marginBottom: theme.spacing(8),
     [theme.breakpoints.down("sm")]: {
       marginBottom: theme.spacing(6),
     },
   },
+  title: {
+    marginBottom: theme.spacing(2),
+  },
   description: {
     marginBottom: theme.spacing(2),
+    textAlign: "center",
   },
   button: {
     marginBottom: theme.spacing(4),
@@ -37,31 +41,6 @@ const useStyles = makeStyles((theme) => ({
   },
   spacer: {
     height: theme.spacing(5),
-  },
-  chainList: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    margin: theme.spacing(-1, -1, 8),
-    [theme.breakpoints.down("sm")]: {
-      margin: theme.spacing(-1, -1, 6),
-    },
-  },
-  chainCard: {
-    backgroundColor: COLORS.nearBlackWithMinorTransparency,
-    borderRadius: 8,
-    display: "flex",
-    flexDirection: "column",
-    margin: theme.spacing(1),
-    minHeight: "100%",
-    padding: theme.spacing(2),
-    width: 149, // makes it square
-    maxWidth: 149,
-    [theme.breakpoints.down("sm")]: {
-      padding: theme.spacing(1.5),
-      width: 141, // keeps it square
-      maxWidth: 141,
-    },
   },
   chainLogoWrapper: {
     position: "relative",
@@ -94,17 +73,15 @@ function Home() {
   return (
     <div>
       <Container maxWidth="md">
-      <Typography variant="h2" className={classes.description}>
-        Converts your Safe ERC20 to SPL, seamlessly
-      </Typography>
+        <div className={classes.header}>
+          <Typography variant="h2" className={classes.title}>
+            Converts your Safe ERC20 to SPL, seamlessly
+          </Typography>
+        </div>
       </Container>
       <Container maxWidth="md">
-    
-          <Typography variant="h6" className={classes.description}>
-            Converts your Safe ERC20 to SPL.
-          </Typography>
-          <div className={classes.spacer} />
-          <Typography variant="subtitle1" className={classes.description}>
+          {/*<div className={classes.spacer} />*/}
+          <Typography variant="h5" className={classes.description}>
             If you transferred assets using the previous version of Wormhole,
             most assets can be migrated to v2 on the{" "}
             <Link component={RouterLink} to="/transfer" noWrap>
@@ -113,10 +90,9 @@ function Home() {
             .
           </Typography>
           <Typography variant="subtitle1" className={classes.description}>
-            For assets that don't support the migration, the v1 UI can be found
-            at{" "}
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. {" "}
             <Link href="https://v1.wormholebridge.com">
-              v1.wormholebridge.com
+              safe.trade
             </Link>
           </Typography>
       </Container>
