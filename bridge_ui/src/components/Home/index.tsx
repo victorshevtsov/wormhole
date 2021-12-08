@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Container,
   Link,
@@ -37,14 +38,20 @@ const useStyles = makeStyles((theme) => ({
   },
   mainCard: {
     padding: theme.spacing(8),
-    backgroundColor: COLORS.nearBlackWithMinorTransparency,
+    backgroundColor: COLORS.nearWhiteWithMinorTransparency,
   },
   spacer: {
     height: theme.spacing(5),
   },
-  chainLogoWrapper: {
-    position: "relative",
-    textAlign: "center",
+  gradientButton: {
+    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
+    transition: "0.75s",
+    backgroundSize: "200% auto",
+    /*boxShadow: "0 0 20px #222",
+    "&:hover": {
+      backgroundPosition:
+        "right center",
+    },*/
   },
   chainLogo: {
     height: 64,
@@ -75,26 +82,38 @@ function Home() {
       <Container maxWidth="md">
         <div className={classes.header}>
           <Typography variant="h2" className={classes.title}>
-            Converts your Safe ERC20 to SPL, seamlessly
+            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span>
           </Typography>
         </div>
       </Container>
       <Container maxWidth="md">
-          {/*<div className={classes.spacer} />*/}
-          <Typography variant="h5" className={classes.description}>
-            If you transferred assets using the previous version of Wormhole,
-            most assets can be migrated to v2 on the{" "}
-            <Link component={RouterLink} to="/transfer" noWrap>
-              transfer page
-            </Link>
-            .
-          </Typography>
-          <Typography variant="subtitle1" className={classes.description}>
+        {/*<div className={classes.spacer} />*/}
+        <Typography variant="h5" className={classes.description}>
+          If you transferred assets using the previous version of Wormhole,
+          most assets can be migrated to v2 on the{" "}
+          <Link component={RouterLink} to="/transfer" noWrap>
+            transfer page
+          </Link>
+          .
+        </Typography>
+        <Typography variant="subtitle1" className={classes.description}>
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. {" "}
-            <Link href="https://v1.wormholebridge.com">
-              safe.trade
-            </Link>
-          </Typography>
+          <Link href="https://v1.wormholebridge.com">
+            safe.trade
+          </Link>
+        </Typography>
+      </Container>
+      <Container maxWidth="md">
+        <Button
+          component={RouterLink}
+          to="/transfer"
+          variant="contained"
+          color="primary"
+          size="large"
+          className={classes.gradientButton}
+        >
+          Transfer Tokens
+        </Button>
       </Container>
     </div>
   );

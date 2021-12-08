@@ -8,8 +8,11 @@ export const COLORS = {
   greenWithTransparency: "rgba(10, 194, 175, 0.8)",
   lightGreen: "rgba(51, 242, 223, 1)",
   lightBlue: "#83b9fc",
+  pureWhite: "#ffffff",
+  nearWhite: "#f3f6ff",
+  nearWhiteWithMinorTransparency: "rgba(255,255,255,.65)",
   nearBlack: "#f3f6ff",
-  nearBlackWithMinorTransparency: "rgba(255,255,255,.65)",
+  nearBlackWithMinorTransparency: "rgba(8,8,8,.65)",
   red: "#aa0818",
   darkRed: "#810612",
 };
@@ -19,12 +22,12 @@ export const themelight = responsiveFontSizes(
     palette: {
       type: "light",
       background: {
-        default: COLORS.nearBlack,
-        paper: COLORS.nearBlack,
+        default: COLORS.nearWhite,
+        paper: COLORS.nearWhite,
       },
       divider: COLORS.gray,
       text: {
-        primary: "rgba(8,8,8,0.98)",
+        primary: "rgba(57,64,82,0.98)",
       },
       primary: {
         main: COLORS.blueWithTransparency, // #0074FF
@@ -66,12 +69,12 @@ export const themelight = responsiveFontSizes(
         "@global": {
           "*": {
             scrollbarWidth: "thin",
-            scrollbarColor: `${COLORS.gray} ${COLORS.nearBlackWithMinorTransparency}`,
+            scrollbarColor: `${COLORS.gray} ${COLORS.nearWhiteWithMinorTransparency}`,
           },
           "*::-webkit-scrollbar": {
             width: "8px",
             height: "8px",
-            backgroundColor: COLORS.nearBlackWithMinorTransparency,
+            backgroundColor: COLORS.nearWhiteWithMinorTransparency,
           },
           "*::-webkit-scrollbar-thumb": {
             backgroundColor: COLORS.gray,
@@ -85,7 +88,7 @@ export const themelight = responsiveFontSizes(
       },
       MuiAccordion: {
         root: {
-          backgroundColor: COLORS.nearBlackWithMinorTransparency,
+          backgroundColor: COLORS.nearWhiteWithMinorTransparency,
           "&:before": {
             display: "none",
           },
@@ -131,7 +134,7 @@ export const themelight = responsiveFontSizes(
       },
       MuiStep: {
         root: {
-          backgroundColor: COLORS.nearBlackWithMinorTransparency,
+          backgroundColor: COLORS.nearWhiteWithMinorTransparency,
           borderRadius: "16px",
           padding: 16,
         },

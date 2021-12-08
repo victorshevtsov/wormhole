@@ -45,7 +45,7 @@ import TokenOriginVerifier from "./components/TokenOriginVerifier";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    background: COLORS.nearBlackWithMinorTransparency,
+    background: COLORS.pureWhite,
     "& > .MuiToolbar-root": {
       margin: "auto",
       width: "100%",
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
   bg: {
     background:
-      "linear-gradient(160deg, rgba(69,74,117,.1) 0%, rgba(138,146,178,.1) 33%, rgba(69,74,117,.1) 66%, rgba(98,104,143,.1) 100%), linear-gradient(45deg, rgba(153,69,255,.1) 0%, rgba(121,98,231,.1) 20%, rgba(0,209,140,.1) 100%)",
+      "linear-gradient(160deg, rgba(69,74,117,.05) 0%, rgba(138,146,178,.05) 33%, rgba(69,74,117,.05) 66%, rgba(98,104,143,.05) 100%), linear-gradient(45deg, rgba(153,69,255,.05) 0%, rgba(121,98,231,.05) 20%, rgba(0,209,140,.05) 100%)",
     display: "flex",
     flexDirection: "column",
     minHeight: "100vh",
@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gradientButton: {
-    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearBlack}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearBlack}50  120%)`,
+    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
     transition: "0.75s",
     backgroundSize: "200% auto",
     /*boxShadow: "0 0 20px #222",
