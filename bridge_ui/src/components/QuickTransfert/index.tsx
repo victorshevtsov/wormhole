@@ -45,17 +45,16 @@ function QuickTransfer() {
       };
     }
   }, [preventNavigation]);
+
+
   return (
     <Container maxWidth="md">
-      <Stepper activeStep={activeStep} orientation="vertical">
+      <Stepper activeStep={activeStep} orientation="horizontal">
         <Step
           expanded={activeStep >= 0}
           disabled={preventNavigation || isRedeemComplete}
         >
           <StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>
-          <StepContent>
-            {activeStep === 0 ? <Source /> : <SourcePreview />}
-          </StepContent>
         </Step>
         <Step
           expanded={activeStep >= 1}
@@ -67,15 +66,9 @@ function QuickTransfer() {
           >
             Target
           </StepButton>
-          <StepContent>
-            {activeStep === 1 ? <Target /> : <TargetPreview />}
-          </StepContent>
         </Step>
         <Step expanded={activeStep >= 2} disabled={isSendComplete}>
           <StepButton disabled>Send tokens</StepButton>
-          <StepContent>
-            {activeStep === 2 ? <Send /> : <SendPreview />}
-          </StepContent>
         </Step>
         <Step expanded={activeStep >= 3}>
           <StepButton
@@ -84,11 +77,14 @@ function QuickTransfer() {
           >
             Redeem tokens
           </StepButton>
-          <StepContent>
-            {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
-          </StepContent>
         </Step>
       </Stepper>
+      <div>
+        {activeStep === 0 ? <Source /> : <SourcePreview />}
+        {activeStep === 1 ? <Target /> : <TargetPreview />}
+        {activeStep === 2 ? <Send /> : <SendPreview />}
+        {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
+      </div>
     </Container>
   );
 }
