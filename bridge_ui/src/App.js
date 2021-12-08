@@ -42,6 +42,7 @@ import { COLORS } from "./muiThemeLight";
 import { CLUSTER } from "./utils/consts";
 import Stats from "./components/Stats";
 import TokenOriginVerifier from "./components/TokenOriginVerifier";
+import QuickTransfer from "./components/QuickTransfert";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -266,6 +267,9 @@ function App() {
         <Switch>
           <Route exact path="/transfer">
             <Transfer />
+          </Route>
+          <Route exact path="/quicktransfer">
+            <QuickTransfer />
           </Route>
           <Route exact path="/nft">
             <NFT />
