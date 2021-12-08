@@ -1,6 +1,5 @@
 import {
   Button,
-  Card,
   Container,
   Link,
   makeStyles,
@@ -13,8 +12,8 @@ import { BETA_CHAINS, CHAINS } from "../../utils/consts";
 const useStyles = makeStyles((theme) => ({
   header: {
     textAlign: "center",
-    marginTop: theme.spacing(12),
-    marginBottom: theme.spacing(8),
+    marginTop: theme.spacing(18),
+    marginBottom: theme.spacing(3),
     [theme.breakpoints.down("sm")]: {
       marginBottom: theme.spacing(6),
     },
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   description: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
     textAlign: "center",
   },
   button: {
@@ -47,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
     transition: "0.75s",
     backgroundSize: "200% auto",
+    textAlign: "center",
     /*boxShadow: "0 0 20px #222",
     "&:hover": {
       backgroundPosition:
@@ -96,24 +96,20 @@ function Home() {
           </Link>
           .
         </Typography>
-        <Typography variant="subtitle1" className={classes.description}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. {" "}
-          <Link href="https://v1.wormholebridge.com">
-            safe.trade
-          </Link>
-        </Typography>
       </Container>
       <Container maxWidth="md">
-        <Button
-          component={RouterLink}
-          to="/transfer"
-          variant="contained"
-          color="primary"
-          size="large"
-          className={classes.gradientButton}
-        >
-          Transfer Tokens
-        </Button>
+        <div style={{ textAlign: "center" }}>
+          <Button
+            component={RouterLink}
+            to="/transfer"
+            variant="contained"
+            color="primary"
+            size="large"
+            className={classes.gradientButton}
+          >
+            Convert now
+          </Button>
+        </div>
       </Container>
     </div>
   );

@@ -1,8 +1,8 @@
 import { createTheme, responsiveFontSizes } from "@material-ui/core";
 
 export const COLORS = {
-  blue: "#1975e6",
-  blueWithTransparency: "rgba(25, 117, 230, 0.8)",
+  blue: "#005779",
+  blueWithTransparency: "rgba(0, 87, 121, 0.8)",
   gray: "#ffffff",
   green: "#0ac2af",
   greenWithTransparency: "rgba(10, 194, 175, 0.8)",
