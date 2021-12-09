@@ -87,7 +87,7 @@ function Home() {
       <Container maxWidth="md">
         <div className={classes.header}>
           <Typography variant="h2" className={classes.title}>
-            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span>
+            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
           </Typography>
         </div>
       </Container>

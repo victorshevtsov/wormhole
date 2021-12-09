@@ -17,6 +17,7 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
+import sPortal from "./icons/sportal.svg";
 import { BarChart, HelpOutline, Send } from "@material-ui/icons";
 import clsx from "clsx";
 import { useCallback } from "react";
@@ -52,6 +53,17 @@ const useStyles = makeStyles((theme) => ({
       width: "100%",
       maxWidth: 1100,
     },
+  },
+  sportalIcon: {
+    height: 40,
+    width: 40,
+    /*filter: "contrast(0.3)",
+    transition: "filter 0.5s",
+    "&:hover": {
+      filter: "contrast(1)",
+    },*/
+    verticalAlign: "middle",
+    marginRight: theme.spacing(1),
   },
   spacer: {
     flex: 1,
@@ -90,7 +102,7 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 22,
     },
     fontWeight: "500",
-    background: `linear-gradient(160deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 100%);`,
+    background: `linear-gradient(160deg, rgba(10,10,20,1) 0%, rgba(10,10,50,0.5) 100%);`,
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -146,13 +158,18 @@ function App() {
             to="/"
             className={clsx(classes.link, classes.brandText)}
           >
-            portal
+            <img
+              src={sPortal}
+              alt="sPortal"
+              className={classes.sportalIcon}
+            />
+             sPortal
           </Link>
           {CLUSTER === "mainnet" ? null : (
-                <Typography style={{ textAlign: "center" }}>
-                  {CLUSTER} build 
-                </Typography>
-            )}
+            <Typography style={{ textAlign: "center" }}>
+              {CLUSTER} build
+            </Typography>
+          )}
           <div className={classes.spacer} />
           <Hidden implementation="css" xsDown>
             <div style={{ display: "flex", alignItems: "center" }}>
