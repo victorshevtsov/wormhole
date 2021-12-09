@@ -286,6 +286,7 @@ function App() {
           <Route exact path="/register">
             <Attest />
           </Route>
+          {/*
           <Route exact path="/migrate/Solana/:legacyAsset/:fromTokenAccount">
             <Migration chainId={CHAIN_ID_SOLANA} />
           </Route>
@@ -301,6 +302,7 @@ function App() {
           <Route exact path="/migrate/BinanceSmartChain/">
             <EvmQuickMigrate chainId={CHAIN_ID_BSC} />
           </Route>
+          */}
           <Route exact path="/stats">
             <Stats />
           </Route>

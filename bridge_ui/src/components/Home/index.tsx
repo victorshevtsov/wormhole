@@ -3,8 +3,10 @@ import {
   Container,
   Link,
   makeStyles,
+  Tooltip,
   Typography,
 } from "@material-ui/core";
+import { HelpOutline } from "@material-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
 import { COLORS } from "../../muiThemeLight";
 import { BETA_CHAINS, CHAINS } from "../../utils/consts";
@@ -41,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
   },
   spacer: {
     height: theme.spacing(5),
+  },
+  hspacer: {
+    width: theme.spacing(5),
   },
   gradientButton: {
     backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
@@ -98,7 +103,7 @@ function Home() {
         </Typography>
       </Container>
       <Container maxWidth="md">
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
           <Button
             component={RouterLink}
             to="/quicktransfer"
@@ -109,6 +114,17 @@ function Home() {
           >
             Convert now
           </Button>
+          <div className={classes.hspacer} />
+          <Tooltip title="Advanced bridge">
+            <Button
+              component={RouterLink}
+              to="/transfer"
+              variant="outlined"
+              endIcon={<HelpOutline />}
+            >
+              Advanced
+            </Button>
+          </Tooltip>
         </div>
       </Container>
     </div>

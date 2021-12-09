@@ -48,44 +48,49 @@ function QuickTransfer() {
 
 
   return (
-    <Container maxWidth="md">
-      <Stepper activeStep={activeStep} orientation="horizontal">
-        <Step
-          expanded={activeStep >= 0}
-          disabled={preventNavigation || isRedeemComplete}
-        >
-          <StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>
-        </Step>
-        <Step
-          expanded={activeStep >= 1}
-          disabled={preventNavigation || isRedeemComplete}
-        >
-          <StepButton
-            disabled={preventNavigation || isRedeemComplete || activeStep === 0}
-            onClick={() => dispatch(setStep(1))}
+    <>
+      <Container maxWidth="md">
+        <Stepper activeStep={activeStep} orientation="horizontal">
+          <Step
+            expanded={activeStep >= 0}
+            disabled={preventNavigation || isRedeemComplete}
           >
-            Target
-          </StepButton>
-        </Step>
-        <Step expanded={activeStep >= 2} disabled={isSendComplete}>
-          <StepButton disabled>Send tokens</StepButton>
-        </Step>
-        <Step expanded={activeStep >= 3}>
-          <StepButton
-            onClick={() => dispatch(setStep(3))}
-            disabled={!isSendComplete}
+            <StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>
+          </Step>
+          <Step
+            expanded={activeStep >= 1}
+            disabled={preventNavigation || isRedeemComplete}
           >
-            Redeem tokens
-          </StepButton>
-        </Step>
-      </Stepper>
-      <div>
-        {activeStep === 0 ? <Source /> : <SourcePreview />}
-        {activeStep === 1 ? <Target /> : <TargetPreview />}
-        {activeStep === 2 ? <Send /> : <SendPreview />}
-        {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
-      </div>
-    </Container>
+            <StepButton
+              disabled={preventNavigation || isRedeemComplete || activeStep === 0}
+              onClick={() => dispatch(setStep(1))}
+            >
+              Target
+            </StepButton>
+          </Step>
+          <Step expanded={activeStep >= 2} disabled={isSendComplete}>
+            <StepButton disabled>Send tokens</StepButton>
+          </Step>
+          <Step expanded={activeStep >= 3}>
+            <StepButton
+              onClick={() => dispatch(setStep(3))}
+              disabled={!isSendComplete}
+            >
+              Redeem tokens
+            </StepButton>
+          </Step>
+        </Stepper>
+        <div>
+          {activeStep === 0 ? <Source /> : <SourcePreview />}
+          {activeStep === 1 ? <Target /> : <TargetPreview />}
+          {activeStep === 2 ? <Send /> : <SendPreview />}
+          {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
+        </div>
+      </Container>
+      <Container maxWidth="md">
+
+      </Container>
+    </>
   );
 }
 
