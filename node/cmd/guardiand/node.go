@@ -3,7 +3,6 @@ package guardiand
 import (
 	"context"
 	"fmt"
-	"github.com/certusone/wormhole/node/pkg/notify/discord"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -12,9 +11,12 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/certusone/wormhole/node/pkg/notify/discord"
+
 	"github.com/certusone/wormhole/node/pkg/db"
 	"github.com/gagliardetto/solana-go/rpc"
 
+	// TODO(Victor): Consider using right lib for Safecoin instead of Solana
 	solana_types "github.com/gagliardetto/solana-go"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -35,6 +37,7 @@ import (
 	gossipv1 "github.com/certusone/wormhole/node/pkg/proto/gossip/v1"
 	"github.com/certusone/wormhole/node/pkg/readiness"
 	"github.com/certusone/wormhole/node/pkg/reporter"
+	"github.com/certusone/wormhole/node/pkg/safecoin"
 	solana "github.com/certusone/wormhole/node/pkg/solana"
 	"github.com/certusone/wormhole/node/pkg/supervisor"
 	"github.com/certusone/wormhole/node/pkg/vaa"
@@ -72,6 +75,10 @@ var (
 	terraWS       *string
 	terraLCD      *string
 	terraContract *string
+
+	safecoinWsRPC    *string
+	safecoinRPC      *string
+	safecoinContract *string
 
 	solanaWsRPC *string
 	solanaRPC   *string
@@ -131,6 +138,10 @@ func init() {
 
 	solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
 	solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
+
+	safecoinContract = NodeCmd.Flags().String("safecoinContract", "", "Address of the Safecoin program (required)")
+	safecoinWsRPC = NodeCmd.Flags().String("safecoinWS", "", "Safecoin Websocket URL (required")
+	safecoinRPC = NodeCmd.Flags().String("safecoinRPC", "", "Safecoin RPC URL (required")
 
 	logLevel = NodeCmd.Flags().String("logLevel", "info", "Logging level (debug, info, warn, error, dpanic, panic, fatal)")
 
@@ -249,6 +260,7 @@ func runNode(cmd *cobra.Command, args []string) {
 	readiness.RegisterComponent(common.ReadinessTerraSyncing)
 	readiness.RegisterComponent(common.ReadinessBSCSyncing)
 	readiness.RegisterComponent(common.ReadinessPolygonSyncing)
+	readiness.RegisterComponent(common.ReadinessSafecoinSyncing)
 
 	if *statusAddr != "" {
 		// Use a custom routing instead of using http.DefaultServeMux directly to avoid accidentally exposing packages
@@ -335,6 +347,16 @@ func runNode(cmd *cobra.Command, args []string) {
 		logger.Fatal("Please specify --nodeName")
 	}
 
+	if *safecoinContract == "" {
+		logger.Fatal("Please specify --safecoinContract")
+	}
+	if *safecoinWsRPC == "" {
+		logger.Fatal("Please specify --safecoinWsUrl")
+	}
+	if *safecoinRPC == "" {
+		logger.Fatal("Please specify --safecoinUrl")
+	}
+
 	if *solanaContract == "" {
 		logger.Fatal("Please specify --solanaContract")
 	}
@@ -396,6 +418,12 @@ func runNode(cmd *cobra.Command, args []string) {
 	ethContractAddr := eth_common.HexToAddress(*ethContract)
 	bscContractAddr := eth_common.HexToAddress(*bscContract)
 	polygonContractAddr := eth_common.HexToAddress(*polygonContract)
+
+	safecoinAddress, err := solana_types.PublicKeyFromBase58(*safecoinContract)
+	if err != nil {
+		logger.Fatal("invalid Safecoin contract address", zap.Error(err))
+	}
+
 	solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
 	if err != nil {
 		logger.Fatal("invalid Solana contract address", zap.Error(err))
@@ -542,6 +570,17 @@ func runNode(cmd *cobra.Command, args []string) {
 
 		if err := supervisor.Run(ctx, "solwatch-finalized",
 			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
+			return err
+		}
+
+		// Start Safecoin watcher
+		if err := supervisor.Run(ctx, "safecoin-confirmed",
+			safecoin.NewSafecoinWatcher(*safecoinWsRPC, *safecoinRPC, safecoinAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
+			return err
+		}
+
+		if err := supervisor.Run(ctx, "safecoin-finalized",
+			safecoin.NewSafecoinWatcher(*safecoinWsRPC, *safecoinRPC, safecoinAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
 			return err
 		}
 
