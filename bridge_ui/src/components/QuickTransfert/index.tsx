@@ -39,7 +39,7 @@ import SourcePreview from "./SourcePreview";
 import Target from "./Target";
 import TargetPreview from "./TargetPreview";
 import clsx from "clsx";
-import ethIcon from "../../icons/eth.svg";
+import safeErc20Icon from "../../icons/safe-erc20.svg";
 
 function QuickTransfer() {
   useCheckIfWormholeWrapped();
@@ -141,7 +141,7 @@ function QuickTransfer() {
     const { active, completed } = props;
 
     const icons: { [index: string]: React.ReactElement } = {
-      1: <img alt="SAFE ERC20" />,
+      1: <img style={{width: "60%"}} src={safeErc20Icon} alt="SAFE ERC20" />,
       2: <img alt="SAFE NATIVE" />,
       3: <img alt="SEND TOKENS" />,
       4: <img alt="REDEEM UNWRAP" />,

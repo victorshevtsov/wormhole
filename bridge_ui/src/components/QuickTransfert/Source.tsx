@@ -124,59 +124,69 @@ function Source() {
           </div>
         </div>
       </StepDescription>
-      <ChainSelect
-        select
-        variant="outlined"
-        fullWidth
-        value={sourceChain}
-        onChange={handleSourceChange}
-        disabled={shouldLockFields}
-        chains={CHAINS}
-      />
-      <KeyAndBalance chainId={sourceChain} />
-      {isReady || uiAmountString ? (
-        <div className={classes.transferField}>
-          <TokenSelector disabled={shouldLockFields} />
-        </div>
-      ) : null}
-      {isMigrationAsset ? (
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleMigrationClick}
-        >
-          Go to Migration Page
-        </Button>
-      ) : (
-        <>
-          <LowBalanceWarning chainId={sourceChain} />
-          {hasParsedTokenAccount ? (
-            <NumberTextField
-              variant="outlined"
-              label="Amount"
-              fullWidth
-              className={classes.transferField}
-              value={amount}
-              onChange={handleAmountChange}
-              disabled={shouldLockFields}
-              onMaxClick={
-                uiAmountString && !parsedTokenAccount.isNativeAsset
-                  ? handleMaxClick
-                  : undefined
-              }
-            />
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <div >
+          <ChainSelect
+            select
+            variant="outlined"
+            fullWidth
+            value={sourceChain}
+            onChange={handleSourceChange}
+            disabled={shouldLockFields}
+            chains={CHAINS}
+          />
+          <KeyAndBalance chainId={sourceChain} />
+          {isReady || uiAmountString ? (
+            <div className={classes.transferField}>
+              <TokenSelector disabled={shouldLockFields} />
+            </div>
           ) : null}
-          <ButtonWithLoader
-            disabled={!isSourceComplete}
-            onClick={handleNextClick}
-            showLoader={false}
-            error={statusMessage || error}
-          >
-            Next
-          </ButtonWithLoader>
-        </>
-      )}
+        </div>
+        <div>
+          {isMigrationAsset ? (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleMigrationClick}
+            >
+              Go to Migration Page
+            </Button>
+          ) : (
+            <>
+              <LowBalanceWarning chainId={sourceChain} />
+              {hasParsedTokenAccount ? (
+                <NumberTextField
+                  variant="outlined"
+                  label="Amount"
+                  fullWidth
+                  className={classes.transferField}
+                  value={amount}
+                  onChange={handleAmountChange}
+                  disabled={shouldLockFields}
+                  onMaxClick={
+                    uiAmountString && !parsedTokenAccount.isNativeAsset
+                      ? handleMaxClick
+                      : undefined
+                  }
+                />
+              ) : null}
+              <ButtonWithLoader
+                disabled={!isSourceComplete}
+                onClick={handleNextClick}
+                showLoader={false}
+              /* error={statusMessage || error}*/
+              >
+                Next
+              </ButtonWithLoader>
+
+            </>
+
+          )}
+          <div>{statusMessage || error}</div>
+        </div>
+      </div>
+      
     </>
   );
 }
