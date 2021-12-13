@@ -122,8 +122,19 @@ export const themelight = responsiveFontSizes(
         },
       },
       MuiPaper: {
+        elevation5: {
+          boxShadow: [
+            // 23 default values of 'shadows' array from https://material-ui-1dab0.firebaseapp.com/customization/themes/
+                ' 0px 6px 29px -7px rgba(0,0,0,0.3)', // 24th value
+              ],
+        },
+    
         rounded: {
+          backgroundColor: '#fff',
           borderRadius: "16px",
+          boxShadow:
+          "0px 3px 1px -2px red,0px 2px 2px 0px rgba(0,0,200,0.9),0px 1px 5px 0px rgba(0,0,0,0.12)",
+         
         },
       },
       MuiStepper: {

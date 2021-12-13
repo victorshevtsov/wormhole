@@ -54,6 +54,14 @@ const useStyles = makeStyles((theme) => ({
       maxWidth: 1100,
     },
   },
+  build: {
+    position: "absolute",
+    left: "120px",
+    bottom: "11px",
+    textTransform: 'uppercase',
+    FontFace: 'monospace',
+    fontSize: 'x-small',
+  },
   sportalIcon: {
     height: 40,
     width: 40,
@@ -153,23 +161,26 @@ function App() {
     <div className={classes.bg}>
       <AppBar position="static" color="inherit" className={classes.appBar} elevation={0}>
         <Toolbar>
-          <Link
-            component={RouterLink}
-            to="/"
-            className={clsx(classes.link, classes.brandText)}
-          >
-            <img
-              src={sPortal}
-              alt="sPortal"
-              className={classes.sportalIcon}
-            />
-             sPortal
-          </Link>
-          {CLUSTER === "mainnet" ? null : (
-            <Typography style={{ textAlign: "center" }}>
-              {CLUSTER} build
-            </Typography>
-          )}
+        
+            <Link
+              component={RouterLink}
+              to="/"
+              className={clsx(classes.link, classes.brandText)}
+            >
+              <img
+                src={sPortal}
+                alt="sPortal"
+                className={classes.sportalIcon}
+              />
+              sPortal
+
+            </Link>
+            {CLUSTER === "mainnet" ? null : (
+                <div style={{ textAlign: "center" }} className={classes.build}>
+                  {CLUSTER} build
+                </div>
+              )}
+         
           <div className={classes.spacer} />
           <Hidden implementation="css" xsDown>
             <div style={{ display: "flex", alignItems: "center" }}>
