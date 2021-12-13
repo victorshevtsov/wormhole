@@ -38,6 +38,7 @@ import LowBalanceWarning from "../LowBalanceWarning";
 import NumberTextField from "../NumberTextField";
 import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
+import {isMobile} from 'react-device-detect';
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -109,7 +110,7 @@ function Source() {
     <>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
-          Select tokens to send through the Wormhole Bridge.
+          Select Safecoin ERC-20 tokens to send through the sPortal Bridge.
           <div style={{ flexGrow: 1 }} />
           <div>
             <Button
@@ -124,7 +125,7 @@ function Source() {
           </div>
         </div>
       </StepDescription>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
+      <div style={ isMobile ? {} : {display:'flex', justifyContent: "space-around"}}>
         <div >
           <ChainSelect
             select

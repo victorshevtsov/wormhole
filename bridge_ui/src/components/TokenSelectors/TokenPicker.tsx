@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) =>
     },
     selectionButtonContainer: {
       //display: "flex",
+      maxWidth: "480px",
       textAlign: "center",
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
