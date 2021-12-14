@@ -19,6 +19,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Alert } from "@material-ui/lab";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { isMobile } from "react-device-detect";
 import { NFTParsedTokenAccount } from "../../store/nftSlice";
 import { shortenAddress } from "../../utils/solana";
 import NFTViewer from "./NFTViewer";
@@ -44,7 +45,6 @@ const useStyles = makeStyles((theme) =>
     },
     selectionButtonContainer: {
       //display: "flex",
-      maxWidth: "480px",
       textAlign: "center",
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
@@ -415,7 +415,7 @@ export default function TokenPicker({
   );
 
   const selectionChip = (
-    <div className={classes.selectionButtonContainer}>
+    <div style={isMobile ? {  } : { width: '480px' }} className={classes.selectionButtonContainer}>
       <Button
         onClick={openDialog}
         disabled={disabled}

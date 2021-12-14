@@ -38,7 +38,7 @@ import LowBalanceWarning from "../LowBalanceWarning";
 import NumberTextField from "../NumberTextField";
 import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -125,8 +125,8 @@ function Source() {
           </div>
         </div>
       </StepDescription>
-      <div style={ isMobile ? {} : {display:'flex', justifyContent: "space-around"}}>
-        <div >
+      <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
+        <div style={isMobile ? {} : { width: "480px" }}>
           <ChainSelect
             select
             variant="outlined"
@@ -187,7 +187,7 @@ function Source() {
           <div>{statusMessage || error}</div>
         </div>
       </div>
-      
+
     </>
   );
 }

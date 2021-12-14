@@ -15,9 +15,9 @@ import {
   withStyles,
 
 } from "@material-ui/core";
-import { Settings, GroupAdd, VideoLabel, Filter1  } from "@material-ui/icons";
+import { Settings, GroupAdd, VideoLabel, Filter1, RedeemRounded  } from "@material-ui/icons";
 import * as React from 'react';
-import { Check } from "@material-ui/icons";
+import { Check, SendRounded } from "@material-ui/icons";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useCheckIfWormholeWrapped from "../../hooks/useCheckIfWormholeWrapped";
@@ -40,7 +40,7 @@ import Target from "./Target";
 import TargetPreview from "./TargetPreview";
 import clsx from "clsx";
 import safeErc20Icon from "../../icons/safe-erc20.svg";
-
+import safeWrapped from "../../icons/safe-wrapped.svg";
 function QuickTransfer() {
   useCheckIfWormholeWrapped();
   useFetchTargetAsset();
@@ -93,13 +93,13 @@ function QuickTransfer() {
     active: {
       '& $line': {
         backgroundImage:
-          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+          'linear-gradient(  95deg,rgb(39 103 129) 0%,rgb(58 137 170) 50%,rgb(87 215 200) 100%)',
       },
     },
     completed: {
       '& $line': {
         backgroundImage:
-          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(233,64,87) 50%,rgb(138,35,135) 100%)',
+          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(242,113,33) 50%,rgb(242,113,33) 100%)',
       },
     },
     line: {
@@ -132,7 +132,7 @@ function QuickTransfer() {
     },
     completed: {
       backgroundImage:
-        'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
+        'linear-gradient(  136deg, rgb(58 136 167) 0%, rgb(45 120 151) 50%, rgb(35 93 116) 100%)',
     },
   });
 
@@ -142,9 +142,9 @@ function QuickTransfer() {
 
     const icons: { [index: string]: React.ReactElement } = {
       1: <img style={{width: "60%"}} src={safeErc20Icon} alt="SAFE ERC20" />,
-      2: <img alt="SAFE NATIVE" />,
-      3: <img alt="SEND TOKENS" />,
-      4: <img alt="REDEEM UNWRAP" />,
+      2: <img style={{width: "60%"}} src={safeWrapped} alt="SAFE NATIVE" />,
+      3: <SendRounded />,
+      4: <RedeemRounded/>,
     };
 
     return (
