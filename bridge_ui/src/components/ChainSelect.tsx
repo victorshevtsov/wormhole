@@ -10,12 +10,19 @@ import clsx from "clsx";
 import { useMemo } from "react";
 import { useBetaContext } from "../contexts/BetaContext";
 import { BETA_CHAINS, ChainInfo } from "../utils/consts";
-
 const useStyles = makeStyles((theme) => ({
   select: {
     "& .MuiSelect-root": {
+      
       display: "flex",
       alignItems: "center",
+    },
+    "& .MuiFilledInput-root": {
+      borderRadius:"10px",
+
+    },
+    "& .MuiFilledInput-input": {
+      padding: "12px 12px 10px",
     },
   },
   listItemIcon: {
@@ -49,7 +56,7 @@ export default function ChainSelect({ chains, ...rest }: ChainSelectProps) {
     [chains, isBeta]
   );
   return (
-    <TextField {...rest} className={clsx(classes.select, rest.className)}>
+    <TextField {...rest}  InputProps={{ disableUnderline: true }} variant="filled" className={clsx(classes.select, rest.className)}>
       {filteredChains.map((chain) => createChainMenuItem(chain, classes))}
     </TextField>
   );

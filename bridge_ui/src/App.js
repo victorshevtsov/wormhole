@@ -98,6 +98,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     minHeight: "100vh",
   },
+  bg: {
+    background:
+      "white",
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "100vh",
+  },
   content: {
     margin: theme.spacing(2, 0),
     [theme.breakpoints.up("md")]: {
@@ -157,8 +164,10 @@ function App() {
     },
     [push]
   );
+  const location = useLocation();
+
   return (
-    <div className={classes.bg}>
+    <div className={ location.pathname == "/quicktransfer" ? classes.bg : classes.bg2}>
       <AppBar position="static" color="inherit" className={classes.appBar} elevation={0}>
         <Toolbar>
         

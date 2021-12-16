@@ -418,8 +418,9 @@ export default function TokenPicker({
     <div style={isMobile ? {  } : { width: '480px' }} className={classes.selectionButtonContainer}>
       <Button
         onClick={openDialog}
+        disableElevation={true}
         disabled={disabled}
-        variant="outlined"
+        variant="contained"
         endIcon={<KeyboardArrowDownIcon />}
         className={classes.selectionButton}
       >

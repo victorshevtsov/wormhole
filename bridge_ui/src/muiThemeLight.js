@@ -22,7 +22,7 @@ export const themelight = responsiveFontSizes(
     palette: {
       type: "light",
       background: {
-        default: COLORS.nearWhite,
+        default: COLORS.pureWhite,
         paper: COLORS.nearWhite,
       },
       divider: COLORS.gray,
@@ -125,7 +125,7 @@ export const themelight = responsiveFontSizes(
         elevation5: {
           boxShadow: [
             // 23 default values of 'shadows' array from https://material-ui-1dab0.firebaseapp.com/customization/themes/
-                ' 0px 6px 29px -7px rgba(0,0,0,0.3)', // 24th value
+                '-16px 16px 56px -8px rgba(145,158,171,0.18)', // 24th value
               ],
         },
     

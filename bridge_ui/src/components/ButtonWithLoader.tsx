@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     textTransform: "none",
     width: "100%",
+    background:"none",
   },
   loader: {
     position: "absolute",
@@ -47,7 +48,7 @@ export default function ButtonWithLoader({
       <div className={classes.root}>
         <Button
           color="primary"
-          variant="contained"
+          variant="outlined"
           className={classes.button}
           disabled={disabled}
           onClick={onClick}

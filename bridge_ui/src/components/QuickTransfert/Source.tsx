@@ -1,10 +1,10 @@
 import {
-  CHAIN_ID_BSC,
+
   CHAIN_ID_ETH,
-  CHAIN_ID_SOLANA,
+
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, Container, makeStyles } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback } from "react";
@@ -54,38 +54,16 @@ function Source() {
   const parsedTokenAccount = useSelector(
     selectTransferSourceParsedTokenAccount
   );
+  console.log("sourceChain ", sourceChain)
   const hasParsedTokenAccount = !!parsedTokenAccount;
-  const isSolanaMigration =
-    sourceChain === CHAIN_ID_SOLANA &&
-    !!parsedTokenAccount &&
-    !!MIGRATION_ASSET_MAP.get(parsedTokenAccount.mintKey);
-  const isEthereumMigration =
-    sourceChain === CHAIN_ID_ETH &&
-    !!parsedTokenAccount &&
-    !!ETH_MIGRATION_ASSET_MAP.get(getAddress(parsedTokenAccount.mintKey));
-  const isBscMigration =
-    sourceChain === CHAIN_ID_BSC &&
-    !!parsedTokenAccount &&
-    !!BSC_MIGRATION_ASSET_MAP.get(getAddress(parsedTokenAccount.mintKey));
-  const isMigrationAsset =
-    isSolanaMigration || isEthereumMigration || isBscMigration;
+
   const uiAmountString = useSelector(selectTransferSourceBalanceString);
   const amount = useSelector(selectTransferAmount);
   const error = useSelector(selectTransferSourceError);
   const isSourceComplete = useSelector(selectTransferIsSourceComplete);
   const shouldLockFields = useSelector(selectTransferShouldLockFields);
   const { isReady, statusMessage } = useIsWalletReady(sourceChain);
-  const handleMigrationClick = useCallback(() => {
-    if (sourceChain === CHAIN_ID_SOLANA) {
-      history.push(
-        `/migrate/Solana/${parsedTokenAccount?.mintKey}/${parsedTokenAccount?.publicKey}`
-      );
-    } else if (sourceChain === CHAIN_ID_ETH) {
-      history.push(`/migrate/Ethereum/${parsedTokenAccount?.mintKey}`);
-    } else if (sourceChain === CHAIN_ID_BSC) {
-      history.push(`/migrate/BinanceSmartChain/${parsedTokenAccount?.mintKey}`);
-    }
-  }, [history, parsedTokenAccount, sourceChain]);
+
   const handleSourceChange = useCallback(
     (event) => {
       dispatch(setSourceChain(event.target.value));
@@ -107,7 +85,8 @@ function Source() {
     dispatch(incrementStep());
   }, [dispatch]);
   return (
-    <>
+    //Ara whole steps container
+    <div>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
           Select Safecoin ERC-20 tokens to send through the sPortal Bridge.
@@ -126,69 +105,58 @@ function Source() {
         </div>
       </StepDescription>
       <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
-        <div style={isMobile ? {} : { width: "480px" }}>
-          <ChainSelect
-            select
-            variant="outlined"
-            fullWidth
-            value={sourceChain}
-            onChange={handleSourceChange}
-            disabled={shouldLockFields}
-            chains={CHAINS}
-          />
-          <KeyAndBalance chainId={sourceChain} />
-          {isReady || uiAmountString ? (
-            <div className={classes.transferField}>
-              <TokenSelector disabled={shouldLockFields} />
-            </div>
-          ) : null}
+        <div>
+          <div style={isMobile ? {} : { width: "480px" }}>
+            <ChainSelect
+              select
+              variant="outlined"
+              fullWidth
+              value={sourceChain}
+              onChange={handleSourceChange}
+              disabled={shouldLockFields}
+              chains={CHAINS}
+            />
+
+            {isReady || uiAmountString ? (
+              <div className={classes.transferField}>
+                <TokenSelector disabled={shouldLockFields} />
+              </div>
+            ) : null}
+            <KeyAndBalance chainId={sourceChain} />
+          </div>
         </div>
         <div>
-          {isMigrationAsset ? (
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              onClick={handleMigrationClick}
+          <>
+            <LowBalanceWarning chainId={sourceChain} />
+            {hasParsedTokenAccount ? (
+              <NumberTextField
+                variant="outlined"
+                label="Amount"
+                fullWidth
+                className={classes.transferField}
+                value={amount}
+                onChange={handleAmountChange}
+                disabled={shouldLockFields}
+                onMaxClick={
+                  uiAmountString && !parsedTokenAccount.isNativeAsset
+                    ? handleMaxClick
+                    : undefined
+                }
+              />
+            ) : null}
+            <ButtonWithLoader
+              disabled={!isSourceComplete}
+              onClick={handleNextClick}
+              showLoader={false}
+            /* error={statusMessage || error}*/
             >
-              Go to Migration Page
-            </Button>
-          ) : (
-            <>
-              <LowBalanceWarning chainId={sourceChain} />
-              {hasParsedTokenAccount ? (
-                <NumberTextField
-                  variant="outlined"
-                  label="Amount"
-                  fullWidth
-                  className={classes.transferField}
-                  value={amount}
-                  onChange={handleAmountChange}
-                  disabled={shouldLockFields}
-                  onMaxClick={
-                    uiAmountString && !parsedTokenAccount.isNativeAsset
-                      ? handleMaxClick
-                      : undefined
-                  }
-                />
-              ) : null}
-              <ButtonWithLoader
-                disabled={!isSourceComplete}
-                onClick={handleNextClick}
-                showLoader={false}
-              /* error={statusMessage || error}*/
-              >
-                Next
-              </ButtonWithLoader>
-
-            </>
-
-          )}
+              Next
+            </ButtonWithLoader>
+          </>
           <div>{statusMessage || error}</div>
         </div>
       </div>
-
-    </>
+    </div>
   );
 }
 

@@ -15,7 +15,7 @@ import {
   withStyles,
 
 } from "@material-ui/core";
-import { Settings, GroupAdd, VideoLabel, Filter1, RedeemRounded  } from "@material-ui/icons";
+import { Settings, GroupAdd, VideoLabel, Filter1, RedeemRounded } from "@material-ui/icons";
 import * as React from 'react';
 import { Check, SendRounded } from "@material-ui/icons";
 import { useEffect } from "react";
@@ -141,10 +141,10 @@ function QuickTransfer() {
     const { active, completed } = props;
 
     const icons: { [index: string]: React.ReactElement } = {
-      1: <img style={{width: "60%"}} src={safeErc20Icon} alt="SAFE ERC20" />,
-      2: <img style={{width: "60%"}} src={safeWrapped} alt="SAFE NATIVE" />,
-      3: <SendRounded />,
-      4: <RedeemRounded/>,
+      1: <div>1</div>,
+      2: <div>2</div>,
+      3: <div>3</div>,
+      4: <div>4</div>,
     };
 
     return (
@@ -163,6 +163,13 @@ function QuickTransfer() {
     createStyles({
       root: {
         width: '100%',
+      },
+      preview: {
+        border: "2px dashed rgba(145, 158, 171, 0.24)",
+        borderRadius: "10px",
+        marginTop: theme.spacing(8),
+        marginBottom: theme.spacing(1),
+        padding: theme.spacing(2)
       },
       button: {
         marginRight: theme.spacing(1),
@@ -204,7 +211,7 @@ function QuickTransfer() {
     <>
       <Container maxWidth="md">
         <div className={classes.root}>
-          <Stepper  activeStep={activeStep} orientation="horizontal" connector={<ColorlibConnector />} alternativeLabel>
+          <Stepper activeStep={activeStep} orientation="horizontal" connector={<ColorlibConnector />} alternativeLabel>
             {/* Pre select with disabled dropdown ethereum */}
             <Step className={clstep.root}
               expanded={activeStep >= 0}
@@ -230,10 +237,10 @@ function QuickTransfer() {
               </StepButton>
             </Step>
             <Step className={clstep.root} expanded={activeStep >= 3}>
-              <StepButton  
+              <StepButton
                 onClick={() => dispatch(setStep(3))}
                 disabled={!isSendComplete}
-                >
+              >
                 <StepLabel StepIconComponent={ColorlibStepIcon}>Redeem tokens</StepLabel>
               </StepButton>
             </Step>
@@ -241,7 +248,7 @@ function QuickTransfer() {
         </div>
       </Container>
       <Container maxWidth="md">
-        <Paper elevation={5}  style={{ padding: "40px"}}>
+        <Paper elevation={5} style={{ padding: "40px" }}>
           {activeStep === 0 ? <Source /> : <></>}
           {activeStep === 1 ? <Target /> : <></>}
           {activeStep === 2 ? <Send /> : <></>}
@@ -253,6 +260,12 @@ function QuickTransfer() {
           {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
         */}
         </Paper>
+        <div className={ activeStep === 0 ? classes.preview : classes.preview } >
+          {activeStep === 0 ? <SourcePreview /> : <></>}
+          {activeStep === 1 ? <TargetPreview /> : <></>}
+          {activeStep === 2 ? <SendPreview /> : <></>}
+          {isRedeemComplete ? <RedeemPreview /> : <></>}
+        </div>
       </Container>
     </>
   );
