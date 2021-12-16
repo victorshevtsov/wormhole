@@ -14,7 +14,7 @@ RUN apt-get update && \
     rustup component add rustfmt && \
     rustup default nightly-2021-08-01
 
-RUN sh -c "$(curl -sSfL https://release.solana.com/v1.7.8/install)"
+RUN sh -c "$(curl -sSfL https://release.solana.com/v1.7.10/install)"
 
 ENV PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
 
@@ -44,12 +44,12 @@ ENV EMITTER_ADDRESS="11111111111111111111111111111115"
 ENV BRIDGE_ADDRESS="Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
 
 # Build Wormhole Solana programs
-RUN --mount=type=cache,target=bridge/target \
-    --mount=type=cache,target=modules/token_bridge/target \
-    --mount=type=cache,target=modules/nft_bridge/target \
-    --mount=type=cache,target=pyth2wormhole/target \
-    --mount=type=cache,target=migration/target \
-    cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
+# RUN --mount=type=cache,id=solana_contract,target=bridge/target \
+#     --mount=type=cache,id=solana_contract,target=modules/token_bridge/target \
+#     --mount=type=cache,id=solana_contract,target=modules/nft_bridge/target \
+#     --mount=type=cache,id=solana_contract,target=pyth2wormhole/target \
+#     --mount=type=cache,id=solana_contract,target=migration/target \
+RUN cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" && \
     cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "pyth2wormhole/program/Cargo.toml" && \

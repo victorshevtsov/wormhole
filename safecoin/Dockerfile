@@ -14,16 +14,18 @@ RUN apt-get update && \
     rustup component add rustfmt && \
     rustup default nightly-2021-08-01
 
-RUN rustup component add rustfmt && \
+RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
+
+RUN --mount=type=cache,target=/root/.cache \
+    rustup component add rustfmt && \
     git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin && \
     cd /usr/src/safecoin && \
-    cargo build --release && \
-    cp -r ./sdk ./target/release/sdk
+    cargo build --release
 
-# RUN sh -c "$(curl -sSfL https://release.solana.com/v1.7.8/install)"
+RUN cp -r /usr/src/safecoin/target/release/. /root/.local/share/safecoin/install/active_release/bin && \
+    cp -r /usr/src/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin
 
-ENV PATH="/usr/src/safecoin/target/release:$PATH"
-# ENV PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
+ENV PATH="/root/.local/share/safecoin/install/active_release/bin:$PATH"
 
 # Safecoin does a questionable download at the beginning of a *first* build-bpf call. Trigger and layer-cache it explicitly.
 RUN cargo init --lib /tmp/decoy-crate && \
@@ -51,11 +53,12 @@ ENV EMITTER_ADDRESS="11111111111111111111111111111115"
 ENV BRIDGE_ADDRESS="Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
 
 # Build Wormhole Safecoin programs
-RUN --mount=type=cache,target=bridge/target \
-    --mount=type=cache,target=modules/token_bridge/target \
-    --mount=type=cache,target=modules/nft_bridge/target \
-    --mount=type=cache,target=pyth2wormhole/target \
-    --mount=type=cache,target=migration/target \
+RUN --mount=type=cache,target=/root/.cache \
+    # --mount=type=cache,id=safecoin_contract,target=bridge/target \
+    # --mount=type=cache,id=safecoin_contract,target=modules/token_bridge/target \
+    # --mount=type=cache,id=safecoin_contract,target=modules/nft_bridge/target \
+    # --mount=type=cache,id=safecoin_contract,target=pyth2wormhole/target \
+    # --mount=type=cache,id=safecoin_contract,target=migration/target \
     cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" && \
     cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" && \

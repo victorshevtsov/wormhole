@@ -21,48 +21,48 @@ COPY pyth2wormhole pyth2wormhole
 
 # Compile Wormhole
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=bridge/target \
+	--mount=type=cache,id=solana_wasm,target=bridge/target \
     cd bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=bridge/target \
+	--mount=type=cache,id=solana_wasm,target=bridge/target \
     cd bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile Token Bridge
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=modules/token_bridge/target \
+	--mount=type=cache,id=solana_wasm,target=modules/token_bridge/target \
     cd modules/token_bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=modules/token_bridge/target \
+	--mount=type=cache,id=solana_wasm,target=modules/token_bridge/target \
     cd modules/token_bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile Migration
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=migration/target \
+	--mount=type=cache,id=solana_wasm,target=migration/target \
     cd migration && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=migration/target \
+	--mount=type=cache,id=solana_wasm,target=migration/target \
     cd migration && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile NFT Bridge
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=modules/nft_bridge/target \
+	--mount=type=cache,id=solana_wasm,target=modules/nft_bridge/target \
     cd modules/nft_bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=modules/nft_bridge/target \
+	--mount=type=cache,id=solana_wasm,target=modules/nft_bridge/target \
     cd modules/nft_bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile pyth2wormhole
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=pyth2wormhole/target \
+	--mount=type=cache,id=solana_wasm,target=pyth2wormhole/target \
     cd pyth2wormhole/program \
     && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
 RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,target=pyth2wormhole/target \
+	--mount=type=cache,id=solana_wasm,target=pyth2wormhole/target \
     cd pyth2wormhole/program \
     && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 

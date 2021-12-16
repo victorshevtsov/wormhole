@@ -2,66 +2,67 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: solana-devnet
+  name: safecoin-devnet
   labels:
-    app: solana-devnet
+    app: safecoin-devnet
 spec:
   ports:
-    - port: 8899
+    - port: 8328
       name: rpc
       protocol: TCP
-    - port: 9900
+    - port: 19900
       name: faucet
       protocol: TCP
   clusterIP: None
   selector:
-    app: solana-devnet
+    app: safecoin-devnet
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: solana-devnet
+  name: safecoin-devnet
 spec:
   selector:
     matchLabels:
-      app: solana-devnet
-  serviceName: solana-devnet
+      app: safecoin-devnet
+  serviceName: safecoin-devnet
   replicas: 1
   template:
     metadata:
       labels:
-        app: solana-devnet
+        app: safecoin-devnet
     spec:
       terminationGracePeriodSeconds: 1
       containers:
         - name: devnet
-          image: solana-contract
+          image: safecoin-contract
           command:
-            - /root/.local/share/solana/install/active_release/bin/solana-test-validator
+            - solana-test-validator
             - --bpf-program
             - Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
-            - /opt/solana/deps/bridge.so
+            - /opt/safecoin/deps/bridge.so
             - --bpf-program
             - B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE
-            - /opt/solana/deps/token_bridge.so
+            - /opt/safecoin/deps/token_bridge.so
             - --bpf-program
             - NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA
-            - /opt/solana/deps/nft_bridge.so
+            - /opt/safecoin/deps/nft_bridge.so
             - --bpf-program
             - CP1co2QMMoDPbsmV7PGcUTLFwyhgCgTXt25gLQ5LewE1
-            - /opt/solana/deps/cpi_poster.so
+            - /opt/safecoin/deps/cpi_poster.so
             - --bpf-program
             - metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s
-            - /opt/solana/deps/spl_token_metadata.so
-            - --bpf-program
-            - gMYYig2utAxVoXnM9UhtTWrt8e7x2SVBZqsWZJeT5Gw # Derived from pyth_program.json
-            - /opt/solana/deps/pyth_oracle.so
+            - /opt/safecoin/deps/spl_token_metadata.so
+            # TODO(Victor): Temporary commented
+            # - --bpf-program
+            # - gMYYig2utAxVoXnM9UhtTWrt8e7x2SVBZqsWZJeT5Gw # Derived from pyth_program.json
+            # - /opt/safecoin/deps/pyth_oracle.so
             - --bpf-program
             - P2WH424242424242424242424242424242424242424
-            - /opt/solana/deps/pyth2wormhole.so
+            - /opt/safecoin/deps/pyth2wormhole.so
             - --bpf-program
             - Ex9bCdVMSfx7EzB3pgSi2R4UHwJAXvTw18rBQm5YQ8gK
-            - /opt/solana/deps/wormhole_migration.so
+            - /opt/safecoin/deps/wormhole_migration.so
             - --log
           ports:
             - containerPort: 8001
@@ -85,10 +86,10 @@ spec:
             - containerPort: 8007
               name: serverepair
               protocol: UDP
-            - containerPort: 8899
+            - containerPort: 8328
               name: rpc
               protocol: TCP
-            - containerPort: 8900
+            - containerPort: 8329
               name: pubsub
               protocol: TCP
             - containerPort: 9900
@@ -100,9 +101,9 @@ spec:
               path: /health
             periodSeconds: 1
         - name: setup
-          image: bridge-client-solana
+          image: bridge-client-safecoin
           command:
-            - /usr/src/solana/devnet_setup.sh
+            - /usr/src/safecoin/devnet_setup.sh
           readinessProbe:
             tcpSocket:
               port: 2000

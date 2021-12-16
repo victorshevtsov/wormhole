@@ -94,6 +94,12 @@ spec:
             - ws://solana-devnet:8900
             - --solanaRPC
             - http://solana-devnet:8899
+            - --safecoinContract
+            - Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
+            - --safecoinWS
+            - ws://safecoin-devnet:8329
+            - --safecoinRPC
+            - http://safecoin-devnet:8328
             - --unsafeDevMode
             - --guardianKey
             - /tmp/bridge.key
