@@ -37,6 +37,7 @@ import NumberTextField from "../NumberTextField";
 import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 import { isMobile } from 'react-device-detect';
+import QKeyAndBalance from "../QKeyAndBalance";
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -189,7 +190,7 @@ function Source() {
             </div>
             <div>
 
-              <KeyAndBalance chainId={sourceChain} />
+              <QKeyAndBalance chainId={sourceChain} />
             </div>
           </div>
           <div className={classes.spacer}></div>
