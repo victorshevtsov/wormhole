@@ -2,7 +2,7 @@ import {
   CHAIN_ID_ETH,
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, Container, makeStyles } from "@material-ui/core";
+import { Button, Container, makeStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback } from "react";
@@ -44,6 +44,13 @@ const useStyles = makeStyles((theme) => ({
   },
   selector: {
     display: "none",
+  },
+  description: {
+   // marginBottom: theme.spacing(4),
+    textAlign: "center",
+  },
+  spacer: {
+    height: theme.spacing(6),
   },
 }));
 
@@ -92,77 +99,102 @@ function Source() {
   return (
     //Ara whole steps container
     <div>
-      <StepDescription>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          Select Safecoin ERC-20 tokens to send through the sPortal Bridge.
-          <div style={{ flexGrow: 1 }} />
-          <div style={{display:"none"}}>
-            <Button
-              component={Link}
-              to="/token-origin-verifier"
-              size="small"
-              variant="outlined"
-              endIcon={<VerifiedUser />}
-            >
-              Token Origin Verifier
-            </Button>
-          </div>
-        </div>
-      </StepDescription>
-      <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
-        <div>
-          <div style={isMobile ? {} : { width: "480px" }}>
-            <ChainSelect
-              hidden={true}
-              className={classes.selector}
-              select
-              variant="outlined"
-              fullWidth
-              value={sourceChain}
-              onChange={handleSourceChange}
-              disabled={shouldLockFields}
-              chains={CHAINS}
-            />
 
-            {isReady || uiAmountString ? (
-              <div className={classes.transferField}>
-                <TokenSelector disabled={shouldLockFields} />
-              </div>
-            ) : null}
-            <KeyAndBalance chainId={sourceChain} />
-          </div>
-        </div>
-        <div>
-          <>
-            <LowBalanceWarning chainId={sourceChain} />
-            {hasParsedTokenAccount ? (
-              <NumberTextField
-                variant="outlined"
-                label="Amount"
-                fullWidth
-                className={classes.transferField}
-                value={amount}
-                onChange={handleAmountChange}
-                disabled={shouldLockFields}
-                onMaxClick={
-                  uiAmountString && !parsedTokenAccount.isNativeAsset
-                    ? handleMaxClick
-                    : undefined
-                }
-              />
-            ) : null}
-            <ButtonWithLoader
-              disabled={!isSourceComplete}
-              onClick={handleNextClick}
-              showLoader={false}
-            /* error={statusMessage || error}*/
-            >
-              Next
-            </ButtonWithLoader>
-          </>
-          <div>{statusMessage || error}</div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {/*Select Safecoin ERC-20 tokens to send through the sPortal Bridge.*/}
+        <div style={{ flexGrow: 1 }} />
+        <div style={{ display: "none" }}>
+          <Button
+            component={Link}
+            to="/token-origin-verifier"
+            size="small"
+            variant="outlined"
+            endIcon={<VerifiedUser />}
+          >
+            Token Origin Verifier
+          </Button>
         </div>
       </div>
+
+      {isReady ? (
+        <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
+          <div>
+            <div style={isMobile ? {} : { width: "480px" }}>
+              {/* hidden for UX purpose for quicktransfer */}
+              <ChainSelect
+                hidden={true}
+                className={classes.selector}
+                select
+                variant="outlined"
+                fullWidth
+                value={sourceChain}
+                onChange={handleSourceChange}
+                disabled={shouldLockFields}
+                chains={CHAINS}
+              />
+
+              { /* to remove */ isReady || uiAmountString ? (
+                <div className={classes.transferField}>
+                  <TokenSelector disabled={shouldLockFields} />
+                </div>
+              ) : null}
+              <KeyAndBalance chainId={sourceChain} />
+            </div>
+          </div>
+          <div>
+            <>
+              <LowBalanceWarning chainId={sourceChain} />
+              {hasParsedTokenAccount ? (
+                <NumberTextField
+                  variant="outlined"
+                  label="Amount"
+                  fullWidth
+                  className={classes.transferField}
+                  value={amount}
+                  onChange={handleAmountChange}
+                  disabled={shouldLockFields}
+                  onMaxClick={
+                    uiAmountString && !parsedTokenAccount.isNativeAsset
+                      ? handleMaxClick
+                      : undefined
+                  }
+                />
+              ) : null}
+              { /* to remove */ isReady ? (
+                <ButtonWithLoader
+                  disabled={!isSourceComplete}
+                  onClick={handleNextClick}
+                  showLoader={false}
+                /* error={statusMessage || error}*/
+                >
+                  Next
+                </ButtonWithLoader>
+              ) : null}
+            </>
+            <div>{statusMessage || error}</div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Typography variant="h4">
+            Get started
+          </Typography>
+          <div className={classes.spacer}></div>
+          <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
+            <div>
+              <Typography className={classes.description}>
+                Select your Safecoin ERC-20 tokens
+                <br /> to send through the sPortal Bridge.
+              </Typography>
+            </div>
+            <div>
+
+              <KeyAndBalance chainId={sourceChain} />
+            </div>
+          </div>
+          <div className={classes.spacer}></div>
+        </>
+      )}
     </div>
   );
 }

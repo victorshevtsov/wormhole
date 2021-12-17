@@ -869,7 +869,8 @@ function useGetAvailableTokens(nft: boolean = false) {
 
   //Ethereum covalent accounts load
   useEffect(() => {
-    const testWallet = "0xf60c2ea62edbfe808163751dd0d8693dcb30019c";
+    //const testWallet = "0xdAF566020156297E2837fDfaA6Fbba929A29461E"; // esafe mainnet
+    const testWallet = "0x2D4fdB3b447f569C8F17f26D0468c81224633179"; // esafe goerli
     // const nftTestWallet1 = "0x3f304c6721f35ff9af00fd32650c8e0a982180ab";
     // const nftTestWallet2 = "0x98ed231428088eb440e8edb5cc8d66dcf913b86e";
     // const nftTestWallet3 = "0xb1fadf677a7e9b90e9d4f31c8ffb3dc18c138c6f";

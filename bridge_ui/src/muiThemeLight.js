@@ -27,7 +27,7 @@ export const themelight = responsiveFontSizes(
       },
       divider: COLORS.gray,
       text: {
-        primary: "rgba(57,64,82,0.98)",
+        primary: "#637381",
       },
       primary: {
         main: COLORS.blueWithTransparency, // #0074FF
@@ -43,7 +43,7 @@ export const themelight = responsiveFontSizes(
     },
     typography: {
       fontFamily: [
-        '-apple-system',
+        'Poppins',
         'BlinkMacSystemFont',
         '"Segoe UI"',
         'Roboto',
@@ -62,6 +62,7 @@ export const themelight = responsiveFontSizes(
       },
       h4: {
         fontWeight: "500",
+        color:"#212B36",
       },
     },
     overrides: {
