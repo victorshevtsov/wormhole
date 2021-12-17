@@ -110,6 +110,7 @@ function Home() {
             variant="contained"
             color="primary"
             size="large"
+            disableElevation={true}
             className={classes.gradientButton}
           >
             Convert now
@@ -120,6 +121,7 @@ function Home() {
               component={RouterLink}
               to="/transfer"
               variant="outlined"
+              disableElevation={true}
               endIcon={<HelpOutline />}
             >
               Advanced

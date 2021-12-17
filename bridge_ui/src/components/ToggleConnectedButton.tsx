@@ -4,7 +4,7 @@ import { LinkOff } from "@material-ui/icons";
 const useStyles = makeStyles((theme) => ({
   button: {
     display: "flex",
-    margin: `${theme.spacing(1)}px auto`,
+    margin: `${theme.spacing(1)}px`,
     width: "100%",
     maxWidth: 400,
   },
@@ -28,7 +28,8 @@ const ToggleConnectedButton = ({
       <Button
         color="primary"
         variant="contained"
-        size="small"
+        size="large"
+        disableElevation={true}
         onClick={disconnect}
         className={classes.button}
         startIcon={<LinkOff />}
@@ -41,7 +42,8 @@ const ToggleConnectedButton = ({
     <Button
       color="primary"
       variant="contained"
-      size="small"
+      size="large"
+      disableElevation={true}
       onClick={connect}
       className={classes.button}
     >

@@ -1,7 +1,5 @@
 import {
-
   CHAIN_ID_ETH,
-
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
 import { Button, Container, makeStyles } from "@material-ui/core";
@@ -44,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
   transferField: {
     marginTop: theme.spacing(5),
   },
+  selector: {
+    display: "none",
+  },
 }));
 
 function Source() {
@@ -54,7 +55,6 @@ function Source() {
   const parsedTokenAccount = useSelector(
     selectTransferSourceParsedTokenAccount
   );
-  console.log("sourceChain ", sourceChain)
   const hasParsedTokenAccount = !!parsedTokenAccount;
 
   const uiAmountString = useSelector(selectTransferSourceBalanceString);
@@ -84,6 +84,11 @@ function Source() {
   const handleNextClick = useCallback(() => {
     dispatch(incrementStep());
   }, [dispatch]);
+
+  if (sourceChain != 2) {
+    dispatch(setSourceChain(2));
+  }
+
   return (
     //Ara whole steps container
     <div>
@@ -91,7 +96,7 @@ function Source() {
         <div style={{ display: "flex", alignItems: "center" }}>
           Select Safecoin ERC-20 tokens to send through the sPortal Bridge.
           <div style={{ flexGrow: 1 }} />
-          <div>
+          <div style={{display:"none"}}>
             <Button
               component={Link}
               to="/token-origin-verifier"
@@ -108,6 +113,8 @@ function Source() {
         <div>
           <div style={isMobile ? {} : { width: "480px" }}>
             <ChainSelect
+              hidden={true}
+              className={classes.selector}
               select
               variant="outlined"
               fullWidth
