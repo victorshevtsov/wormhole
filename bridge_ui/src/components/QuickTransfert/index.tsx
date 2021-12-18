@@ -174,6 +174,9 @@ function QuickTransfer() {
       button: {
         marginRight: theme.spacing(1),
       },
+      spacer: {
+        height: theme.spacing(3),
+      },
       instructions: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
@@ -218,7 +221,7 @@ function QuickTransfer() {
               disabled={preventNavigation || isRedeemComplete}
             >
               <StepButton onClick={() => dispatch(setStep(0))}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}>Source</StepLabel>
+                <StepLabel StepIconComponent={ColorlibStepIcon}><b>ESAFE </b>Source</StepLabel>
               </StepButton>
               {/*<StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>*/}
             </Step>
@@ -247,6 +250,7 @@ function QuickTransfer() {
           </Stepper>
         </div>
       </Container>
+      <div className={classes.spacer}></div>
       <Container maxWidth="md">
         <Paper elevation={5} style={{ padding: "40px" }}>
           {activeStep === 0 ? <Source /> : <></>}

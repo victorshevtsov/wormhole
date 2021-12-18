@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginBottom: theme.spacing(2),
+    color: "#212B36",
   },
   description: {
     marginBottom: theme.spacing(4),
@@ -92,15 +93,12 @@ function Home() {
         </div>
       </Container>
       <Container maxWidth="md">
+        <div className={classes.spacer} />
         {/*<div className={classes.spacer} />*/}
         <Typography variant="h5" className={classes.description}>
-          If you transferred assets using the previous version of Wormhole,
-          most assets can be migrated to v2 on the{" "}
-          <Link component={RouterLink} to="/transfer" noWrap>
-            transfer page
-          </Link>
-          .
+          Transfering assets through different chains has never been so easy.
         </Typography>
+        <div className={classes.spacer} />
       </Container>
       <Container maxWidth="md">
         <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>

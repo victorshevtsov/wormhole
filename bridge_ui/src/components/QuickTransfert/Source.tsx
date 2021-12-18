@@ -184,7 +184,7 @@ function Source() {
           <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
             <div>
               <Typography className={classes.description}>
-                Select your Safecoin ERC-20 tokens
+                Select your Safecoin <b>ERC-20</b> tokens
                 <br /> to send through the sPortal Bridge.
               </Typography>
             </div>

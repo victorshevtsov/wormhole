@@ -1,7 +1,7 @@
 //cloned for styling on quick transfert
 import { Button, makeStyles, Tooltip } from "@material-ui/core";
 import { LinkOff } from "@material-ui/icons";
-
+import metamast from "../icons/metamaskwhite2.svg";
 const useStyles = makeStyles((theme) => ({
   button: {
     display: "flex",
@@ -47,6 +47,7 @@ const QToggleConnectedButton = ({
       disableElevation={true}
       onClick={connect}
       className={classes.button}
+      startIcon={<img style={{ width:"30px", height:"auto"}} src={metamast}></img>}
     >
       Connect
     </Button>
