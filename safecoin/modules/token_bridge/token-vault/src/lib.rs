@@ -1,7 +1,5 @@
-//! A Token Metadata program for the Solana blockchain.
+//! A Token Fraction program for the Safecoin blockchain.
 
-pub mod deprecated_instruction;
-pub mod deprecated_processor;
 pub mod entrypoint;
 pub mod error;
 pub mod instruction;
@@ -11,4 +9,4 @@ pub mod utils;
 // Export current sdk types for downstream users building with a different sdk version
 pub use safecoin_program;
 
-safecoin_program::declare_id!("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+safecoin_program::declare_id!("vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn");
