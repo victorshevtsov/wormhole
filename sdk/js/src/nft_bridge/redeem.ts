@@ -2,7 +2,7 @@ import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { ethers } from "ethers";
 import { CHAIN_ID_SOLANA } from "..";
 import { Bridge__factory } from "../ethers-contracts";
-import { ixFromRust } from "../solana";
+import { ixFromRustSolana } from "../solana";
 import { importCoreWasm, importNftWasm } from "../solana/wasm";
 
 export async function redeemOnEth(
@@ -38,7 +38,7 @@ export async function redeemOnSolana(
   const ixs = [];
   if (isSolanaNative) {
     ixs.push(
-      ixFromRust(
+      ixFromRustSolana(
         complete_transfer_native_ix(
           tokenBridgeAddress,
           bridgeAddress,
@@ -50,7 +50,7 @@ export async function redeemOnSolana(
     );
   } else {
     ixs.push(
-      ixFromRust(
+      ixFromRustSolana(
         complete_transfer_wrapped_ix(
           tokenBridgeAddress,
           bridgeAddress,
@@ -76,7 +76,7 @@ export async function createMetaOnSolana(
   signedVAA: Uint8Array
 ) {
   const { complete_transfer_wrapped_meta_ix } = await importNftWasm();
-  const ix = ixFromRust(
+  const ix = ixFromRustSolana(
     complete_transfer_wrapped_meta_ix(
       tokenBridgeAddress,
       bridgeAddress,

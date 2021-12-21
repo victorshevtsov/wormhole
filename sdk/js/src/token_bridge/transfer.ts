@@ -13,7 +13,7 @@ import {
   Bridge__factory,
   TokenImplementation__factory,
 } from "../ethers-contracts";
-import { getBridgeFeeIx, ixFromRust } from "../solana";
+import { getBridgeFeeIxSolana, ixFromRustSolana } from "../solana";
 import { importTokenWasm } from "../solana/wasm";
 import { ChainId, CHAIN_ID_SOLANA, createNonce, WSOL_ADDRESS } from "../utils";
 
@@ -207,7 +207,7 @@ export async function transferNativeSol(
     await importTokenWasm();
   const nonce = createNonce().readUInt32LE(0);
   const fee = BigInt(0); // for now, this won't do anything, we may add later
-  const transferIx = await getBridgeFeeIx(
+  const transferIx = await getBridgeFeeIxSolana(
     connection,
     bridgeAddress,
     payerAddress
@@ -222,7 +222,7 @@ export async function transferNativeSol(
   );
   let messageKey = Keypair.generate();
 
-  const ix = ixFromRust(
+  const ix = ixFromRustSolana(
     transfer_native_ix(
       tokenBridgeAddress,
       bridgeAddress,
@@ -277,7 +277,7 @@ export async function transferFromSolana(
 ) {
   const nonce = createNonce().readUInt32LE(0);
   const fee = BigInt(0); // for now, this won't do anything, we may add later
-  const transferIx = await getBridgeFeeIx(
+  const transferIx = await getBridgeFeeIxSolana(
     connection,
     bridgeAddress,
     payerAddress
@@ -301,7 +301,7 @@ export async function transferFromSolana(
   if (!isSolanaNative && !originAddress) {
     throw new Error("originAddress is required when specifying originChain");
   }
-  const ix = ixFromRust(
+  const ix = ixFromRustSolana(
     isSolanaNative
       ? transfer_native_ix(
           tokenBridgeAddress,

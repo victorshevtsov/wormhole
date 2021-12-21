@@ -1,6 +1,6 @@
 import { Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { ixFromRust } from "../solana";
+import { ixFromRustSolana } from "../solana";
 import { importMigrationWasm } from "../solana/wasm";
 
 export default async function migrateTokens(
@@ -22,7 +22,7 @@ export default async function migrateTokens(
     [],
     new u64(amount.toString(16), 16)
   );
-  const ix = ixFromRust(
+  const ix = ixFromRustSolana(
     migrate_tokens(
       program_id,
       from_mint,

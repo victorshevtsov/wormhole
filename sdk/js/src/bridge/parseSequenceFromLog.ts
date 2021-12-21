@@ -1,4 +1,5 @@
-import { TransactionResponse } from "@solana/web3.js";
+import { TransactionResponse as TransactionResponseSafecoin } from "@safecoin/web3.js";
+import { TransactionResponse as TransactionResponseSolana} from "@solana/web3.js";
 import { TxInfo } from "@terra-money/terra.js";
 import { ContractReceipt } from "ethers";
 import { Implementation__factory } from "../ethers-contracts";
@@ -35,8 +36,20 @@ export function parseSequenceFromLogTerra(info: TxInfo): string {
   return sequence.toString();
 }
 
+const SAFECOIN_SEQ_LOG = "Program log: Sequence: ";
+export function parseSequenceFromLogSafecoin(info: TransactionResponseSafecoin) {
+  // TODO: better parsing, safer
+  const sequence = info.meta?.logMessages
+    ?.filter((msg) => msg.startsWith(SAFECOIN_SEQ_LOG))[0]
+    .replace(SAFECOIN_SEQ_LOG, "");
+  if (!sequence) {
+    throw new Error("sequence not found");
+  }
+  return sequence.toString();
+}
+
 const SOLANA_SEQ_LOG = "Program log: Sequence: ";
-export function parseSequenceFromLogSolana(info: TransactionResponse) {
+export function parseSequenceFromLogSolana(info: TransactionResponseSolana) {
   // TODO: better parsing, safer
   const sequence = info.meta?.logMessages
     ?.filter((msg) => msg.startsWith(SOLANA_SEQ_LOG))[0]

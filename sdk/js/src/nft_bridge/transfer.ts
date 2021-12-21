@@ -5,7 +5,7 @@ import {
   NFTBridge__factory,
   NFTImplementation__factory,
 } from "../ethers-contracts";
-import { getBridgeFeeIx, ixFromRust } from "../solana";
+import { getBridgeFeeIxSolana, ixFromRustSolana } from "../solana";
 import { importNftWasm } from "../solana/wasm";
 import { ChainId, CHAIN_ID_SOLANA, createNonce } from "../utils";
 
@@ -46,7 +46,7 @@ export async function transferFromSolana(
   originTokenId?: Uint8Array
 ) {
   const nonce = createNonce().readUInt32LE(0);
-  const transferIx = await getBridgeFeeIx(
+  const transferIx = await getBridgeFeeIxSolana(
     connection,
     bridgeAddress,
     payerAddress
@@ -72,7 +72,7 @@ export async function transferFromSolana(
       "originAddress and originTokenId are required when specifying originChain"
     );
   }
-  const ix = ixFromRust(
+  const ix = ixFromRustSolana(
     isSolanaNative
       ? transfer_native_ix(
           tokenBridgeAddress,

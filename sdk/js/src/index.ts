@@ -1,4 +1,5 @@
 export * from "./ethers-contracts";
+export * from "./safecoin";
 export * from "./solana";
 export * from "./terra";
 export * from "./rpc";

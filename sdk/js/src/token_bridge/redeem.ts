@@ -10,7 +10,7 @@ import { MsgExecuteContract } from "@terra-money/terra.js";
 import { ethers } from "ethers";
 import { fromUint8Array } from "js-base64";
 import { Bridge__factory } from "../ethers-contracts";
-import { ixFromRust } from "../solana";
+import { ixFromRustSolana } from "../solana";
 import { importCoreWasm, importTokenWasm } from "../solana/wasm";
 import {
   CHAIN_ID_SOLANA,
@@ -85,7 +85,7 @@ export async function redeemAndUnwrapOnSolana(
   const payerPublicKey = new PublicKey(payerAddress);
   const ancillaryKeypair = Keypair.generate();
 
-  const completeTransferIx = ixFromRust(
+  const completeTransferIx = ixFromRustSolana(
     complete_transfer_native_ix(
       tokenBridgeAddress,
       bridgeAddress,
@@ -160,7 +160,7 @@ export async function redeemOnSolana(
   const ixs = [];
   if (isSolanaNative) {
     ixs.push(
-      ixFromRust(
+      ixFromRustSolana(
         complete_transfer_native_ix(
           tokenBridgeAddress,
           bridgeAddress,
@@ -171,7 +171,7 @@ export async function redeemOnSolana(
     );
   } else {
     ixs.push(
-      ixFromRust(
+      ixFromRustSolana(
         complete_transfer_wrapped_ix(
           tokenBridgeAddress,
           bridgeAddress,

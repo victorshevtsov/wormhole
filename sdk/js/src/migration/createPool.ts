@@ -1,5 +1,5 @@
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { ixFromRust } from "../solana";
+import { ixFromRustSolana } from "../solana";
 import { importMigrationWasm } from "../solana/wasm";
 
 export default async function createPool(
@@ -11,7 +11,7 @@ export default async function createPool(
   to_mint: string
 ) {
   const { create_pool } = await importMigrationWasm();
-  const ix = ixFromRust(create_pool(program_id, payer, from_mint, to_mint));
+  const ix = ixFromRustSolana(create_pool(program_id, payer, from_mint, to_mint));
   const transaction = new Transaction().add(ix);
   const { blockhash } = await connection.getRecentBlockhash();
   transaction.recentBlockhash = blockhash;
