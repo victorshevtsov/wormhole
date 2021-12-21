@@ -1,4 +1,4 @@
-import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
+import { CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
 import { makeStyles, Typography } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import {
@@ -29,7 +29,7 @@ export default function WaitingForWalletMessage() {
   return showWarning ? (
     <Typography className={classes.message} variant="body2">
       {WAITING_FOR_WALLET_AND_CONF}{" "}
-      {targetChain === CHAIN_ID_SOLANA && isCreating
+      {(targetChain === CHAIN_ID_SAFECOIN || targetChain === CHAIN_ID_SOLANA) && isCreating
         ? "Note: there will be several transactions"
         : null}
     </Typography>

@@ -3,11 +3,14 @@ import {
   CHAIN_ID_TERRA,
   getForeignAssetEth,
   getForeignAssetSolana,
+  getForeignAssetSafecoin,
   getForeignAssetTerra,
   hexToUint8Array,
   nativeToHexString,
+  CHAIN_ID_SAFECOIN,
 } from "@certusone/wormhole-sdk";
-import { Connection } from "@solana/web3.js";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection } from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,6 +19,8 @@ import { DataWrapper } from "../store/helpers";
 import {
   getEvmChainId,
   getTokenBridgeAddressForChain,
+  SAFECOIN_HOST,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOLANA_HOST,
   SOL_TOKEN_BRIDGE_ADDRESS,
   TERRA_HOST,
@@ -118,8 +123,18 @@ function useFetchForeignAsset(
         //       hexToUint8Array(originAssetHex)
         //     );
         //   }
+        : foreignChain === CHAIN_ID_SAFECOIN
+        ? () => {
+            const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+            return getForeignAssetSafecoin(
+              connection,
+              SAFE_TOKEN_BRIDGE_ADDRESS,
+              originChain,
+              hexToUint8Array(originAssetHex)
+            );
+          }
         : () => {
-            const connection = new Connection(SOLANA_HOST, "confirmed");
+            const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
             return getForeignAssetSolana(
               connection,
               SOL_TOKEN_BRIDGE_ADDRESS,
