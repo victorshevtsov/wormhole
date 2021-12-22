@@ -38,31 +38,52 @@ spec:
           image: safecoin-contract
           command:
             - solana-test-validator
+            # Token
+            - --bpf-program
+            - ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA9PHN
+            - /opt/safecoin/deps/safe_token.so
+            # Memo
+            - --bpf-program
+            - MEMWKbqsjEB8o972BvDHExZFSauzGZKvB4xHDVPFowh
+            - /opt/safecoin/deps/safe_memo.so
+            # Associated Token
+            - --bpf-program
+            - AToD9iqHSc2fhEP9Jp7UYA6mRjHQ4CTWyzCsw8X3tH7K
+            - /opt/safecoin/deps/safe_associated_token_account.so
+            # Token Lending
+            - --bpf-program
+            - LENeX3L4CE1euBZp4zUNuicLP2SUZCbgXYZgBpZ9hWZ
+            - /opt/safecoin/deps/safe_token_lending.so
+            # Token Metadata
+            - --bpf-program
+            - mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j
+            - /opt/safecoin/deps/safe_token_metadata.so
+            # Bridge
             - --bpf-program
             - Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
             - /opt/safecoin/deps/bridge.so
+            # Token Bridge
             - --bpf-program
-            - B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE
+            - tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj
             - /opt/safecoin/deps/token_bridge.so
+            # NFT Bridge
             - --bpf-program
-            - NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA
+            - ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD
             - /opt/safecoin/deps/nft_bridge.so
+            # CPI Poster
             - --bpf-program
             - CP1co2QMMoDPbsmV7PGcUTLFwyhgCgTXt25gLQ5LewE1
             - /opt/safecoin/deps/cpi_poster.so
-            - --bpf-program
-            - metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s
-            - /opt/safecoin/deps/spl_token_metadata.so
             # TODO(Victor): Temporary commented
             # - --bpf-program
             # - gMYYig2utAxVoXnM9UhtTWrt8e7x2SVBZqsWZJeT5Gw # Derived from pyth_program.json
             # - /opt/safecoin/deps/pyth_oracle.so
-            - --bpf-program
-            - P2WH424242424242424242424242424242424242424
-            - /opt/safecoin/deps/pyth2wormhole.so
-            - --bpf-program
-            - Ex9bCdVMSfx7EzB3pgSi2R4UHwJAXvTw18rBQm5YQ8gK
-            - /opt/safecoin/deps/wormhole_migration.so
+            # - --bpf-program
+            # - P2WH424242424242424242424242424242424242424
+            # - /opt/safecoin/deps/pyth2wormhole.so
+            # - --bpf-program
+            # - Ex9bCdVMSfx7EzB3pgSi2R4UHwJAXvTw18rBQm5YQ8gK
+            # - /opt/safecoin/deps/wormhole_migration.so
             - --log
           ports:
             - containerPort: 8001

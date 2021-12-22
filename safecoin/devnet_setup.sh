@@ -10,9 +10,6 @@ websocket_url: ""
 keypair_path: /usr/src/safecoin/keys/safecoin-devnet.json
 EOF
 
-safecoin-keygen new -o /usr/src/safecoin/keys/safecoin-devnet.json
-sqfecoin config -k /usr/src/safecoin/keys/safecoin-devnet.json
-
 # Static key for the mint so it always has the same address
 cat <<EOF > token.json
 [179,228,102,38,68,102,75,133,127,56,63,167,143,42,59,29,220,215,100,149,220,241,176,204,154,241,168,147,195,139,55,100,22,88,9,115,146,64,160,172,3,185,132,64,254,137,133,84,142,58,166,131,205,13,77,157,245,181,101,150,105,250,163,1]
@@ -30,9 +27,9 @@ EOF
 
 # Constants
 cli_address=6sbzC1eH4FTujJXWj51eQe25cYvr4xfXbJ1vAj7j2k5J
-bridge_address=Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
-nft_bridge_address=NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA
-token_bridge_address=B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE
+bridge_address=brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj
+nft_bridge_address=ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD
+token_bridge_address=tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj
 initial_guardian=befa429d57cd18b7f8a4d91a2da9ab4af05d0fbe
 recipient_address=90F8bf6A479f320ead074411a4B0e7944Ea8c9C1
 chain_id_ethereum=2
@@ -47,40 +44,40 @@ retry () {
 retry safecoin airdrop 1000
 
 # Create a new SPL token
-token=$(spl-token create-token -- token.json | grep 'Creating token' | awk '{ print $3 }')
+token=$(safe-token create-token -- token.json | grep 'Creating token' | awk '{ print $3 }')
 echo "Created token $token"
 
 # Create token account
-account=$(spl-token create-account "$token" | grep 'Creating account' | awk '{ print $3 }')
+account=$(safe-token create-account "$token" | grep 'Creating account' | awk '{ print $3 }')
 echo "Created token account $account"
 
 # Mint new tokens owned by our CLI account
-spl-token mint "$token" 10000000000 "$account"
+safe-token mint "$token" 10000000000 "$account"
 
 # Create meta for token
 token-bridge-client create-meta "$token" "Safecoin Test Token" "SAFET" ""
 
 # Create a new SPL NFT
-nft=$(spl-token create-token --decimals 0 -- nft.json | grep 'Creating token' | awk '{ print $3 }')
+nft=$(safe-token create-token --decimals 0 -- nft.json | grep 'Creating token' | awk '{ print $3 }')
 echo "Created NFT $nft"
 
 # Create NFT account
-nft_account=$(spl-token create-account "$nft" | grep 'Creating account' | awk '{ print $3 }')
+nft_account=$(safe-token create-account "$nft" | grep 'Creating account' | awk '{ print $3 }')
 echo "Created NFT account $nft_account"
 
 # Mint new NFT owned by our CLI account
-spl-token mint "$nft" 1 "$nft_account"
+safe-token mint "$nft" 1 "$nft_account"
 
 # Create meta for token
 token-bridge-client create-meta "$nft" "Not a PUNK🎸" "PUNK🎸" "https://wrappedpunks.com:3000/api/punks/metadata/39"
 
-nft=$(spl-token create-token --decimals 0 -- nft2.json | grep 'Creating token' | awk '{ print $3 }')
+nft=$(safe-token create-token --decimals 0 -- nft2.json | grep 'Creating token' | awk '{ print $3 }')
 echo "Created NFT $nft"
 
-nft_account=$(spl-token create-account "$nft" | grep 'Creating account' | awk '{ print $3 }')
+nft_account=$(safe-token create-account "$nft" | grep 'Creating account' | awk '{ print $3 }')
 echo "Created NFT account $nft_account"
 
-spl-token mint "$nft" 1 "$nft_account"
+safe-token mint "$nft" 1 "$nft_account"
 
 token-bridge-client create-meta "$nft" "Not a PUNK 2🎸" "PUNK2🎸" "https://wrappedpunks.com:3000/api/punks/metadata/51"
 

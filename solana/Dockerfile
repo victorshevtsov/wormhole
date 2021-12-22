@@ -44,12 +44,12 @@ ENV EMITTER_ADDRESS="11111111111111111111111111111115"
 ENV BRIDGE_ADDRESS="Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
 
 # Build Wormhole Solana programs
-# RUN --mount=type=cache,id=solana_contract,target=bridge/target \
-#     --mount=type=cache,id=solana_contract,target=modules/token_bridge/target \
-#     --mount=type=cache,id=solana_contract,target=modules/nft_bridge/target \
-#     --mount=type=cache,id=solana_contract,target=pyth2wormhole/target \
-#     --mount=type=cache,id=solana_contract,target=migration/target \
-RUN cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
+RUN --mount=type=cache,id=solana_bridge,target=bridge/target \
+    --mount=type=cache,id=solana_token_bridge,target=modules/token_bridge/target \
+    --mount=type=cache,id=solana_nft_bridge,target=modules/nft_bridge/target \
+    --mount=type=cache,id=solana_pyth2wormhole,target=pyth2wormhole/target \
+    --mount=type=cache,id=solana_migration,target=migration/target \
+    cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" && \
     cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "pyth2wormhole/program/Cargo.toml" && \

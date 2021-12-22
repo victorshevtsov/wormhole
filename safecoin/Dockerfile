@@ -27,10 +27,24 @@ RUN cp -r /usr/src/safecoin/target/release/. /root/.local/share/safecoin/install
 
 ENV PATH="/root/.local/share/safecoin/install/active_release/bin:$PATH"
 
+RUN mkdir -p /opt/safecoin/deps
+
 # Safecoin does a questionable download at the beginning of a *first* build-bpf call. Trigger and layer-cache it explicitly.
 RUN cargo init --lib /tmp/decoy-crate && \
     cd /tmp/decoy-crate && cargo build-bpf && \
     rm -rf /tmp/decoy-crate
+
+RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library
+
+RUN --mount=type=cache,id=safecoin-program-library,target=/usr/src/safecoin-program-library/target \
+    cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/token/program/Cargo.toml" && \
+    cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/memo/program/Cargo.toml" && \
+    cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/associated-token-account/program/Cargo.toml" && \
+    cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/token-lending/program/Cargo.toml" && \
+    cp /usr/src/safecoin-program-library/target/deploy/safe_token.so /opt/safecoin/deps/safe_token.so && \
+    cp /usr/src/safecoin-program-library/target/deploy/safe_memo.so /opt/safecoin/deps/safe_memo.so && \
+    cp /usr/src/safecoin-program-library/target/deploy/safe_associated_token_account.so /opt/safecoin/deps/safe_associated_token_account.so && \
+    cp /usr/src/safecoin-program-library/target/deploy/safe_token_lending.so /opt/safecoin/deps/safe_token_lending.so
 
 # Cache Pyth sources
 # This comes soon after mainnet-v2.1
@@ -47,20 +61,20 @@ RUN tar -xvf *.tar.gz && rm -rf *.tar.gz && mv pyth-client-$PYTH_SRC_REV pyth-cl
 WORKDIR /usr/src/bridge
 
 ADD . .
-RUN mkdir -p /opt/safecoin/deps
 
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
+ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
 
 # Build Wormhole Safecoin programs
-RUN --mount=type=cache,target=/root/.cache \
-    # --mount=type=cache,id=safecoin_contract,target=bridge/target \
-    # --mount=type=cache,id=safecoin_contract,target=modules/token_bridge/target \
-    # --mount=type=cache,id=safecoin_contract,target=modules/nft_bridge/target \
-    # --mount=type=cache,id=safecoin_contract,target=pyth2wormhole/target \
-    # --mount=type=cache,id=safecoin_contract,target=migration/target \
+RUN --mount=type=cache,id=safecoin_bridge,target=bridge/target \
+    --mount=type=cache,id=safecoin_token_bridge,target=modules/token_bridge/target \
+    --mount=type=cache,id=safecoin_nft_bridge,target=modules/nft_bridge/target \
+    --mount=type=cache,id=safecoin_pyth2wormhole,target=pyth2wormhole/target \
+    --mount=type=cache,id=safecoin_migration,target=migration/target \
     cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" && \
+    cargo build-bpf --manifest-path "modules/token_bridge/token-vault/Cargo.toml" && \
+    cargo build-bpf --manifest-path "modules/token_bridge/token-metadata/Cargo.toml" && \
     cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "pyth2wormhole/program/Cargo.toml" && \
     cargo build-bpf --manifest-path "modules/nft_bridge/program/Cargo.toml" && \
@@ -68,9 +82,10 @@ RUN --mount=type=cache,target=/root/.cache \
     cp bridge/target/deploy/bridge.so /opt/safecoin/deps/bridge.so && \
     cp bridge/target/deploy/cpi_poster.so /opt/safecoin/deps/cpi_poster.so && \
     cp migration/target/deploy/wormhole_migration.so /opt/safecoin/deps/wormhole_migration.so && \
+    cp modules/token_bridge/target/deploy/safe_token_vault.so /opt/safecoin/deps/safe_token_vault.so && \
+    cp modules/token_bridge/target/deploy/safe_token_metadata.so /opt/safecoin/deps/safe_token_metadata.so && \
     cp modules/token_bridge/target/deploy/token_bridge.so /opt/safecoin/deps/token_bridge.so && \
     cp modules/nft_bridge/target/deploy/nft_bridge.so /opt/safecoin/deps/nft_bridge.so && \
-    cp modules/token_bridge/token-metadata/spl_token_metadata.so /opt/safecoin/deps/spl_token_metadata.so && \
     cp pyth2wormhole/target/deploy/pyth2wormhole.so /opt/safecoin/deps/pyth2wormhole.so
 
 # TODO(Victor): Temporary commented

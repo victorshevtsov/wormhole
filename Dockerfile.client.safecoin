@@ -35,10 +35,20 @@ ADD proto /usr/src/proto
 
 # Safecoin
 
-COPY safecoin/safecoin.tar.gz /tmp
-RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
-    tar -xzf /tmp/safecoin.tar.gz -C /root/.local/share/safecoin/install/active_release/bin && \
-    rm /tmp/safecoin.tar.gz
+RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
+
+RUN git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin-install && \
+    cd /usr/src/safecoin-install && \
+    cargo build --release --target-dir /tmp/safecoin-install && \
+    find /tmp/safecoin-install/release/ -maxdepth 1 -type f -executable -exec cp {} /root/.local/share/safecoin/install/active_release/bin \; && \
+    cp -r /usr/src/safecoin-install/sdk /root/.local/share/safecoin/install/active_release/bin && \
+    rm -rf /usr/src/safecoin-install
+
+RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library && \
+    cd /usr/src/safecoin-program-library && \
+    cargo build --release --target-dir /tmp/safecoin-program-library && \
+    find /tmp/safecoin-program-library/release/ -maxdepth 1 -type f -executable -exec cp {} /root/.local/share/safecoin/install/active_release/bin \; && \
+    rm -rf /usr/src/safecoin-program-library
 
 ENV SAFECOIN_BIN_PATH="/root/.local/share/safecoin/install/active_release/bin"
 ENV PATH="$SAFECOIN_BIN_PATH:$PATH"
@@ -50,7 +60,7 @@ RUN safecoin config set --keypair "/usr/src/safecoin/keys/safecoin-devnet.json"
 RUN safecoin config set --url "http://safecoin-devnet:8328"
 
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
+ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
 
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=cache,target=/usr/src/safecoin/bridge/target \
