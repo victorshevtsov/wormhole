@@ -20,49 +20,49 @@ COPY migration migration
 COPY pyth2wormhole pyth2wormhole
 
 # Compile Wormhole
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_bridge,target=bridge/target \
     cd bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_bridge,target=bridge/target \
     cd bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile Token Bridge
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=modules/token_bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_token_bridge,target=modules/token_bridge/target \
     cd modules/token_bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=modules/token_bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_token_bridge,target=modules/token_bridge/target \
     cd modules/token_bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile Migration
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=migration/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_migration,target=migration/target \
     cd migration && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=migration/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_migration,target=migration/target \
     cd migration && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile NFT Bridge
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=modules/nft_bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_nft_bridge,target=modules/nft_bridge/target \
     cd modules/nft_bridge/program && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=modules/nft_bridge/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_nft_bridge,target=modules/nft_bridge/target \
     cd modules/nft_bridge/program && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
 # Compile pyth2wormhole
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=pyth2wormhole/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_pyth2wormhole,target=pyth2wormhole/target \
     cd pyth2wormhole/program \
     && /usr/local/cargo/bin/wasm-pack build --target bundler -d bundler -- --features wasm
 
-RUN --mount=type=cache,target=/root/.cache \
-	--mount=type=cache,id=safecoin_wasm,target=pyth2wormhole/target \
+RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
+	--mount=type=cache,id=safecoin_pyth2wormhole,target=pyth2wormhole/target \
     cd pyth2wormhole/program \
     && /usr/local/cargo/bin/wasm-pack build --target nodejs -d nodejs -- --features wasm
 
