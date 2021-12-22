@@ -154,7 +154,7 @@ yargs(hideBin(process.argv))
         alias: 'b',
         type: 'string',
         description: 'Bridge address',
-        default: "Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
+        default: "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
     })
     .argv;
 

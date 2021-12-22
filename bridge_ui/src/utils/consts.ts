@@ -280,19 +280,19 @@ export const SAFE_BRIDGE_ADDRESS =
     ? "worm2ZoG2kUd4vFXhvjh93UUH596ayRfgQ2MgjNMTth"
     : CLUSTER === "testnet"
     ? "Brdguy7BmNB4qwEbcqqMbyV5CyJd2sxQNUn6NEpMSsUb"
-    : "Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o";
+    : "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj";
 export const SAFE_NFT_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
     ? "WnFt12ZrnzZrFZkt2xsNsaNWoQribnuQ5B5FrDbwDhD"
     : CLUSTER === "testnet"
     ? "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA" // TODO: test address
-    : "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA";
+    : "ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD";
 export const SAFE_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
     ? "wormDTUJ6AWPNvk59vGQbDvGJmqbDTdgWgAqcLBCgUb"
     : CLUSTER === "testnet"
     ? "A4Us8EhCC76XdGAN17L4KpRNEK423nMivVHZzZqFqqBg"
-    : "B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE";
+    : "tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj";
 
 export const SOL_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"

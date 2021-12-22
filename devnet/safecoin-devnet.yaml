@@ -54,13 +54,17 @@ spec:
             - --bpf-program
             - LENeX3L4CE1euBZp4zUNuicLP2SUZCbgXYZgBpZ9hWZ
             - /opt/safecoin/deps/safe_token_lending.so
+            # Token Vault
+            - --bpf-program
+            - vau3q7e1FkBCACg8o1fFMYz8WmMbcocjBX2LgXGZypU
+            - /opt/safecoin/deps/safe_token_vault.so
             # Token Metadata
             - --bpf-program
             - mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j
             - /opt/safecoin/deps/safe_token_metadata.so
             # Bridge
             - --bpf-program
-            - Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
+            - brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj
             - /opt/safecoin/deps/bridge.so
             # Token Bridge
             - --bpf-program
