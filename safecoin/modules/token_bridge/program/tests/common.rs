@@ -132,17 +132,17 @@ mod helpers {
     /// each test has a fresh environment to work within.
     pub fn setup() -> (Keypair, RpcClient, Pubkey, Pubkey) {
         let payer = env::var("BRIDGE_PAYER").unwrap_or("./payer.json".to_string());
-        let rpc_address = env::var("BRIDGE_RPC").unwrap_or("http://127.0.0.1:8899".to_string());
+        let rpc_address = env::var("BRIDGE_RPC").unwrap_or("http://127.0.0.1:8328".to_string());
         let payer = read_keypair_file(payer).unwrap();
         let rpc = RpcClient::new(rpc_address);
 
         let (program, token_program) = (
             env::var("BRIDGE_PROGRAM")
-                .unwrap_or("Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o".to_string())
+                .unwrap_or("brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj".to_string())
                 .parse::<Pubkey>()
                 .unwrap(),
             env::var("TOKEN_BRIDGE_PROGRAM")
-                .unwrap_or("B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE".to_string())
+                .unwrap_or("tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj".to_string())
                 .parse::<Pubkey>()
                 .unwrap(),
         );

@@ -18,7 +18,7 @@ default = []
 
 [dependencies]
 bridge = { path = "../../../bridge/program", features = ["no-entrypoint", "cpi"] }
-borsh = "0.9.0"
+borsh = "0.9.1"
 bstr = "0.2.16"
 byteorder = "1.4.3"
 rocksalt = { path = "../../../solitaire/rocksalt" }
@@ -40,4 +40,4 @@ libsecp256k1 = { version = "0.3.5", features = [] }
 safecoin-client = "1.7.17"
 safecoin-sdk = "=1.7.17"
 safe-token = { version = "=3.2.0", features = ["no-entrypoint"] }
-safe-token-metadata = { path = "../token-metadata" }
+safe-token-metadata = { path = "../token-metadata", features = ["no-entrypoint"]  }

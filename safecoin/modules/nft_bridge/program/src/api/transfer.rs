@@ -184,7 +184,7 @@ pub fn transfer_native(
     invoke(&transfer_ix, ctx.accounts)?;
 
     let metadata: Metadata =
-        Metadata::from_account_info(accs.safe_metadata.info()).ok_or(InvalidMetadata)?;
+        Metadata::from_account_info(accs.safe_metadata.info())?;
 
     // Post message
     // Given there is no tokenID equivalent on Safecoin and each distinct token address is translated
@@ -346,7 +346,7 @@ pub fn transfer_wrapped(
     }
 
     let metadata: Metadata =
-        Metadata::from_account_info(accs.safe_metadata.info()).ok_or(InvalidMetadata)?;
+        Metadata::from_account_info(accs.safe_metadata.info())?;
 
     // Post message
     let payload = PayloadTransfer {

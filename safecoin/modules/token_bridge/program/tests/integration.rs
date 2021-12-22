@@ -170,7 +170,7 @@ fn run_integration_tests() {
     // Context for test environment.
     let mint = Keypair::new();
     let mint_pubkey = mint.pubkey();
-    let metadata_pubkey = Pubkey::from_str("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s").unwrap();
+    let metadata_pubkey = Pubkey::from_str("mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j").unwrap();
 
     // SPL Token Meta
     let metadata_seeds = &[
@@ -181,7 +181,7 @@ fn run_integration_tests() {
 
     let (metadata_key, metadata_bump_seed) = Pubkey::find_program_address(
         metadata_seeds,
-        &Pubkey::from_str("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s").unwrap(),
+        &Pubkey::from_str("mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j").unwrap(),
     );
 
     // Token Bridge Meta
