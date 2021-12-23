@@ -6,13 +6,15 @@ import {
   CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
+  WSAFE_ADDRESS,
+  WSAFE_DECIMALS,
   WSOL_ADDRESS,
   WSOL_DECIMALS,
 } from "@certusone/wormhole-sdk";
 import { ethers } from "@certusone/wormhole-sdk/node_modules/ethers";
 import { Dispatch } from "@reduxjs/toolkit";
-import { TOKEN_PROGRAM_ID as SAFECOIN_TOKEN_PROGRAM_ID } from "@safecoin/safe-token";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID as SAFE_TOKEN_PROGRAM_ID } from "@safecoin/safe-token";
+import { TOKEN_PROGRAM_ID as SPL_TOKEN_PROGRAM_ID} from "@solana/spl-token";
 import {
   AccountInfo as SafecoinAccountInfo,
   Connection as SafecoinConnection,
@@ -197,7 +199,7 @@ const createParsedTokenAccountFromCovalent = (
   };
 };
 
-const createNativeSafecoinParsedTokenAccount = async (
+const createNativeSafeParsedTokenAccount = async (
   connection: SafecoinConnection,
   walletAddress: string
 ) => {
@@ -210,11 +212,11 @@ const createNativeSafecoinParsedTokenAccount = async (
   } else {
     return createParsedTokenAccount(
       walletAddress, //publicKey
-      WSOL_ADDRESS, //Mint key
+      WSAFE_ADDRESS, //Mint key
       fetchAccounts[0].lamports.toString(), //amount
-      WSOL_DECIMALS, //decimals, 9
-      parseFloat(formatUnits(fetchAccounts[0].lamports, WSOL_DECIMALS)),
-      formatUnits(fetchAccounts[0].lamports, WSOL_DECIMALS).toString(),
+      WSAFE_DECIMALS, //decimals, 9
+      parseFloat(formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS)),
+      formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS).toString(),
       "SAFE",
       "Safecoin",
       undefined, //TODO logo. It's in the solana token map, so we could potentially use that URL.
@@ -425,7 +427,7 @@ const getSafecoinParsedTokenAccounts = async (
     //No matter what, we retrieve the spl tokens associated to this address.
     let splParsedTokenAccounts = await connection
       .getParsedTokenAccountsByOwner(new SafecoinPublicKey(walletAddress), {
-        programId: new SafecoinPublicKey(SAFECOIN_TOKEN_PROGRAM_ID),
+        programId: new SafecoinPublicKey(SAFE_TOKEN_PROGRAM_ID),
       })
       .then((result) => {
         return result.value.map((item) =>
@@ -449,7 +451,7 @@ const getSafecoinParsedTokenAccounts = async (
       dispatch(receiveSourceParsedTokenAccountsNFT(splParsedTokenAccounts));
     } else {
       //In the transfer case, we also pull the SOL balance of the wallet, and prepend it at the beginning of the list.
-      const nativeAccount = await createNativeSafecoinParsedTokenAccount(
+      const nativeAccount = await createNativeSafeParsedTokenAccount(
         connection,
         walletAddress
       );
@@ -481,7 +483,7 @@ const getSolanaParsedTokenAccounts = async (
     //No matter what, we retrieve the spl tokens associated to this address.
     let splParsedTokenAccounts = await connection
       .getParsedTokenAccountsByOwner(new PublicKey(walletAddress), {
-        programId: new PublicKey(TOKEN_PROGRAM_ID),
+        programId: new PublicKey(SPL_TOKEN_PROGRAM_ID),
       })
       .then((result) => {
         return result.value.map((item) =>

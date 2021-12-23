@@ -2,7 +2,9 @@ import {
   CHAIN_ID_BSC,
   CHAIN_ID_ETH,
   CHAIN_ID_POLYGON,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
+  WSAFE_ADDRESS,
   WSOL_ADDRESS,
 } from "@certusone/wormhole-sdk";
 import { Checkbox, FormControlLabel } from "@material-ui/core";
@@ -40,12 +42,16 @@ function Redeem() {
     targetChain === CHAIN_ID_POLYGON &&
     targetAsset &&
     targetAsset.toLowerCase() === WMATIC_ADDRESS.toLowerCase();
+  const isSafeNative =
+    targetChain === CHAIN_ID_SAFECOIN &&
+    targetAsset &&
+    targetAsset === WSAFE_ADDRESS;
   const isSolNative =
     targetChain === CHAIN_ID_SOLANA &&
     targetAsset &&
     targetAsset === WSOL_ADDRESS;
   const isNativeEligible =
-    isEthNative || isBscNative || isPolygonNative || isSolNative;
+    isEthNative || isBscNative || isPolygonNative || isSafeNative || isSolNative;
   const [useNativeRedeem, setUseNativeRedeem] = useState(true);
   const toggleNativeRedeem = useCallback(() => {
     setUseNativeRedeem(!useNativeRedeem);

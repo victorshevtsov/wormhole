@@ -14,16 +14,21 @@ RUN apt-get update && \
     rustup component add rustfmt && \
     rustup default nightly-2021-08-01
 
-RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
+# RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
 
-RUN --mount=type=cache,target=/root/.cache \
-    rustup component add rustfmt && \
-    git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin && \
-    cd /usr/src/safecoin && \
-    cargo build --release
+# RUN --mount=type=cache,target=/root/.cache \
+#     rustup component add rustfmt && \
+#     git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin && \
+#     cd /usr/src/safecoin && \
+#     cargo build --release
 
-RUN cp -r /usr/src/safecoin/target/release/. /root/.local/share/safecoin/install/active_release/bin && \
-    cp -r /usr/src/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin
+# RUN cp -r /usr/src/safecoin/target/release/. /root/.local/share/safecoin/install/active_release/bin && \
+#     cp -r /usr/src/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin
+
+COPY safecoin.tar.gz /tmp
+RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+    tar -xzvf /tmp/safecoin.tar.gz -C /root/.local/share/safecoin/install/active_release/bin && \
+    rm /tmp/safecoin.tar.gz
 
 ENV PATH="/root/.local/share/safecoin/install/active_release/bin:$PATH"
 
@@ -62,7 +67,7 @@ WORKDIR /usr/src/bridge
 
 ADD . .
 
-ENV EMITTER_ADDRESS="11111111111111111111111111111115"
+ENV EMITTER_ADDRESS="11111111111111111111111111111116"
 ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
 
 # Build Wormhole Safecoin programs

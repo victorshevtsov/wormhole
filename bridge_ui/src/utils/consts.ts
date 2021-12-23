@@ -7,7 +7,8 @@ import {
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
 } from "@certusone/wormhole-sdk";
-import { clusterApiUrl } from "@solana/web3.js";
+import { clusterApiUrl as clusterApiUrlSafecoin } from "@safecoin/web3.js";
+import { clusterApiUrl as clusterApiUrlSolana } from "@solana/web3.js";
 import { getAddress } from "ethers/lib/utils";
 import bscIcon from "../icons/bsc.svg";
 import ethIcon from "../icons/eth.svg";
@@ -181,16 +182,16 @@ export const getEvmChainId = (chainId: ChainId) =>
 export const SAFECOIN_HOST = process.env.REACT_APP_SAFECOIN_API_URL
   ? process.env.REACT_APP_SAFECOIN_API_URL
   : CLUSTER === "mainnet"
-  ? clusterApiUrl("mainnet-beta")
+  ? clusterApiUrlSafecoin("mainnet-beta")
   : CLUSTER === "testnet"
-  ? clusterApiUrl("testnet")
-  : "http://localhost:8899";
+  ? clusterApiUrlSafecoin("testnet")
+  : "http://localhost:8328";
 export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   ? process.env.REACT_APP_SOLANA_API_URL
   : CLUSTER === "mainnet"
-  ? clusterApiUrl("mainnet-beta")
+  ? clusterApiUrlSolana("mainnet-beta")
   : CLUSTER === "testnet"
-  ? clusterApiUrl("testnet")
+  ? clusterApiUrlSolana("testnet")
   : "http://localhost:8899";
 
 export const TERRA_HOST =
@@ -691,6 +692,9 @@ export const MULTI_CHAIN_TOKENS: MultiChainInfo =
   //EVM chains should format the addresses to all lowercase
   CLUSTER === "mainnet"
     ? ({
+        [CHAIN_ID_SAFECOIN]: {
+          "2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ": "SAFET",
+        },
         [CHAIN_ID_SOLANA]: {
           EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: "USDC",
           Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: "USDT",
@@ -710,6 +714,9 @@ export const MULTI_CHAIN_TOKENS: MultiChainInfo =
         },
       } as MultiChainInfo)
     : ({
+        [CHAIN_ID_SAFECOIN]: {
+          "2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ": "SAFET",
+        },
         [CHAIN_ID_SOLANA]: {
           "2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ": "SOLT",
         },

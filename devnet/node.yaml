@@ -95,7 +95,7 @@ spec:
             - --solanaRPC
             - http://solana-devnet:8899
             - --safecoinContract
-            - Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o
+            - brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj
             - --safecoinWS
             - ws://safecoin-devnet:8329
             - --safecoinRPC
