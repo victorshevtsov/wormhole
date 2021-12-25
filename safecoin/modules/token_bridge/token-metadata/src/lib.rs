@@ -1,4 +1,4 @@
-//! A Token Metadata program for the Solana blockchain.
+//! A Token Metadata program for the Safecoin blockchain.
 
 pub mod deprecated_instruction;
 pub mod deprecated_processor;

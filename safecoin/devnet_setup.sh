@@ -43,7 +43,7 @@ retry () {
 # Fund our account (as defined in safecoin/keys/safecoin-devnet.json).
 retry safecoin airdrop 1000
 
-# Create a new SPL token
+# Create a new SAFE token
 token=$(safe-token create-token -- token.json | grep 'Creating token' | awk '{ print $3 }')
 echo "Created token $token"
 
@@ -57,7 +57,7 @@ safe-token mint "$token" 10000000000 "$account"
 # Create meta for token
 token-bridge-client create-meta "$token" "Safecoin Test Token" "SAFET" ""
 
-# Create a new SPL NFT
+# Create a new SAFE NFT
 nft=$(safe-token create-token --decimals 0 -- nft.json | grep 'Creating token' | awk '{ print $3 }')
 echo "Created NFT $nft"
 
