@@ -215,7 +215,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
   const { enqueueSnackbar } = useSnackbar();
   const targetChain = useSelector(selectAttestTargetChain);
   const safecoinWallet = useSafecoinWallet();
-  const safecoinPK = safecoinWallet?.publicKey;
+  const safePK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const signedVAA = useAttestSignedVAA();
@@ -235,14 +235,14 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
     } else if (
       targetChain === CHAIN_ID_SAFECOIN &&
       !!safecoinWallet &&
-      !!safecoinPK &&
+      !!safePK &&
       !!signedVAA
     ) {
       safecoin(
         dispatch,
         enqueueSnackbar,
         safecoinWallet,
-        safecoinPK.toString(),
+        safePK.toString(),
         signedVAA,
         shouldUpdate
       );
@@ -275,7 +275,7 @@ export function useHandleCreateWrapped(shouldUpdate: boolean) {
     enqueueSnackbar,
     targetChain,
     safecoinWallet,
-    safecoinPK,
+    safePK,
     solanaWallet,
     solPK,
     terraWallet,

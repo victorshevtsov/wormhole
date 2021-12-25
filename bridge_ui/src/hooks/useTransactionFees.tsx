@@ -1,5 +1,6 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
 } from "@certusone/wormhole-sdk";
@@ -7,15 +8,18 @@ import { Provider } from "@certusone/wormhole-sdk/node_modules/@ethersproject/ab
 import { formatUnits } from "@ethersproject/units";
 import { Typography } from "@material-ui/core";
 import { LocalGasStation } from "@material-ui/icons";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection as SafecoinConnection, PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
+import { Connection as SolanaConnection, PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import {
   getDefaultNativeCurrencySymbol,
+  SAFECOIN_HOST,
   SOLANA_HOST,
   TERRA_HOST,
 } from "../utils/consts";
-import { getMultipleAccountsRPC } from "../utils/solana";
+import { getMultipleAccountsRPC as getMultipleSafecoinAccountsRPC } from "../utils/safecoin";
+import { getMultipleAccountsRPC as getMultipleSolanaAccountsRPC } from "../utils/solana";
 import { NATIVE_TERRA_DECIMALS } from "../utils/terra";
 import useIsWalletReady from "./useIsWalletReady";
 import { LCDClient } from "@terra-money/terra.js";
@@ -35,6 +39,7 @@ export type MethodType = "nft" | "createWrapped" | "transfer";
 //As such, for the moment it is best to just check for a reasonable 'low balance' threshold.
 //Still it would be good to calculate a reasonable value at runtime based off current gas prices,
 //rather than a hardcoded value.
+const SAFECOIN_THRESHOLD_LAMPORTS: bigint = BigInt(300000);
 const SOLANA_THRESHOLD_LAMPORTS: bigint = BigInt(300000);
 const ETHEREUM_THRESHOLD_WEI: bigint = BigInt(35000000000000000);
 const TERRA_THRESHOLD_ULUNA: bigint = BigInt(500000);
@@ -42,6 +47,9 @@ const TERRA_THRESHOLD_ULUNA: bigint = BigInt(500000);
 const isSufficientBalance = (chainId: ChainId, balance: bigint | undefined) => {
   if (balance === undefined || !chainId) {
     return true;
+  }
+  if (CHAIN_ID_SAFECOIN === chainId) {
+    return balance > SAFECOIN_THRESHOLD_LAMPORTS;
   }
   if (CHAIN_ID_SOLANA === chainId) {
     return balance > SOLANA_THRESHOLD_LAMPORTS;
@@ -57,10 +65,27 @@ const isSufficientBalance = (chainId: ChainId, balance: bigint | undefined) => {
 };
 
 //TODO move to more generic location
+const getBalanceSafecoin = async (walletAddress: string) => {
+  const connection = new SafecoinConnection(SAFECOIN_HOST);
+  return getMultipleSafecoinAccountsRPC(connection, [
+    new SafecoinPublicKey(walletAddress),
+  ]).then(
+    (results) => {
+      if (results.length && results[0]) {
+        return BigInt(results[0].lamports);
+      }
+    },
+    (error) => {
+      return BigInt(0);
+    }
+  );
+};
+
+//TODO move to more generic location
 const getBalanceSolana = async (walletAddress: string) => {
-  const connection = new Connection(SOLANA_HOST);
-  return getMultipleAccountsRPC(connection, [
-    new PublicKey(walletAddress),
+  const connection = new SolanaConnection(SOLANA_HOST);
+  return getMultipleSolanaAccountsRPC(connection, [
+    new SolanaPublicKey(walletAddress),
   ]).then(
     (results) => {
       if (results.length && results[0]) {
@@ -104,6 +129,8 @@ const toBalanceString = (balance: bigint | undefined, chainId: ChainId) => {
   }
   if (isEVMChain(chainId)) {
     return formatUnits(balance, 18); //wei decimals
+  } else if (chainId === CHAIN_ID_SAFECOIN) {
+    return formatUnits(balance, 9); //lamports to safe decmals
   } else if (chainId === CHAIN_ID_SOLANA) {
     return formatUnits(balance, 9); //lamports to sol decmals
   } else if (chainId === CHAIN_ID_TERRA) {
@@ -125,7 +152,21 @@ export default function useTransactionFees(chainId: ChainId) {
   }, []);
 
   useEffect(() => {
-    if (chainId === CHAIN_ID_SOLANA && isReady && walletAddress) {
+    if (chainId === CHAIN_ID_SAFECOIN && isReady && walletAddress) {
+      loadStart();
+      getBalanceSafecoin(walletAddress).then(
+        (result) => {
+          const adjustedresult =
+            result === undefined || result === null ? BigInt(0) : result;
+          setIsLoading(false);
+          setBalance(adjustedresult);
+        },
+        (error) => {
+          setIsLoading(false);
+          setError("Cannot load wallet balance");
+        }
+      );
+    }else if (chainId === CHAIN_ID_SOLANA && isReady && walletAddress) {
       loadStart();
       getBalanceSolana(walletAddress).then(
         (result) => {

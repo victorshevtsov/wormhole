@@ -1,5 +1,6 @@
-import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
-import migrateTokensTx from "@certusone/wormhole-sdk/lib/migration/migrateTokens";
+import { CHAIN_ID_SAFECOIN } from "@certusone/wormhole-sdk";
+// TODO(Victor): migrateTokens
+// import migrateTokensTx from "@certusone/wormhole-sdk/lib/migration/migrateTokens";
 import getPoolAddress from "@certusone/wormhole-sdk/lib/migration/poolAddress";
 import getToCustodyAddress from "@certusone/wormhole-sdk/lib/migration/toCustodyAddress";
 import { makeStyles, Typography } from "@material-ui/core";
@@ -7,25 +8,25 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { Connection, PublicKey } from "@solana/web3.js";
+} from "@safecoin/safe-token";
+import { Connection, PublicKey } from "@safecoin/web3.js";
 import { parseUnits } from "ethers/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSolanaWallet } from "../../contexts/SolanaWalletContext";
+import { useSafecoinWallet } from "../../contexts/SafecoinWalletContext";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
 import useMetaplexData from "../../hooks/useMetaplexData";
-import useSolanaTokenMap from "../../hooks/useSolanaTokenMap";
+import useSafecoinTokenMap from "../../hooks/useSafecoinTokenMap";
 import { COLORS } from "../../muiTheme";
-import { MIGRATION_PROGRAM_ADDRESS, SOLANA_HOST } from "../../utils/consts";
-import { getMultipleAccounts, signSendAndConfirm } from "../../utils/solana";
+import { MIGRATION_PROGRAM_ADDRESS, SAFECOIN_HOST } from "../../utils/consts";
+import { getMultipleAccounts, signSendAndConfirm } from "../../utils/safecoin";
 import ButtonWithLoader from "../ButtonWithLoader";
 import NumberTextField from "../NumberTextField";
 import ShowTx from "../ShowTx";
 import SmartAddress from "../SmartAddress";
-import SolanaCreateAssociatedAddress, {
-  useAssociatedSolanaAccountExistsState,
-} from "../SolanaCreateAssociatedAddress";
-import SolanaWalletKey from "../SolanaWalletKey";
+import SafecoinCreateAssociatedAddress, {
+  useAssociatedSafecoinAccountExistsState,
+} from "../SafecoinCreateAssociatedAddress";
+import SafecoinWalletKey from "../SafecoinWalletKey";
 
 const useStyles = makeStyles(() => ({
   mainPaper: {
@@ -44,7 +45,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-//TODO move to utils/solana
+//TODO move to utils/safecoin
 const getDecimals = async (
   connection: Connection,
   mint: string,
@@ -64,7 +65,7 @@ const getDecimals = async (
   }
 };
 
-//TODO move to utils/solana
+//TODO move to utils/safecoin
 const getBalance = async (
   connection: Connection,
   address: string | undefined,
@@ -96,12 +97,12 @@ export default function Workflow({
   const classes = useStyles();
 
   const connection = useMemo(
-    () => new Connection(SOLANA_HOST, "confirmed"),
+    () => new Connection(SAFECOIN_HOST, "confirmed"),
     []
   );
-  const wallet = useSolanaWallet();
-  const { isReady } = useIsWalletReady(CHAIN_ID_SOLANA);
-  const solanaTokenMap = useSolanaTokenMap();
+  const wallet = useSafecoinWallet();
+  const { isReady } = useIsWalletReady(CHAIN_ID_SAFECOIN);
+  const safecoinTokenMap = useSafecoinTokenMap();
   const metaplexArray = useMemo(() => [fromMint, toMint], [fromMint, toMint]);
   const metaplexData = useMetaplexData(metaplexArray);
 
@@ -121,17 +122,17 @@ export default function Workflow({
   );
 
   const {
-    associatedSolanaAccountExists: fromTokenAccountExists,
+    associatedSafecoinAccountExists: fromTokenAccountExists,
     //setAssociatedAccountExists: setFromTokenAccountExists,
-  } = useAssociatedSolanaAccountExistsState(
-    CHAIN_ID_SOLANA,
+  } = useAssociatedSafecoinAccountExistsState(
+    CHAIN_ID_SAFECOIN,
     fromMint,
     fromTokenAccount
   );
   const {
-    associatedSolanaAccountExists: toTokenAccountExists,
-    setAssociatedSolanaAccountExists: setToTokenAccountExists,
-  } = useAssociatedSolanaAccountExistsState(CHAIN_ID_SOLANA, toMint, toTokenAccount);
+    associatedSafecoinAccountExists: toTokenAccountExists,
+    setAssociatedSafecoinAccountExists: setToTokenAccountExists,
+  } = useAssociatedSafecoinAccountExistsState(CHAIN_ID_SAFECOIN, toMint, toTokenAccount);
 
   const [toCustodyAddress, setToCustodyAddress] = useState<string | undefined>(
     undefined
@@ -265,46 +266,47 @@ export default function Workflow({
     End effects
     */
 
-  const migrateTokens = useCallback(async () => {
-    try {
-      setError("");
-      const instruction = await migrateTokensTx(
-        connection,
-        wallet?.publicKey?.toString() || "",
-        MIGRATION_PROGRAM_ADDRESS,
-        fromMint,
-        toMint,
-        fromTokenAccount || "",
-        toTokenAccount || "",
-        parseUnits(migrationAmount, fromMintDecimals).toBigInt()
-      );
-      setMigrationIsProcessing(true);
-      signSendAndConfirm(wallet, connection, instruction).then(
-        (transaction: any) => {
-          setMigrationIsProcessing(false);
-          setTransaction(transaction);
-        },
-        (error) => {
-          console.log(error);
-          setError("Could not complete the migrateTokens transaction.");
-          setMigrationIsProcessing(false);
-        }
-      );
-    } catch (e) {
-      console.log(e);
-      setError("Could not complete the migrateTokens transaction.");
-      setMigrationIsProcessing(false);
-    }
-  }, [
-    connection,
-    fromMint,
-    fromTokenAccount,
-    migrationAmount,
-    toMint,
-    toTokenAccount,
-    wallet,
-    fromMintDecimals,
-  ]);
+  // TODO(Victor): migrateTokens
+  // const migrateTokens = useCallback(async () => {
+  //   try {
+  //     setError("");
+  //     const instruction = await migrateTokensTx(
+  //       connection,
+  //       wallet?.publicKey?.toString() || "",
+  //       MIGRATION_PROGRAM_ADDRESS,
+  //       fromMint,
+  //       toMint,
+  //       fromTokenAccount || "",
+  //       toTokenAccount || "",
+  //       parseUnits(migrationAmount, fromMintDecimals).toBigInt()
+  //     );
+  //     setMigrationIsProcessing(true);
+  //     signSendAndConfirm(wallet, connection, instruction).then(
+  //       (transaction: any) => {
+  //         setMigrationIsProcessing(false);
+  //         setTransaction(transaction);
+  //       },
+  //       (error) => {
+  //         console.log(error);
+  //         setError("Could not complete the migrateTokens transaction.");
+  //         setMigrationIsProcessing(false);
+  //       }
+  //     );
+  //   } catch (e) {
+  //     console.log(e);
+  //     setError("Could not complete the migrateTokens transaction.");
+  //     setMigrationIsProcessing(false);
+  //   }
+  // }, [
+  //   connection,
+  //   fromMint,
+  //   fromTokenAccount,
+  //   migrationAmount,
+  //   toMint,
+  //   toTokenAccount,
+  //   wallet,
+  //   fromMintDecimals,
+  // ]);
 
   const fromParse = (amount: string) => {
     try {
@@ -366,7 +368,7 @@ export default function Workflow({
   }, [fromTokenAccountBalance]);
 
   const getMetadata = (address: string) => {
-    const tokenMapItem = solanaTokenMap.data?.find(
+    const tokenMapItem = safecoinTokenMap.data?.find(
       (x) => x.address === address
     );
     const metaplexItem = metaplexData.data?.get(address);
@@ -383,7 +385,7 @@ export default function Workflow({
 
   const toMintPretty = (
     <SmartAddress
-      chainId={CHAIN_ID_SOLANA}
+      chainId={CHAIN_ID_SAFECOIN}
       address={toMint}
       symbol={toMetadata?.symbol}
       tokenName={toMetadata?.name}
@@ -391,7 +393,7 @@ export default function Workflow({
   );
   const fromMintPretty = (
     <SmartAddress
-      chainId={CHAIN_ID_SOLANA}
+      chainId={CHAIN_ID_SAFECOIN}
       address={fromMint}
       symbol={fromMetadata?.symbol}
       tokenName={fromMetadata?.name}
@@ -400,7 +402,7 @@ export default function Workflow({
 
   return (
     <div>
-      <SolanaWalletKey />
+      <SafecoinWalletKey />
       <div className={classes.spacer} />
       {fromTokenAccount && toTokenAccount ? (
         <>
@@ -412,7 +414,7 @@ export default function Workflow({
           <Typography variant="h5">
             <SmartAddress
               address={fromTokenAccount}
-              chainId={CHAIN_ID_SOLANA}
+              chainId={CHAIN_ID_SAFECOIN}
             />
             {`(Balance: ${fromTokenAccountBalance}${
               fromMetadata.symbol && " " + fromMetadata.symbol
@@ -428,7 +430,7 @@ export default function Workflow({
             variant="h5"
             color={toTokenAccountExists ? "textPrimary" : "textSecondary"}
           >
-            <SmartAddress address={toTokenAccount} chainId={CHAIN_ID_SOLANA} />
+            <SmartAddress address={toTokenAccount} chainId={CHAIN_ID_SAFECOIN} />
             <span>
               {toTokenAccountExists
                 ? ` (Balance: ${toTokenAccountBalance}${
@@ -437,7 +439,7 @@ export default function Workflow({
                 : " (Not created yet)"}
             </span>
           </Typography>
-          <SolanaCreateAssociatedAddress
+          <SafecoinCreateAssociatedAddress
             mintAddress={toMint}
             readableTargetAddress={toTokenAccount}
             associatedAccountExists={toTokenAccountExists}
@@ -448,13 +450,13 @@ export default function Workflow({
               <div className={classes.spacer} />
               <Typography variant="body2" component="div">
                 <span>Using pool </span>
-                <SmartAddress address={poolAddress} chainId={CHAIN_ID_SOLANA} />
+                <SmartAddress address={poolAddress} chainId={CHAIN_ID_SAFECOIN} />
                 <span> holding tokens in this account:</span>
               </Typography>
               <Typography variant="h5">
                 <SmartAddress
                   address={toCustodyAddress}
-                  chainId={CHAIN_ID_SOLANA}
+                  chainId={CHAIN_ID_SAFECOIN}
                 />
                 <span>{` (Balance: ${toCustodyBalance}${
                   toMetadata.symbol && " " + toMetadata.symbol
@@ -478,7 +480,9 @@ export default function Workflow({
         <ButtonWithLoader
           disabled={!isReadyToTransfer || migrationIsProcessing}
           showLoader={migrationIsProcessing}
-          onClick={migrateTokens}
+          // TODO(Victor): migrateTokens
+          // onClick={migrateTokens}
+          onClick={()=> {}}
         >
           {migrationAmount && isReadyToTransfer
             ? "Migrate " + migrationAmount + " Tokens"
@@ -496,7 +500,7 @@ export default function Workflow({
           </Typography>
           <ShowTx
             tx={{ id: transaction, block: 1 }}
-            chainId={CHAIN_ID_SOLANA}
+            chainId={CHAIN_ID_SAFECOIN}
           />
         </>
       ) : null}

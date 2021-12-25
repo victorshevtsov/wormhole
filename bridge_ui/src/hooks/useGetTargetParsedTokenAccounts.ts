@@ -12,6 +12,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   selectTransferTargetAsset,
@@ -22,7 +23,6 @@ import { getEvmChainId, SAFECOIN_HOST, SOLANA_HOST, TERRA_HOST } from "../utils/
 import { isEVMChain } from "../utils/ethereum";
 import { createParsedTokenAccount } from "./useGetSourceParsedTokenAccounts";
 import useMetadata from "./useMetadata";
-import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 
 function useGetTargetParsedTokenAccounts() {
   const dispatch = useDispatch();
@@ -40,7 +40,7 @@ function useGetTargetParsedTokenAccounts() {
   const logo =
     (targetAsset && metadata.data?.get(targetAsset)?.logo) || undefined;
   const safecoinWallet = useSafecoinWallet();
-  const safecoinPK = safecoinWallet?.publicKey;
+  const safePK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const terraWallet = useConnectedWallet();
@@ -93,7 +93,7 @@ function useGetTargetParsedTokenAccounts() {
             })
         );
     }
-    if (targetChain === CHAIN_ID_SAFECOIN && safecoinPK) {
+    if (targetChain === CHAIN_ID_SAFECOIN && safePK) {
       let mint;
       try {
         mint = new SafecoinPublicKey(targetAsset);
@@ -102,7 +102,7 @@ function useGetTargetParsedTokenAccounts() {
       }
       const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
       connection
-        .getParsedTokenAccountsByOwner(safecoinPK, { mint })
+        .getParsedTokenAccountsByOwner(safePK, { mint })
         .then(({ value }) => {
           if (!cancelled) {
             if (value.length) {
@@ -219,6 +219,8 @@ function useGetTargetParsedTokenAccounts() {
     targetChain,
     provider,
     signerAddress,
+    safecoinWallet,
+    safePK,
     solanaWallet,
     solPK,
     terraWallet,

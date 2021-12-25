@@ -1,7 +1,7 @@
 import {
   ChainId,
-  CHAIN_ID_SOLANA,
-  getForeignAssetSolana,
+  CHAIN_ID_SAFECOIN,
+  getForeignAssetSafecoin,
   hexToNativeString,
   hexToUint8Array,
 } from "@certusone/wormhole-sdk";
@@ -11,45 +11,45 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   Token,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+} from "@safecoin/safe-token";
+import { Connection, PublicKey, Transaction } from "@safecoin/web3.js";
 import { useSnackbar } from "notistack";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useSolanaWallet } from "../contexts/SolanaWalletContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import {
   selectTransferOriginAsset,
   selectTransferOriginChain,
   selectTransferTargetAddressHex,
 } from "../store/selectors";
-import { SOLANA_HOST, SOL_TOKEN_BRIDGE_ADDRESS } from "../utils/consts";
+import { SAFECOIN_HOST, SAFE_TOKEN_BRIDGE_ADDRESS } from "../utils/consts";
 import parseError from "../utils/parseError";
-import { signSendAndConfirm } from "../utils/solana";
+import { signSendAndConfirm } from "../utils/safecoin";
 import ButtonWithLoader from "./ButtonWithLoader";
 import SmartAddress from "./SmartAddress";
 
-export function useAssociatedSolanaAccountExistsState(
+export function useAssociatedSafecoinAccountExistsState(
   targetChain: ChainId,
   mintAddress: string | null | undefined,
   readableTargetAddress: string | undefined
 ) {
-  const [associatedSolanaAccountExists, setAssociatedSolanaAccountExists] = useState(true); // for now, assume it exists until we confirm it doesn't
-  const solanaWallet = useSolanaWallet();
-  const solPK = solanaWallet?.publicKey;
+  const [associatedSafecoinAccountExists, setAssociatedSafecoinAccountExists] = useState(true); // for now, assume it exists until we confirm it doesn't
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
   useEffect(() => {
-    setAssociatedSolanaAccountExists(true);
+    setAssociatedSafecoinAccountExists(true);
     if (
-      targetChain !== CHAIN_ID_SOLANA ||
+      targetChain !== CHAIN_ID_SAFECOIN ||
       !mintAddress ||
       !readableTargetAddress ||
-      !solPK
+      !safePK
     )
       return;
     let cancelled = false;
     (async () => {
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new Connection(SAFECOIN_HOST, "confirmed");
       const mintPublicKey = new PublicKey(mintAddress);
-      const payerPublicKey = new PublicKey(solPK); // currently assumes the wallet is the owner
+      const payerPublicKey = new PublicKey(safePK); // currently assumes the wallet is the owner
       const associatedAddress = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
@@ -63,7 +63,7 @@ export function useAssociatedSolanaAccountExistsState(
         );
         if (!associatedAddressInfo) {
           if (!cancelled) {
-            setAssociatedSolanaAccountExists(false);
+            setAssociatedSafecoinAccountExists(false);
           }
         }
       }
@@ -71,14 +71,14 @@ export function useAssociatedSolanaAccountExistsState(
     return () => {
       cancelled = true;
     };
-  }, [targetChain, mintAddress, readableTargetAddress, solPK]);
+  }, [targetChain, mintAddress, readableTargetAddress, safePK]);
   return useMemo(
-    () => ({ associatedSolanaAccountExists, setAssociatedSolanaAccountExists }),
-    [associatedSolanaAccountExists]
+    () => ({ associatedSafecoinAccountExists, setAssociatedSafecoinAccountExists }),
+    [associatedSafecoinAccountExists]
   );
 }
 
-export default function SolanaCreateAssociatedAddress({
+export default function SafecoinCreateAssociatedAddress({
   mintAddress,
   readableTargetAddress,
   associatedAccountExists,
@@ -90,20 +90,20 @@ export default function SolanaCreateAssociatedAddress({
   setAssociatedAccountExists: (associatedAccountExists: boolean) => void;
 }) {
   const [isCreating, setIsCreating] = useState(false);
-  const solanaWallet = useSolanaWallet();
-  const solPK = solanaWallet?.publicKey;
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
   const handleClick = useCallback(() => {
     if (
       associatedAccountExists ||
       !mintAddress ||
       !readableTargetAddress ||
-      !solPK
+      !safePK
     )
       return;
     (async () => {
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new Connection(SAFECOIN_HOST, "confirmed");
       const mintPublicKey = new PublicKey(mintAddress);
-      const payerPublicKey = new PublicKey(solPK); // currently assumes the wallet is the owner
+      const payerPublicKey = new PublicKey(safePK); // currently assumes the wallet is the owner
       const associatedAddress = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
@@ -130,7 +130,7 @@ export default function SolanaCreateAssociatedAddress({
           const { blockhash } = await connection.getRecentBlockhash();
           transaction.recentBlockhash = blockhash;
           transaction.feePayer = new PublicKey(payerPublicKey);
-          await signSendAndConfirm(solanaWallet, connection, transaction);
+          await signSendAndConfirm(safecoinWallet, connection, transaction);
           setIsCreating(false);
           setAssociatedAccountExists(true);
         } else {
@@ -142,9 +142,9 @@ export default function SolanaCreateAssociatedAddress({
     associatedAccountExists,
     setAssociatedAccountExists,
     mintAddress,
-    solPK,
+    safePK,
     readableTargetAddress,
-    solanaWallet,
+    safecoinWallet,
   ]);
   if (associatedAccountExists) return null;
   return (
@@ -154,7 +154,7 @@ export default function SolanaCreateAssociatedAddress({
       </Typography>
       <ButtonWithLoader
         disabled={
-          !mintAddress || !readableTargetAddress || !solPK || isCreating
+          !mintAddress || !readableTargetAddress || !safePK || isCreating
         }
         onClick={handleClick}
         showLoader={isCreating}
@@ -165,32 +165,32 @@ export default function SolanaCreateAssociatedAddress({
   );
 }
 
-export function SolanaCreateAssociatedAddressAlternate() {
+export function SafecoinCreateAssociatedAddressAlternate() {
   const { enqueueSnackbar } = useSnackbar();
   const originChain = useSelector(selectTransferOriginChain);
   const originAsset = useSelector(selectTransferOriginAsset);
   const addressHex = useSelector(selectTransferTargetAddressHex);
   const base58TargetAddress = useMemo(
-    () => hexToNativeString(addressHex, CHAIN_ID_SOLANA) || "",
+    () => hexToNativeString(addressHex, CHAIN_ID_SAFECOIN) || "",
     [addressHex]
   );
   const base58OriginAddress = useMemo(
-    () => hexToNativeString(originAsset, CHAIN_ID_SOLANA) || "",
+    () => hexToNativeString(originAsset, CHAIN_ID_SAFECOIN) || "",
     [originAsset]
   );
-  const connection = useMemo(() => new Connection(SOLANA_HOST), []);
+  const connection = useMemo(() => new Connection(SAFECOIN_HOST), []);
   const [targetAsset, setTargetAsset] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     if (!(originChain && originAsset && addressHex && base58TargetAddress)) {
       setTargetAsset(null);
-    } else if (originChain === CHAIN_ID_SOLANA && base58OriginAddress) {
+    } else if (originChain === CHAIN_ID_SAFECOIN && base58OriginAddress) {
       setTargetAsset(base58OriginAddress);
     } else {
-      getForeignAssetSolana(
+      getForeignAssetSafecoin(
         connection,
-        SOL_TOKEN_BRIDGE_ADDRESS,
+        SAFE_TOKEN_BRIDGE_ADDRESS,
         originChain,
         hexToUint8Array(originAsset)
       ).then((result) => {
@@ -212,21 +212,21 @@ export function SolanaCreateAssociatedAddressAlternate() {
     base58OriginAddress,
   ]);
 
-  const { associatedSolanaAccountExists, setAssociatedSolanaAccountExists } =
-    useAssociatedSolanaAccountExistsState(
-      CHAIN_ID_SOLANA,
+  const { associatedSafecoinAccountExists, setAssociatedSafecoinAccountExists } =
+    useAssociatedSafecoinAccountExistsState(
+      CHAIN_ID_SAFECOIN,
       targetAsset,
       base58TargetAddress
     );
 
-  const solanaWallet = useSolanaWallet();
-  const solPK = solanaWallet?.publicKey;
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
   const handleForceCreateClick = useCallback(() => {
-    if (!targetAsset || !base58TargetAddress || !solPK) return;
+    if (!targetAsset || !base58TargetAddress || !safePK) return;
     (async () => {
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new Connection(SAFECOIN_HOST, "confirmed");
       const mintPublicKey = new PublicKey(targetAsset);
-      const payerPublicKey = new PublicKey(solPK); // currently assumes the wallet is the owner
+      const payerPublicKey = new PublicKey(safePK); // currently assumes the wallet is the owner
       const associatedAddress = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
@@ -249,8 +249,8 @@ export function SolanaCreateAssociatedAddressAlternate() {
           const { blockhash } = await connection.getRecentBlockhash();
           transaction.recentBlockhash = blockhash;
           transaction.feePayer = new PublicKey(payerPublicKey);
-          await signSendAndConfirm(solanaWallet, connection, transaction);
-          setAssociatedSolanaAccountExists(true);
+          await signSendAndConfirm(safecoinWallet, connection, transaction);
+          setAssociatedSafecoinAccountExists(true);
           enqueueSnackbar(null, {
             content: (
               <Alert severity="success">
@@ -275,11 +275,11 @@ export function SolanaCreateAssociatedAddressAlternate() {
       }
     })();
   }, [
-    setAssociatedSolanaAccountExists,
+    setAssociatedSafecoinAccountExists,
     targetAsset,
-    solPK,
+    safePK,
     base58TargetAddress,
-    solanaWallet,
+    safecoinWallet,
     enqueueSnackbar,
   ]);
 
@@ -288,7 +288,7 @@ export function SolanaCreateAssociatedAddressAlternate() {
       <Typography variant="subtitle2">Recipient Address:</Typography>
       <Typography component="div">
         <SmartAddress
-          chainId={CHAIN_ID_SOLANA}
+          chainId={CHAIN_ID_SAFECOIN}
           address={base58TargetAddress}
           variant="h6"
           extraContent={
@@ -296,19 +296,19 @@ export function SolanaCreateAssociatedAddressAlternate() {
               size="small"
               variant="outlined"
               onClick={handleForceCreateClick}
-              disabled={!targetAsset || !base58TargetAddress || !solPK}
+              disabled={!targetAsset || !base58TargetAddress || !safePK}
             >
               Force Create Account
             </Button>
           }
         />
       </Typography>
-      {associatedSolanaAccountExists ? null : (
-        <SolanaCreateAssociatedAddress
+      {associatedSafecoinAccountExists ? null : (
+        <SafecoinCreateAssociatedAddress
           mintAddress={targetAsset}
           readableTargetAddress={base58TargetAddress}
-          associatedAccountExists={associatedSolanaAccountExists}
-          setAssociatedAccountExists={setAssociatedSolanaAccountExists}
+          associatedAccountExists={associatedSafecoinAccountExists}
+          setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
         />
       )}
     </div>

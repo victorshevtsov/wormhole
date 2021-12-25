@@ -19,6 +19,7 @@ import {
 import { WBNB_ADDRESS, WETH_ADDRESS, WMATIC_ADDRESS } from "../../utils/consts";
 import ButtonWithLoader from "../ButtonWithLoader";
 import KeyAndBalance from "../KeyAndBalance";
+import { SafecoinCreateAssociatedAddressAlternate } from "../SafecoinCreateAssociatedAddress";
 import { SolanaCreateAssociatedAddressAlternate } from "../SolanaCreateAssociatedAddress";
 import StepDescription from "../StepDescription";
 import WaitingForWalletMessage from "./WaitingForWalletMessage";
@@ -73,7 +74,9 @@ function Redeem() {
           label="Automatically unwrap to native currency"
         />
       )}
-      {targetChain === CHAIN_ID_SOLANA ? (
+      {targetChain === CHAIN_ID_SAFECOIN ? (
+        <SafecoinCreateAssociatedAddressAlternate />
+      ) : targetChain === CHAIN_ID_SOLANA ? (
         <SolanaCreateAssociatedAddressAlternate />
       ) : null}
 

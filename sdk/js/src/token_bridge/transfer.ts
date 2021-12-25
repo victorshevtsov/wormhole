@@ -1,10 +1,28 @@
-import { AccountLayout, Token, TOKEN_PROGRAM_ID, u64 } from "@solana/spl-token";
 import {
-  Connection,
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  Transaction,
+  AccountLayout as SafeAccountLayout,
+  Token as SafeToken,
+  TOKEN_PROGRAM_ID as SAFE_TOKEN_PROGRAM_ID,
+  u64 as Safeu64 
+} from "@safecoin/safe-token";
+import {
+  AccountLayout as SplAccountLayout,
+  Token as SplToken,
+  TOKEN_PROGRAM_ID as SPL_TOKEN_PROGRAM_ID,
+  u64 as Splu64 
+} from "@solana/spl-token";
+import {
+  Connection as SafecoinConnection,
+  Keypair as SafecoinKeypair,
+  PublicKey as SafecoinPublicKey,
+  SystemProgram as SafecoinSystemProgram,
+  Transaction as SafecoinTransaction,
+} from "@safecoin/web3.js";
+import {
+  Connection as SolanaConnection,
+  Keypair as SolanaKeypair,
+  PublicKey as SolanaPublicKey,
+  SystemProgram as SolanaSystemProgram,
+  Transaction as SolanaTransaction,
 } from "@solana/web3.js";
 import { MsgExecuteContract } from "@terra-money/terra.js";
 import { BigNumber, ethers } from "ethers";
@@ -13,9 +31,18 @@ import {
   Bridge__factory,
   TokenImplementation__factory,
 } from "../ethers-contracts";
+import { getBridgeFeeIxSafecoin, ixFromRustSafecoin } from "../safecoin";
 import { getBridgeFeeIxSolana, ixFromRustSolana } from "../solana";
-import { importTokenWasm } from "../solana/wasm";
-import { ChainId, CHAIN_ID_SOLANA, createNonce, WSOL_ADDRESS } from "../utils";
+import { importTokenWasm as importTokenSafecoinWasm } from "../safecoin/wasm";
+import { importTokenWasm as importTokenSolanaWasm } from "../solana/wasm";
+import {
+  ChainId,
+  CHAIN_ID_SAFECOIN,
+  CHAIN_ID_SOLANA,
+  createNonce,
+  WSAFE_ADDRESS,
+  WSOL_ADDRESS
+} from "../utils";
 
 export async function getAllowanceEth(
   tokenBridgeAddress: string,
@@ -164,8 +191,8 @@ export async function transferFromTerra(
       ];
 }
 
-export async function transferNativeSol(
-  connection: Connection,
+export async function transferNativeSafe(
+  connection: SafecoinConnection,
   bridgeAddress: string,
   tokenBridgeAddress: string,
   payerAddress: string,
@@ -174,29 +201,29 @@ export async function transferNativeSol(
   targetChain: ChainId
 ) {
   //https://github.com/solana-labs/solana-program-library/blob/master/token/js/client/token.js
-  const rentBalance = await Token.getMinBalanceRentForExemptAccount(connection);
-  const mintPublicKey = new PublicKey(WSOL_ADDRESS);
-  const payerPublicKey = new PublicKey(payerAddress);
-  const ancillaryKeypair = Keypair.generate();
+  const rentBalance = await SafeToken.getMinBalanceRentForExemptAccount(connection);
+  const mintPublicKey = new SafecoinPublicKey(WSAFE_ADDRESS);
+  const payerPublicKey = new SafecoinPublicKey(payerAddress);
+  const ancillaryKeypair = SafecoinKeypair.generate();
 
-  //This will create a temporary account where the wSOL will be created.
-  const createAncillaryAccountIx = SystemProgram.createAccount({
+  //This will create a temporary account where the wSAFE will be created.
+  const createAncillaryAccountIx = SafecoinSystemProgram.createAccount({
     fromPubkey: payerPublicKey,
     newAccountPubkey: ancillaryKeypair.publicKey,
     lamports: rentBalance, //spl token accounts need rent exemption
-    space: AccountLayout.span,
-    programId: TOKEN_PROGRAM_ID,
+    space: SafeAccountLayout.span,
+    programId: SAFE_TOKEN_PROGRAM_ID,
   });
 
-  //Send in the amount of SOL which we want converted to wSOL
-  const initialBalanceTransferIx = SystemProgram.transfer({
+  //Send in the amount of SAFE which we want converted to wSAFE
+  const initialBalanceTransferIx = SafecoinSystemProgram.transfer({
     fromPubkey: payerPublicKey,
     lamports: Number(amount),
     toPubkey: ancillaryKeypair.publicKey,
   });
   //Initialize the account as a WSOL account, with the original payerAddress as owner
-  const initAccountIx = await Token.createInitAccountInstruction(
-    TOKEN_PROGRAM_ID,
+  const initAccountIx = await SafeToken.createInitAccountInstruction(
+    SAFE_TOKEN_PROGRAM_ID,
     mintPublicKey,
     ancillaryKeypair.publicKey,
     payerPublicKey
@@ -204,7 +231,183 @@ export async function transferNativeSol(
 
   //Normal approve & transfer instructions, except that the wSOL is sent from the ancillary account.
   const { transfer_native_ix, approval_authority_address } =
-    await importTokenWasm();
+    await importTokenSafecoinWasm();
+  const nonce = createNonce().readUInt32LE(0);
+  const fee = BigInt(0); // for now, this won't do anything, we may add later
+  const transferIx = await getBridgeFeeIxSafecoin(
+    connection,
+    bridgeAddress,
+    payerAddress
+  );
+  const approvalIx = SafeToken.createApproveInstruction(
+    SAFE_TOKEN_PROGRAM_ID,
+    ancillaryKeypair.publicKey,
+    new SafecoinPublicKey(approval_authority_address(tokenBridgeAddress)),
+    payerPublicKey, //owner
+    [],
+    new Safeu64(amount.toString(16), 16)
+  );
+  let messageKey = SafecoinKeypair.generate();
+
+  const ix = ixFromRustSafecoin(
+    transfer_native_ix(
+      tokenBridgeAddress,
+      bridgeAddress,
+      payerAddress,
+      messageKey.publicKey.toString(),
+      ancillaryKeypair.publicKey.toString(),
+      WSAFE_ADDRESS,
+      nonce,
+      amount,
+      fee,
+      targetAddress,
+      targetChain
+    )
+  );
+
+  //Close the ancillary account for cleanup. Payer address receives any remaining funds
+  const closeAccountIx = SafeToken.createCloseAccountInstruction(
+    SAFE_TOKEN_PROGRAM_ID,
+    ancillaryKeypair.publicKey, //account to close
+    payerPublicKey, //Remaining funds destination
+    payerPublicKey, //authority
+    []
+  );
+
+  const { blockhash } = await connection.getRecentBlockhash();
+  const transaction = new SafecoinTransaction();
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new SafecoinPublicKey(payerAddress);
+  transaction.add(createAncillaryAccountIx);
+  transaction.add(initialBalanceTransferIx);
+  transaction.add(initAccountIx);
+  transaction.add(transferIx, approvalIx, ix);
+  transaction.add(closeAccountIx);
+  transaction.partialSign(messageKey);
+  transaction.partialSign(ancillaryKeypair);
+  return transaction;
+}
+
+export async function transferFromSafecoin(
+  connection: SafecoinConnection,
+  bridgeAddress: string,
+  tokenBridgeAddress: string,
+  payerAddress: string,
+  fromAddress: string,
+  mintAddress: string,
+  amount: BigInt,
+  targetAddress: Uint8Array,
+  targetChain: ChainId,
+  originAddress?: Uint8Array,
+  originChain?: ChainId,
+  fromOwnerAddress?: string
+) {
+  const nonce = createNonce().readUInt32LE(0);
+  const fee = BigInt(0); // for now, this won't do anything, we may add later
+  const transferIx = await getBridgeFeeIxSafecoin(
+    connection,
+    bridgeAddress,
+    payerAddress
+  );
+  const {
+    transfer_native_ix,
+    transfer_wrapped_ix,
+    approval_authority_address,
+  } = await importTokenSafecoinWasm();
+  const approvalIx = SafeToken.createApproveInstruction(
+    SAFE_TOKEN_PROGRAM_ID,
+    new SafecoinPublicKey(fromAddress),
+    new SafecoinPublicKey(approval_authority_address(tokenBridgeAddress)),
+    new SafecoinPublicKey(fromOwnerAddress || payerAddress),
+    [],
+    new Safeu64(amount.toString(16), 16)
+  );
+  let messageKey = SafecoinKeypair.generate();
+  const isSafecoinNative =
+    originChain === undefined || originChain === CHAIN_ID_SAFECOIN;
+  if (!isSafecoinNative && !originAddress) {
+    throw new Error("originAddress is required when specifying originChain");
+  }
+  const ix = ixFromRustSafecoin(
+    isSafecoinNative
+      ? transfer_native_ix(
+          tokenBridgeAddress,
+          bridgeAddress,
+          payerAddress,
+          messageKey.publicKey.toString(),
+          fromAddress,
+          mintAddress,
+          nonce,
+          amount,
+          fee,
+          targetAddress,
+          targetChain
+        )
+      : transfer_wrapped_ix(
+          tokenBridgeAddress,
+          bridgeAddress,
+          payerAddress,
+          messageKey.publicKey.toString(),
+          fromAddress,
+          fromOwnerAddress || payerAddress,
+          originChain as number, // checked by isSolanaNative
+          originAddress as Uint8Array, // checked by throw
+          nonce,
+          amount,
+          fee,
+          targetAddress,
+          targetChain
+        )
+  );
+  const transaction = new SafecoinTransaction().add(transferIx, approvalIx, ix);
+  const { blockhash } = await connection.getRecentBlockhash();
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new SafecoinPublicKey(payerAddress);
+  transaction.partialSign(messageKey);
+  return transaction;
+}
+
+export async function transferNativeSol(
+  connection: SolanaConnection,
+  bridgeAddress: string,
+  tokenBridgeAddress: string,
+  payerAddress: string,
+  amount: BigInt,
+  targetAddress: Uint8Array,
+  targetChain: ChainId
+) {
+  //https://github.com/solana-labs/solana-program-library/blob/master/token/js/client/token.js
+  const rentBalance = await SplToken.getMinBalanceRentForExemptAccount(connection);
+  const mintPublicKey = new SolanaPublicKey(WSOL_ADDRESS);
+  const payerPublicKey = new SolanaPublicKey(payerAddress);
+  const ancillaryKeypair = SolanaKeypair.generate();
+
+  //This will create a temporary account where the wSOL will be created.
+  const createAncillaryAccountIx = SolanaSystemProgram.createAccount({
+    fromPubkey: payerPublicKey,
+    newAccountPubkey: ancillaryKeypair.publicKey,
+    lamports: rentBalance, //spl token accounts need rent exemption
+    space: SplAccountLayout.span,
+    programId: SPL_TOKEN_PROGRAM_ID,
+  });
+
+  //Send in the amount of SOL which we want converted to wSOL
+  const initialBalanceTransferIx = SolanaSystemProgram.transfer({
+    fromPubkey: payerPublicKey,
+    lamports: Number(amount),
+    toPubkey: ancillaryKeypair.publicKey,
+  });
+  //Initialize the account as a WSOL account, with the original payerAddress as owner
+  const initAccountIx = await SplToken.createInitAccountInstruction(
+    SPL_TOKEN_PROGRAM_ID,
+    mintPublicKey,
+    ancillaryKeypair.publicKey,
+    payerPublicKey
+  );
+
+  //Normal approve & transfer instructions, except that the wSOL is sent from the ancillary account.
+  const { transfer_native_ix, approval_authority_address } =
+    await importTokenSolanaWasm();
   const nonce = createNonce().readUInt32LE(0);
   const fee = BigInt(0); // for now, this won't do anything, we may add later
   const transferIx = await getBridgeFeeIxSolana(
@@ -212,15 +415,15 @@ export async function transferNativeSol(
     bridgeAddress,
     payerAddress
   );
-  const approvalIx = Token.createApproveInstruction(
-    TOKEN_PROGRAM_ID,
+  const approvalIx = SplToken.createApproveInstruction(
+    SPL_TOKEN_PROGRAM_ID,
     ancillaryKeypair.publicKey,
-    new PublicKey(approval_authority_address(tokenBridgeAddress)),
+    new SolanaPublicKey(approval_authority_address(tokenBridgeAddress)),
     payerPublicKey, //owner
     [],
-    new u64(amount.toString(16), 16)
+    new Splu64(amount.toString(16), 16)
   );
-  let messageKey = Keypair.generate();
+  let messageKey = SolanaKeypair.generate();
 
   const ix = ixFromRustSolana(
     transfer_native_ix(
@@ -239,8 +442,8 @@ export async function transferNativeSol(
   );
 
   //Close the ancillary account for cleanup. Payer address receives any remaining funds
-  const closeAccountIx = Token.createCloseAccountInstruction(
-    TOKEN_PROGRAM_ID,
+  const closeAccountIx = SplToken.createCloseAccountInstruction(
+    SPL_TOKEN_PROGRAM_ID,
     ancillaryKeypair.publicKey, //account to close
     payerPublicKey, //Remaining funds destination
     payerPublicKey, //authority
@@ -248,9 +451,9 @@ export async function transferNativeSol(
   );
 
   const { blockhash } = await connection.getRecentBlockhash();
-  const transaction = new Transaction();
+  const transaction = new SolanaTransaction();
   transaction.recentBlockhash = blockhash;
-  transaction.feePayer = new PublicKey(payerAddress);
+  transaction.feePayer = new SolanaPublicKey(payerAddress);
   transaction.add(createAncillaryAccountIx);
   transaction.add(initialBalanceTransferIx);
   transaction.add(initAccountIx);
@@ -262,7 +465,7 @@ export async function transferNativeSol(
 }
 
 export async function transferFromSolana(
-  connection: Connection,
+  connection: SolanaConnection,
   bridgeAddress: string,
   tokenBridgeAddress: string,
   payerAddress: string,
@@ -286,16 +489,16 @@ export async function transferFromSolana(
     transfer_native_ix,
     transfer_wrapped_ix,
     approval_authority_address,
-  } = await importTokenWasm();
-  const approvalIx = Token.createApproveInstruction(
-    TOKEN_PROGRAM_ID,
-    new PublicKey(fromAddress),
-    new PublicKey(approval_authority_address(tokenBridgeAddress)),
-    new PublicKey(fromOwnerAddress || payerAddress),
+  } = await importTokenSolanaWasm();
+  const approvalIx = SplToken.createApproveInstruction(
+    SPL_TOKEN_PROGRAM_ID,
+    new SolanaPublicKey(fromAddress),
+    new SolanaPublicKey(approval_authority_address(tokenBridgeAddress)),
+    new SolanaPublicKey(fromOwnerAddress || payerAddress),
     [],
-    new u64(amount.toString(16), 16)
+    new Splu64(amount.toString(16), 16)
   );
-  let messageKey = Keypair.generate();
+  let messageKey = SolanaKeypair.generate();
   const isSolanaNative =
     originChain === undefined || originChain === CHAIN_ID_SOLANA;
   if (!isSolanaNative && !originAddress) {
@@ -332,10 +535,10 @@ export async function transferFromSolana(
           targetChain
         )
   );
-  const transaction = new Transaction().add(transferIx, approvalIx, ix);
+  const transaction = new SolanaTransaction().add(transferIx, approvalIx, ix);
   const { blockhash } = await connection.getRecentBlockhash();
   transaction.recentBlockhash = blockhash;
-  transaction.feePayer = new PublicKey(payerAddress);
+  transaction.feePayer = new SolanaPublicKey(payerAddress);
   transaction.partialSign(messageKey);
   return transaction;
 }

@@ -1,4 +1,5 @@
 import {
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   hexToNativeString,
@@ -32,8 +33,11 @@ import ChainSelect from "../ChainSelect";
 import KeyAndBalance from "../KeyAndBalance";
 import LowBalanceWarning from "../LowBalanceWarning";
 import SmartAddress from "../SmartAddress";
+import SafecoinCreateAssociatedAddress, {
+  useAssociatedSafecoinAccountExistsState,
+} from "../SafecoinCreateAssociatedAddress";
 import SolanaCreateAssociatedAddress, {
-  useAssociatedAccountExistsState,
+  useAssociatedSolanaAccountExistsState,
 } from "../SolanaCreateAssociatedAddress";
 import StepDescription from "../StepDescription";
 import RegisterNowButton from "./RegisterNowButton";
@@ -100,8 +104,14 @@ function Target() {
   const shouldLockFields = useSelector(selectTransferShouldLockFields);
   const { statusMessage } = useIsWalletReady(targetChain);
   const isLoading = !statusMessage && !targetAssetError && !data;
-  const { associatedAccountExists, setAssociatedAccountExists } =
-    useAssociatedAccountExistsState(
+  const { associatedSafecoinAccountExists, setAssociatedSafecoinAccountExists } =
+    useAssociatedSafecoinAccountExistsState(
+      targetChain,
+      targetAsset,
+      readableTargetAddress
+    );
+  const { associatedSolanaAccountExists, setAssociatedSolanaAccountExists } =
+    useAssociatedSolanaAccountExistsState(
       targetChain,
       targetAsset,
       readableTargetAddress
@@ -160,12 +170,19 @@ function Target() {
           </div>
         </>
       ) : null}
-      {targetChain === CHAIN_ID_SOLANA && targetAsset ? (
+      {targetChain === CHAIN_ID_SAFECOIN && targetAsset ? (
+        <SafecoinCreateAssociatedAddress
+          mintAddress={targetAsset}
+          readableTargetAddress={readableTargetAddress}
+          associatedAccountExists={associatedSafecoinAccountExists}
+          setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
+        />
+      ) : targetChain === CHAIN_ID_SOLANA && targetAsset ? (
         <SolanaCreateAssociatedAddress
           mintAddress={targetAsset}
           readableTargetAddress={readableTargetAddress}
-          associatedAccountExists={associatedAccountExists}
-          setAssociatedAccountExists={setAssociatedAccountExists}
+          associatedAccountExists={associatedSolanaAccountExists}
+          setAssociatedAccountExists={setAssociatedSolanaAccountExists}
         />
       ) : null}
       <Alert severity="info" variant="outlined" className={classes.alert}>
@@ -179,7 +196,7 @@ function Target() {
       </Alert>
       <LowBalanceWarning chainId={targetChain} />
       <ButtonWithLoader
-        disabled={!isTargetComplete || !associatedAccountExists}
+        disabled={!isTargetComplete || !associatedSafecoinAccountExists || !associatedSolanaAccountExists}
         onClick={handleNextClick}
         showLoader={isLoading}
         error={
