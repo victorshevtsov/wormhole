@@ -48,6 +48,10 @@ export interface PublicKeyStringAndAccount<T> {
   account: AccountInfo<T>;
 }
 
+export const WRAPPED_SAFE_MINT = new PublicKey(
+  "Safe111111111111111111111111111111111111112"
+);
+
 export const WRAPPED_SOL_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
 );
