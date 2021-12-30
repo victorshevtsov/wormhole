@@ -9,6 +9,12 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     maxWidth: 400,
   },
+  btnstepper: {
+    display: "flex",
+   // margin: `${theme.spacing(4)}px`,
+  //  width: "100%",
+    maxWidth: 400,
+  },
 }));
 
 const QToggleConnectedButton = ({
@@ -28,15 +34,15 @@ const QToggleConnectedButton = ({
     <Tooltip title={pk}>
       <Button
         color="primary"
-        variant="contained"
-        size="large"
+        variant="text"
+        size="medium"
         disableElevation={true}
         onClick={disconnect}
-        className={classes.button}
+        //className={classes.button}
         startIcon={<LinkOff />}
       >
         Disconnect {pk.substring(0, is0x ? 6 : 3)}...
-        {pk.substr(pk.length - (is0x ? 4 : 3))}
+        
       </Button>
     </Tooltip>
   ) : (

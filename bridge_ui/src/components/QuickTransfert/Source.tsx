@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
   },
   description: {
-   // marginBottom: theme.spacing(4),
+    // marginBottom: theme.spacing(4),
     textAlign: "center",
   },
   spacer: {
@@ -100,7 +100,9 @@ function Source() {
   return (
     //Ara whole steps container
     <div>
-
+      {isReady ? (
+        <QKeyAndBalance chainId={sourceChain} />
+      ) : null}
       <div style={{ display: "flex", alignItems: "center" }}>
         {/*Select Safecoin ERC-20 tokens to send through the sPortal Bridge.*/}
         <div style={{ flexGrow: 1 }} />
@@ -118,7 +120,10 @@ function Source() {
       </div>
 
       {isReady ? (
+
         <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
+
+          {/* left part */}
           <div>
             <div style={isMobile ? {} : { width: "480px" }}>
               {/* hidden for UX purpose for quicktransfer */}
@@ -133,17 +138,11 @@ function Source() {
                 disabled={shouldLockFields}
                 chains={CHAINS}
               />
-
               { /* to remove */ isReady || uiAmountString ? (
                 <div className={classes.transferField}>
                   <TokenSelector disabled={shouldLockFields} />
                 </div>
               ) : null}
-              <KeyAndBalance chainId={sourceChain} />
-            </div>
-          </div>
-          <div>
-            <>
               <LowBalanceWarning chainId={sourceChain} />
               {hasParsedTokenAccount ? (
                 <NumberTextField
@@ -161,6 +160,12 @@ function Source() {
                   }
                 />
               ) : null}
+
+            </div>
+          </div>
+          {/* right part */}
+          <div>
+            <>
               { /* to remove */ isReady ? (
                 <ButtonWithLoader
                   disabled={!isSourceComplete}
