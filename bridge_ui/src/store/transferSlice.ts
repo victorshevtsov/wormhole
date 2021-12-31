@@ -14,9 +14,9 @@ import {
   receiveDataWrapper,
 } from "./helpers";
 
-const LAST_STEP = 3;
+const LAST_STEP = 4;
 
-type Steps = 0 | 1 | 2 | 3;
+type Steps = 0 | 1 | 2 | 3 | 4;
 
 export interface ParsedTokenAccount {
   publicKey: string;

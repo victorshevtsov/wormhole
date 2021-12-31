@@ -1,4 +1,5 @@
 import {
+  Button,
   Container,
   createStyles,
   makeStyles,
@@ -41,6 +42,7 @@ import TargetPreview from "./TargetPreview";
 import clsx from "clsx";
 import safeErc20Icon from "../../icons/safe-erc20.svg";
 import safeWrapped from "../../icons/safe-wrapped.svg";
+import Swap from "./Swap";
 function QuickTransfer() {
   useCheckIfWormholeWrapped();
   useFetchTargetAsset();
@@ -145,6 +147,7 @@ function QuickTransfer() {
       2: <div>2</div>,
       3: <div>3</div>,
       4: <div>4</div>,
+      5: <div>5</div>,
     };
 
     return (
@@ -212,6 +215,15 @@ function QuickTransfer() {
 */
   return (
     <>
+      <div>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => dispatch(setStep(4))}
+        >
+          swap 
+        </Button>
+        </div>
       <Container maxWidth="md">
         <div className={classes.root}>
           <Stepper activeStep={activeStep} orientation="horizontal" connector={<ColorlibConnector />} alternativeLabel>
@@ -247,16 +259,24 @@ function QuickTransfer() {
                 <StepLabel StepIconComponent={ColorlibStepIcon}>Redeem tokens</StepLabel>
               </StepButton>
             </Step>
+            <Step className={clstep.root} expanded={activeStep >= 4}>
+              <StepButton
+                onClick={() => dispatch(setStep(4))}
+              >
+                <StepLabel StepIconComponent={ColorlibStepIcon}>Swap</StepLabel>
+              </StepButton>
+            </Step>
           </Stepper>
         </div>
       </Container>
       <div className={classes.spacer}></div>
       <Container maxWidth="md">
-        <Paper elevation={5} style={{ padding: "40px" }}>
+        <Paper elevation={5} style={activeStep === 4 ?  { display:"none" }:  { padding:"40px"}}>
           {activeStep === 0 ? <Source /> : <></>}
           {activeStep === 1 ? <Target /> : <></>}
           {activeStep === 2 ? <Send /> : <></>}
           {isRedeemComplete ? <RedeemPreview /> : <></>}
+         
           {/*
           {activeStep === 0 ? <Source /> : <SourcePreview />}
           {activeStep === 1 ? <Target /> : <TargetPreview />}
@@ -264,7 +284,8 @@ function QuickTransfer() {
           {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
         */}
         </Paper>
-        <div className={ activeStep === 0 ? classes.preview : classes.preview } >
+        {activeStep === 4 ? <Swap /> : <></>}
+        <div className={activeStep === 0 ? classes.preview : classes.preview} >
           {activeStep === 0 ? <SourcePreview /> : <></>}
           {activeStep === 1 ? <TargetPreview /> : <></>}
           {activeStep === 2 ? <SendPreview /> : <></>}
