@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     paddingTop: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5),
+    paddingBottom: theme.spacing(1.2),
     paddingRight: theme.spacing(2),
     paddingLeft: theme.spacing(2),
     fontWeight: 500,

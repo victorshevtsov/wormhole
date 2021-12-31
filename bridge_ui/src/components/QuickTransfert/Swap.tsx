@@ -8,6 +8,7 @@ import {
   import { useCallback, useEffect, useState,useMemo } from "react";
   import { useDispatch, useSelector } from "react-redux";
   import { useHistory } from "react-router";
+  import safeicon from "./../../icons/safecoin.svg";
   import useIsWalletReady from "../../hooks/useIsWalletReady";
   import {
     selectTransferAmount,
@@ -23,18 +24,7 @@ import {
     setAmount,
     setSourceChain,
   } from "../../store/transferSlice";
-  import {
-    BSC_MIGRATION_ASSET_MAP,
-    CHAINS,
-    ETH_MIGRATION_ASSET_MAP,
-    MIGRATION_ASSET_MAP,
-  } from "../../utils/consts";
   import ButtonWithLoader from "../ButtonWithLoader";
-  import ChainSelect from "../ChainSelect";
-  import KeyAndBalance from "../KeyAndBalance";
-  import LowBalanceWarning from "../LowBalanceWarning";
-  import NumberTextField from "../NumberTextField";
-  import StepDescription from "../StepDescription";
   import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
   import { isMobile } from 'react-device-detect';
   import QKeyAndBalance from "../QKeyAndBalance";
@@ -53,11 +43,18 @@ import {
   } from '@safecoin/web3.js';
   import { AccountLayout, NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@safecoin/safe-token';
 import Divi from "../Divi";
+import { ExpandMore, SwapVert } from "@material-ui/icons";
+import { COLORS } from "../../muiThemeLight";
 
 
   const useStyles = makeStyles((theme) => ({
-      amount: {
-        width:"40px",
+    swppbutton: {
+        marginTop: "10px",
+        borderRadius: "20px",
+    },
+    amount: {
+        fontSize: "24px",
+        width:"100%",
         textAlign:"right",
         fontFamily:"'Roboto Mono', monospace",
       },
@@ -68,8 +65,8 @@ import Divi from "../Divi";
       display: "none",
     },
     description: {
-      // marginBottom: theme.spacing(4),
-      textAlign: "center",
+      marginTop: theme.spacing(4),
+      textAlign: "left",
     },
     spacer: {
       height: theme.spacing(6),
@@ -99,12 +96,52 @@ import Divi from "../Divi";
         minWidth: 40,
       },
       icon: {
-        height: 24,
-        maxWidth: 24,
+        height: 30,
+        maxWidth: 30,
       },
   }));
 
   function Swap() {
+
+    const [wormbalance, setWormBalance] = useState(2);
+    const [wrapbalance, setWrapBalance] = useState(0);
+    const [wsafeInput, setWsetInput] = useState(0); 
+    const [isSwappable, setIsSwappable] = useState(false);
+    const [isSwapped, setIsSwapped] = useState(false);
+    const [isUnwrapping, setIsUnwrapping] = useState(false); // important pass to true after the transaction is sent and confirmed
+    const [swapBtnState, setswapBtnState] = useState("Swap");
+    /*wwSafehandleChange(e){
+        setWsetBal()
+     }*/
+    const swapping = (e : any) => {
+        setswapBtnState("Swapping...")
+        e.preventDefault();
+        setTimeout(() => {
+            setswapBtnState("Unrwap")
+            setWormBalance(0)
+            setWrapBalance(2)
+            setWsetInput(0)
+            setIsSwapped(true)
+        }, 2000);
+      };
+
+
+      useEffect(() => {
+        console.log("wsafeInput")
+        if (wsafeInput !== 0)
+        {setIsSwappable(true)}
+        console.log("wsafeBal", wsafeInput, "isSwappable ", isSwappable)
+    }, []);
+
+    useEffect(() => {
+        if (isUnwrapping === true)
+        console.log("TRIGGER SWITCH PAGE")
+    }, []);
+
+    const onTextChangeInput = (e: any) => setWsetInput(e.target.value);
+
+
+
 
     const network = clusterApiUrl('devnet');
     const [providerUrl, setProviderUrl] = useState('https://wallet.safecoin.org/');
@@ -133,46 +170,17 @@ import Divi from "../Divi";
       }
     }, [selectedWallet]);
 
+
+
+
     const classes = useStyles();
-    const dispatch = useDispatch();
-    const history = useHistory();
     const sourceChain = useSelector(selectTransferSourceChain);
     const parsedTokenAccount = useSelector(
       selectTransferSourceParsedTokenAccount
     );
-    const hasParsedTokenAccount = !!parsedTokenAccount;
-  
-    const uiAmountString = useSelector(selectTransferSourceBalanceString);
-    const amount = useSelector(selectTransferAmount);
-    const error = useSelector(selectTransferSourceError);
-    const isSourceComplete = useSelector(selectTransferIsSourceComplete);
-    const shouldLockFields = useSelector(selectTransferShouldLockFields);
     const { isReady, statusMessage } = useIsWalletReady(sourceChain);
-  
-    const handleSourceChange = useCallback(
-      (event) => {
-        dispatch(setSourceChain(event.target.value));
-      },
-      [dispatch]
-    );
-    const handleAmountChange = useCallback(
-      (event) => {
-        dispatch(setAmount(event.target.value));
-      },
-      [dispatch]
-    );
-    const handleMaxClick = useCallback(() => {
-      if (uiAmountString) {
-        dispatch(setAmount(uiAmountString));
-      }
-    }, [dispatch, uiAmountString]);
-    const handleNextClick = useCallback(() => {
-      dispatch(incrementStep());
-    }, [dispatch]);
-  
-    if (sourceChain != 2) {
-      dispatch(setSourceChain(2));
-    }
+
+
   
     async function unwrapSafe(
         /* for implementation
@@ -209,6 +217,8 @@ import Divi from "../Divi";
             const signed = await selectedWallet.signTransaction(transac);
             const signature2 = await connection2.sendRawTransaction(signed.serialize());
             const confirmation = await connection2.confirmTransaction(signature2, 'singleGossip');
+            setIsUnwrapping(true)
+            console.log("isUnwrapping : ", isUnwrapping)
             console.log("Succefully unwrapped : ", confirmation)
           } else {
             console.log("There is nothing to unwrap")
@@ -219,6 +229,7 @@ import Divi from "../Divi";
       }
     
       async function checkWrappedSafe() {
+
         // 1. fetch account
         // 2. filter associated NATIVE_MINT accounts
         // 3. returns accounts or empty array
@@ -262,7 +273,6 @@ import Divi from "../Divi";
               );
             }
           });
-    
           return result
         }
     
@@ -286,54 +296,19 @@ import Divi from "../Divi";
         {isReady ? (
           <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
             {/* left part */}
-            <div>
-              <div style={isMobile ? {} : { width: "480px" }}>
-                {/* hidden for UX purpose for quicktransfer */}
-                <ChainSelect
-                  hidden={true}
-                  className={classes.selector}
-                  select
-                  variant="outlined"
-                  fullWidth
-                  value={sourceChain}
-                  onChange={handleSourceChange}
-                  disabled={shouldLockFields}
-                  chains={CHAINS}
-                />
-                { /* to remove */ isReady || uiAmountString ? (
-                  <div className={classes.transferField}>
-                    <TokenSelector disabled={shouldLockFields} />
-                  </div>
-                ) : null}
-                <LowBalanceWarning chainId={sourceChain} />
-                {hasParsedTokenAccount ? (
-                  <NumberTextField
-                    variant="outlined"
-                    label="Amount"
-                    fullWidth
-                    className={classes.transferField}
-                    value={amount}
-                    onChange={handleAmountChange}
-                    disabled={shouldLockFields}
-                    onMaxClick={
-                      uiAmountString && !parsedTokenAccount.isNativeAsset
-                        ? handleMaxClick
-                        : undefined
-                    }
-                  />
-                ) : null}
-              </div>
-            </div>
+         
+
             {/* right part */}
           </div>
         ) : (
           <>
-            <Typography variant="h4">
-              Finalizing
-            </Typography>
+
             <div className={classes.spacer}></div>
             <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
               <div>
+                <Typography variant="h4">
+                {isSwapped ? ("Unrwapping"):("Swapping")}<span style={{ color: COLORS.green, fontSize:"40px" }}>.</span>
+                </Typography>
                 <Typography className={classes.description}>
                   This last part will swap <b>1:1</b> your received
                   <br />wormhole tokens to Wrapped Safe.
@@ -341,86 +316,139 @@ import Divi from "../Divi";
               </div>
               <div>
                 <div>
-                    <Paper elevation={5} style={{ padding:"30px"}}>
-                        <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
-                            <Button disableElevation={true}  variant="contained" className={classes.swpbutton} >
-                                <MenuItem button={false}>
-                                    <ListItemIcon className={classes.listItemIcon}>
-                                        <img className={classes.icon} />
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                        <div><b>wWSAFE</b></div>
-                                        <div style={{fontSize:"12px"}}>Wormhole Wrapped Safe</div>
-                                    </ListItemText>
-                                </MenuItem>
-                            </Button>
-                            <div>amount</div>
+                    <Paper elevation={5} style={{ height:"460px", padding:"30px"}}>
+                        <div >
+                            Waller provider:{' '}
+                            <input
+                            type="text"
+                            value={providerUrl}
+                            onChange={(e) => setProviderUrl(e.target.value.trim())}
+                            />
                         </div>
+                            {selectedWallet && selectedWallet.connected ? (
+                        <div style={{ marginTop: "10px" }}>
+                            <div>Wallet address: {selectedWallet.publicKey?.toBase58()}.</div>
+                            <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={checkWrappedSafe}>Check Safe</button>
+                            
+                            <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={unwrapSafe}>unWrap</button>
+                            <button style={{ color: "white", background: "black", padding: "8px", margin: "6px" }} onClick={() => selectedWallet.disconnect()}>
+                                Disconnect
+                            </button>
+                        </div>
+                    ) : (
                         <div>
-                            <Divi><div>dsqd</div></Divi>
+                            <button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
+                                Connect to Wallet
+                            </button>
                         </div>
-                        <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
+                    )}
+
+
+                        {!isUnwrapping ? (
                             <div>
-                                <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
-                                    <MenuItem button={false}>
-                                        <ListItemIcon className={classes.listItemIcon}>
-                                            <img className={classes.icon} />
-                                        </ListItemIcon>
-                                        <ListItemText>
-                                            <div><b>WSAFE</b></div>
-                                            <div style={{fontSize:"12px"}}>Wrapped Safe</div>
-                                        </ListItemText>
-                                    </MenuItem>
-                                </Button>
+                            <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
                                 <div>
-                                balance : 0
+                                    <Button disableElevation={true}  variant="contained" className={classes.swpbutton} >
+                                        <MenuItem button={false}>
+                                            <ListItemIcon className={classes.listItemIcon}>
+                                                <img src={safeicon} className={classes.icon} />
+                                            </ListItemIcon>
+                                            <ListItemText>
+                                                <div><b>wWSAFE</b></div>
+                                                <div style={{fontSize:"12px", opacity:"0.7"}}>Wormhole Wrapped Safe</div>
+                                            </ListItemText>
+                                        </MenuItem>
+                                    </Button>
+
+                                </div>
+                                <div>
+                                    <InputBase
+                                    style={{ textAlign: 'right' }}
+                                    placeholder="0,00"
+                                onChange={onTextChangeInput}
+                                    className={classes.amount}
+                                        /*defaultValue="Naked input"*/
+                                    inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
+                                    />
                                 </div>
                             </div>
+                            <div style={{ paddingTop:"8px"}}>
+                                Balance : <b>{wormbalance}</b>
+                            </div>
                             <div>
-                                
-                            <InputBase
-                            placeholder="0,00"
-                                className={classes.amount}
-                                /*defaultValue="Naked input"*/
-                                inputProps={{ 'aria-label': 'naked' }}
-                            />
+                                <Divi><div><ExpandMore/></div></Divi>
+                            </div>
+                            <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
+                                <div>
+                                    <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
+                                        <MenuItem button={false}>
+                                            <ListItemIcon className={classes.listItemIcon}>
+                                                <img src={safeicon} className={classes.icon} />
+                                            </ListItemIcon>
+                                            <ListItemText>
+                                                <div><b>WSAFE</b></div>
+                                                <div style={{fontSize:"12px", opacity:"0.7"}}>Wrapped Safe</div>
+                                            </ListItemText>
+                                        </MenuItem>
+                                    </Button>
+
+                                </div>
+                                <div>
+                                <InputBase
+                                    style={{ textAlign: 'right' }}
+                                    placeholder="0,00"
+                                    className={classes.amount}
+                                    disabled={true}
+                                    value={wsafeInput == 0 ? (wsafeInput) :
+                                        (wsafeInput - 0.0020)
+                                    }
+                                    /*defaultValue="Naked input"*/
+                                    inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ paddingTop:"8px"}}>
+                                    Balance : <b>{wrapbalance}</b> {/* a update apres le clic swap */}
+                                </div>
+                            <div>
+
+                                <Button
+                                //color="primary"
+                                disableElevation={true}
+                                variant="contained"
+                                size="medium"
+                                disabled={!isSwappable}
+                                onClick={swapping}
+                                className={classes.swppbutton}
+                                startIcon={<SwapVert />}
+                                fullWidth={true}>
+                                    {swapBtnState}
+                                </Button>
+
+
+                            {selectedWallet && selectedWallet.connected ? (
+                                ""
+                            ) : (
+                                <div>
+                                    <button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
+                                        Connect to Wallet
+                                    </button>
+                                </div>
+                            )}
                             </div>
                         </div>
+                            ) : (
+
+                                <div>Landing on native...</div>
+                            )}
+                        
                     </Paper>
                 </div>
               </div>
             </div>
             <div className={classes.spacer}></div>
-            <div>
-        Waller provider:{' '}
-        <input
-          type="text"
-          value={providerUrl}
-          onChange={(e) => setProviderUrl(e.target.value.trim())}
-        />
-      </div>
-            {selectedWallet && selectedWallet.connected ? (
-        <div style={{ marginTop: "10px" }}>
-          <div>Wallet address: {selectedWallet.publicKey?.toBase58()}.</div>
-          <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={checkWrappedSafe}>Check Safe</button>
-          
-          <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={unwrapSafe}>unWrap</button>
-          <button style={{ color: "white", background: "black", padding: "8px", margin: "6px" }} onClick={() => selectedWallet.disconnect()}>
-            Disconnect
-          </button>
-          <div></div>
-        </div>
-      ) : (
-        <div>
-          <button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
-            Connect to Wallet
-          </button>
-          {/*<button onClick={() => setSelectedWallet(injectedWallet)}>
-            Connect to Injected Wallet
-      </button>*/}
-        </div>
-      )}
-      <hr />
+
+      
           </>
         )}
       </div>
