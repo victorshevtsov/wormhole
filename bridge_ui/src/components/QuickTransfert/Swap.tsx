@@ -110,33 +110,44 @@ import { COLORS } from "../../muiThemeLight";
     const [isSwapped, setIsSwapped] = useState(false);
     const [isUnwrapping, setIsUnwrapping] = useState(false); // important pass to true after the transaction is sent and confirmed
     const [swapBtnState, setswapBtnState] = useState("Swap");
-    /*wwSafehandleChange(e){
-        setWsetBal()
-     }*/
+
+    const [isUnrwapPossible, setisUnrwapPossible] = useState("Unrwap");
+
     const swapping = (e : any) => {
         setswapBtnState("Swapping...")
         e.preventDefault();
         setTimeout(() => {
-            setswapBtnState("Unrwap")
-            setWormBalance(0)
-            setWrapBalance(2)
-            setWsetInput(0)
-            setIsSwapped(true)
+            console.log("test")
+            wrapSafe()
         }, 2000);
-      };
+    };
+    
+    const unwrapping = (e : any) => {
+        setisUnrwapPossible("Checking")
+        e.preventDefault();
+        setTimeout(() => {
+            setisUnrwapPossible("Unrwap now")
+            //checkWrappedSafe()
+            unwrapSafe()
+        }, 6000);
+    };
 
+    /*
+useEffect(() => { // internal effect
+    const timeoutID = window.setTimeout(() => {
+        setisUnrwapPossible("Unrwap now")
+    }, 7000);
 
-      useEffect(() => {
-        console.log("wsafeInput")
+    return () => window.clearTimeout(timeoutID );
+}, []);
+*/
+
+    useEffect(() => { // internal effect
         if (wsafeInput !== 0)
         {setIsSwappable(true)}
         console.log("wsafeBal", wsafeInput, "isSwappable ", isSwappable)
-    }, []);
+    }, [wsafeInput]);
 
-    useEffect(() => {
-        if (isUnwrapping === true)
-        console.log("TRIGGER SWITCH PAGE")
-    }, []);
 
     const onTextChangeInput = (e: any) => setWsetInput(e.target.value);
 
@@ -180,7 +191,129 @@ import { COLORS } from "../../muiThemeLight";
     );
     const { isReady, statusMessage } = useIsWalletReady(sourceChain);
 
+    async function wrapSafe() {
+        // parameters : connection ? selectedwallet, amount
+    
+        try {
+          const mainPubkey = selectedWallet?.publicKey;
+          if (!mainPubkey || !selectedWallet) {
+            throw new Error('wallet not connected');
+          }
+    
+          // returns any PublicKey found
+          const fetchedAcc = await checkWrappedSafe();
+    
+          if (fetchedAcc.length !== 0) // account already here
+          {
+            const transac = new Transaction();
+            //addLog('Wrapped account exists, sending to it');
+    
+            transac.add(
+              SystemProgram.transfer({
+                fromPubkey: mainPubkey,
+                toPubkey: fetchedAcc[0],
+                lamports: 2000000000, 
+              }),
+              new TransactionInstruction({
+                keys: [
+                  {
+                    pubkey: fetchedAcc[0],
+                    isSigner: false,
+                    isWritable: true,
+                  },
+                ],
+                data: Buffer.from(new Uint8Array([17])),
+                programId: TOKEN_PROGRAM_ID,
+              })
+            )
+    
+            transac.recentBlockhash = (
+              await connection2.getRecentBlockhash()
+            ).blockhash;
+    
+            transac.feePayer = mainPubkey;
+            const signed = await selectedWallet.signTransaction(transac);
+            const signature2 = await connection2.sendRawTransaction(signed.serialize());
+            const confirmation = await connection2.confirmTransaction(signature2, 'singleGossip');
+            console.log("Succefully wrapped : ", confirmation)
 
+
+            setswapBtnState("Unrwap")
+            setWormBalance(0)
+            setWrapBalance(2)
+            setWsetInput(0)
+            setIsSwapped(true)
+            setIsUnwrapping(true)
+    
+          } else { // no accounts found, create - fund and initializing a NATIVE_MINT account
+            const transac = new Transaction();
+            //addLog('Creating a wrapped account');
+            const newAccount = new Keypair();
+    
+            transac.add(
+              SystemProgram.createAccount({
+                fromPubkey: mainPubkey,
+                lamports: await Token.getMinBalanceRentForExemptAccount(connection2),
+                newAccountPubkey: newAccount.publicKey,
+                programId: TOKEN_PROGRAM_ID,
+                space: AccountLayout.span,
+              })
+            );
+            transac.add(
+              Token.createInitAccountInstruction(
+                TOKEN_PROGRAM_ID,
+                NATIVE_MINT,
+                newAccount.publicKey,
+                mainPubkey
+              )
+            )
+            transac.add(
+              SystemProgram.transfer({
+                fromPubkey: mainPubkey,
+                toPubkey: newAccount.publicKey,
+                lamports: 2000000000,
+              }),
+              new TransactionInstruction({
+                keys: [
+                  {
+                    pubkey: newAccount.publicKey,
+                    isSigner: false,
+                    isWritable: true,
+                  },
+                ],
+                data: Buffer.from(new Uint8Array([17])),
+                programId: TOKEN_PROGRAM_ID,
+              })
+            );
+    
+            transac.recentBlockhash = (
+              await connection2.getRecentBlockhash()
+            ).blockhash;
+    
+            //addLog('Sending signature request to wallet');
+            transac.feePayer = mainPubkey;
+    
+            //transac.partialSign(newAccount)
+            const signed = await selectedWallet.signTransaction(transac);
+            //signed.serialize()
+            signed.partialSign(newAccount)
+            const signature2 = await connection2.sendRawTransaction(signed.serialize());
+            //addLog('Sending transaction succes : ' + signature2 + '');
+            const confirmation = await connection2.confirmTransaction(signature2, 'singleGossip');
+            console.log("Succefully created & funded a wrapped account : ", confirmation)
+
+            setswapBtnState("Unrwap")
+            setWormBalance(0)
+            setWrapBalance(2)
+            setWsetInput(0)
+            setIsSwapped(true)
+            setIsUnwrapping(true)
+          }
+    
+        } catch (e) {
+          //addLog('ERROR : ' + e);
+        }
+      }
   
     async function unwrapSafe(
         /* for implementation
@@ -317,23 +450,23 @@ import { COLORS } from "../../muiThemeLight";
               <div>
                 <div>
                     <Paper elevation={5} style={{ height:"460px", padding:"30px"}}>
-                        <div >
+                        {/*<div >
                             Waller provider:{' '}
                             <input
                             type="text"
                             value={providerUrl}
                             onChange={(e) => setProviderUrl(e.target.value.trim())}
                             />
-                        </div>
+                        </div>*/}
                             {selectedWallet && selectedWallet.connected ? (
-                        <div style={{ marginTop: "10px" }}>
-                            <div>Wallet address: {selectedWallet.publicKey?.toBase58()}.</div>
-                            <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={checkWrappedSafe}>Check Safe</button>
+                        <div>
+                            <div>{selectedWallet.publicKey?.toBase58()}.</div>
+                            {/*<button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={checkWrappedSafe}>Check Safe</button>
                             
                             <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={unwrapSafe}>unWrap</button>
                             <button style={{ color: "white", background: "black", padding: "8px", margin: "6px" }} onClick={() => selectedWallet.disconnect()}>
                                 Disconnect
-                            </button>
+                            </button>*/}
                         </div>
                     ) : (
                         <div>
@@ -346,100 +479,117 @@ import { COLORS } from "../../muiThemeLight";
 
                         {!isUnwrapping ? (
                             <div>
-                            <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
-                                <div>
-                                    <Button disableElevation={true}  variant="contained" className={classes.swpbutton} >
-                                        <MenuItem button={false}>
-                                            <ListItemIcon className={classes.listItemIcon}>
-                                                <img src={safeicon} className={classes.icon} />
-                                            </ListItemIcon>
-                                            <ListItemText>
-                                                <div><b>wWSAFE</b></div>
-                                                <div style={{fontSize:"12px", opacity:"0.7"}}>Wormhole Wrapped Safe</div>
-                                            </ListItemText>
-                                        </MenuItem>
-                                    </Button>
+                                <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
+                                    <div>
+                                        <Button disableElevation={true}  variant="contained" className={classes.swpbutton} >
+                                            <MenuItem button={false}>
+                                                <ListItemIcon className={classes.listItemIcon}>
+                                                    <img src={safeicon} className={classes.icon} />
+                                                </ListItemIcon>
+                                                <ListItemText>
+                                                    <div><b>wWSAFE</b></div>
+                                                    <div style={{fontSize:"12px", opacity:"0.7"}}>Wormhole Wrapped Safe</div>
+                                                </ListItemText>
+                                            </MenuItem>
+                                        </Button>
 
+                                    </div>
+                                    <div>
+                                        <InputBase
+                                        style={{ textAlign: 'right' }}
+                                        placeholder="0,00"
+                                    onChange={onTextChangeInput}
+                                        className={classes.amount}
+                                            /*defaultValue="Naked input"*/
+                                        inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ paddingTop:"8px"}}>
+                                    Balance : <b>{wormbalance}</b>
                                 </div>
                                 <div>
+                                    <Divi><div><ExpandMore/></div></Divi>
+                                </div>
+                                <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
+                                    <div>
+                                        <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
+                                            <MenuItem button={false}>
+                                                <ListItemIcon className={classes.listItemIcon}>
+                                                    <img src={safeicon} className={classes.icon} />
+                                                </ListItemIcon>
+                                                <ListItemText>
+                                                    <div><b>WSAFE</b></div>
+                                                    <div style={{fontSize:"12px", opacity:"0.7"}}>Wrapped Safe</div>
+                                                </ListItemText>
+                                            </MenuItem>
+                                        </Button>
+
+                                    </div>
+                                    <div>
                                     <InputBase
-                                    style={{ textAlign: 'right' }}
-                                    placeholder="0,00"
-                                onChange={onTextChangeInput}
-                                    className={classes.amount}
+                                        style={{ textAlign: 'right' }}
+                                        placeholder="0,00"
+                                        className={classes.amount}
+                                        disabled={true}
+                                        value={wsafeInput == 0 ? (wsafeInput) :
+                                            (wsafeInput - 0.0020)
+                                        }
                                         /*defaultValue="Naked input"*/
-                                    inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
-                                    />
+                                        inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ paddingTop:"8px"}}>
+                                        Balance : <b>{wrapbalance}</b> {/* a update apres le clic swap */}
+                                    </div>
+                                <div>
+
+                                    <Button
+                                    //color="primary"
+                                    disableElevation={true}
+                                    variant="contained"
+                                    size="medium"
+                                    disabled={!isSwappable}
+                                    onClick={swapping}
+                                    className={classes.swppbutton}
+                                    startIcon={<SwapVert />}
+                                    fullWidth={true}>
+                                        {swapBtnState}
+                                    </Button>
+
+
+                                {selectedWallet && selectedWallet.connected ? (
+                                   ""
+                                ) : (
+                                    <div>
+                                       {/*<button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
+                                            Connect to Wallet
+                                </button>*/}
+                                    </div>
+                                )}
                                 </div>
                             </div>
-                            <div style={{ paddingTop:"8px"}}>
-                                Balance : <b>{wormbalance}</b>
-                            </div>
-                            <div>
-                                <Divi><div><ExpandMore/></div></Divi>
-                            </div>
-                            <div style={{display:"flex", width:"400px", justifyContent: "space-between", alignItems:"center"}}>
+                        
+                            ) : (
                                 <div>
-                                    <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
-                                        <MenuItem button={false}>
-                                            <ListItemIcon className={classes.listItemIcon}>
-                                                <img src={safeicon} className={classes.icon} />
-                                            </ListItemIcon>
-                                            <ListItemText>
-                                                <div><b>WSAFE</b></div>
-                                                <div style={{fontSize:"12px", opacity:"0.7"}}>Wrapped Safe</div>
-                                            </ListItemText>
-                                        </MenuItem>
+                                    
+                                    <div>Transaction is finalizing...</div>
+                                    <div>{isUnrwapPossible}</div>
+                                    <Button
+                                    //color="primary"
+                                    disableElevation={true}
+                                    variant="contained"
+                                    size="medium"
+                                    disabled={!isSwappable}
+                                    onClick={unwrapping}
+                                    className={classes.swppbutton}
+                                    startIcon={<SwapVert />}
+                                    fullWidth={true}>
+                                        {isUnrwapPossible}
                                     </Button>
 
                                 </div>
-                                <div>
-                                <InputBase
-                                    style={{ textAlign: 'right' }}
-                                    placeholder="0,00"
-                                    className={classes.amount}
-                                    disabled={true}
-                                    value={wsafeInput == 0 ? (wsafeInput) :
-                                        (wsafeInput - 0.0020)
-                                    }
-                                    /*defaultValue="Naked input"*/
-                                    inputProps={{ style: {textAlign: 'right'}, 'aria-label': 'naked', 'size':'medium' }}
-                                    />
-                                </div>
-                            </div>
-                            <div style={{ paddingTop:"8px"}}>
-                                    Balance : <b>{wrapbalance}</b> {/* a update apres le clic swap */}
-                                </div>
-                            <div>
-
-                                <Button
-                                //color="primary"
-                                disableElevation={true}
-                                variant="contained"
-                                size="medium"
-                                disabled={!isSwappable}
-                                onClick={swapping}
-                                className={classes.swppbutton}
-                                startIcon={<SwapVert />}
-                                fullWidth={true}>
-                                    {swapBtnState}
-                                </Button>
-
-
-                            {selectedWallet && selectedWallet.connected ? (
-                                ""
-                            ) : (
-                                <div>
-                                    <button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
-                                        Connect to Wallet
-                                    </button>
-                                </div>
-                            )}
-                            </div>
-                        </div>
-                            ) : (
-
-                                <div>Landing on native...</div>
                             )}
                         
                     </Paper>
