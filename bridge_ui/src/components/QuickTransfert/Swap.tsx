@@ -2,7 +2,7 @@ import {
   CHAIN_ID_ETH,
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, Chip, Container, Divider, InputBase, ListItemIcon, ListItemText, makeStyles, MenuItem, Paper, TextField, Typography } from "@material-ui/core";
+import { Button, Chip, Container, Divider, Fade, InputBase, ListItemIcon, ListItemText, makeStyles, MenuItem, Paper, TextField, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback, useEffect, useState, useMemo } from "react";
@@ -43,7 +43,7 @@ import {
 } from '@safecoin/web3.js';
 import { AccountLayout, NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@safecoin/safe-token';
 import Divi from "../Divi";
-import { ExpandMore, SwapVert } from "@material-ui/icons";
+import { ExpandMore, SwapVert, CheckOutlined, SearchOutlined } from "@material-ui/icons";
 import { COLORS } from "../../muiThemeLight";
 
 
@@ -138,7 +138,7 @@ function Swap() {
       setisUnrwapPossible("Unrwap now")
       //checkWrappedSafe()
       unwrapSafe()
-    }, 8000);
+    }, 10000);
   };
 
   /*
@@ -367,8 +367,10 @@ useEffect(() => { // internal effect
         transac.recentBlockhash = (
           await connection2.getRecentBlockhash()
         ).blockhash;
+        setisUnrwapPossible("Waiting approval...")
         transac.feePayer = mainPubkey;
         const signed = await selectedWallet.signTransaction(transac);
+
         const signature2 = await connection2.sendRawTransaction(signed.serialize());
         const confirmation = await connection2.confirmTransaction(signature2, 'singleGossip');
         setIsUnwrapping(true)
@@ -420,14 +422,14 @@ useEffect(() => { // internal effect
       accounts.map((account, i) => {
 
         let data: any = account.account.data;
-        console.log("lol ", data)
+        console.log("data (raw object) ", data)
         //go through accounts and catch native minted ones
         if (data["parsed"]["info"]["mint"] === NATIVE_MINT.toBase58()) {
           console.log("wrapped safe found on :", account.pubkey.toString());
 
           //setWaccountStatus(`Wrapped Safe found ! : ${(<div style={{ color: "red" }}>{account.pubkey.toString()}</div>)}`)
 
-          setWaccountStatus(`Wrapped Safe found !`)
+          setWaccountStatus(" " + ` Wrapped Safe found !`)
           setAddressFound(account.pubkey.toString())
           setamountUnwrapped(data["parsed"]["info"]["tokenAmount"]["uiAmount"])
           result.push(account.pubkey)
@@ -621,11 +623,12 @@ useEffect(() => { // internal effect
                   ) : (
                     <div>
 
-                      <div style={{ paddingBottom: "20px", textAlign: "center" }}>{waccountStatus}</div>
-                      <div style={{ paddingBottom: "20px", textAlign: "center" }}>{addressFound}</div>
-                     
                       <div style={{ textAlignLast: "center" }}>
                       {!isFinal ? (
+                        <div>
+                        <div style={{ paddingBottom: "20px", textAlign: "center" }}>{amountUnwrapped}{waccountStatus}</div>
+                        <div style={{ paddingBottom: "20px", textAlign: "center", fontFamily:"monospace", fontSize:"12px" }}>{addressFound}</div>
+                        
                         <Button
                           //color="primary"
                           disableElevation={true}
@@ -634,16 +637,21 @@ useEffect(() => { // internal effect
                           disabled={!isSwappable}
                           onClick={unwrapping}
                           className={classes.swppbutton}
-                          startIcon={<SwapVert />}
+                          startIcon={ isUnrwapPossible === "Check wrapped account" ? (<SearchOutlined/>) : (<SwapVert />) }
+                            
                           fullWidth={false}>
                           {isUnrwapPossible}
                         </Button>
-                        ) : ("")}
+                        </div>
+                        ) : (
+                          <Fade in={true}><CheckOutlined/></Fade>
+                          
+                          )}
                       </div>
                       <div style={{ paddingTop: "20px", textAlign: "center" }}>
                         {isFinal ? (
                           <div>
-                            <div>Succefully landed <a style={{color:"rgb(10, 194, 175)"}}>{amountUnwrapped}</a> Safe on Native.</div>
+                            <div>Succefully landed <b><a style={{color:"rgb(10, 194, 175)"}}>{amountUnwrapped}</a></b> Safe on Native.</div>
                             <div>You may now want to <b><a style={{color:"rgb(10, 194, 175)"}}>stake them </a> </b>?</div>
                           </div>
                         ) : ("")}</div>
