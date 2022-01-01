@@ -101,7 +101,7 @@ function QuickTransfer() {
     completed: {
       '& $line': {
         backgroundImage:
-          'linear-gradient( 95deg,rgb(242,113,33) 0%,rgb(242,113,33) 50%,rgb(242,113,33) 100%)',
+        'linear-gradient(  95deg,rgb(39 103 129) 0%,rgb(39 103 129) 50%,rgb(39 103 129) 100%)',
       },
     },
     line: {
