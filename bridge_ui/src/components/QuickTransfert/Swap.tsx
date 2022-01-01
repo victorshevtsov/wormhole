@@ -118,7 +118,10 @@ function Swap() {
 
   const [isUnrwapPossible, setisUnrwapPossible] = useState("Check wrapped account");
   const [isFinal, setIsFinal] = useState(false);
-  const [waccountStatus, setWaccountStatus] = useState("Your wrapping is still finalizing, click the check button");
+  const [waccountStatus, setWaccountStatus] = useState("Your swapping is still finalizing, click the check button");
+  const [addressFound, setAddressFound] = useState("");
+
+  const [amountUnwrapped, setamountUnwrapped] = useState("");
   const swapping = (e: any) => {
     setswapBtnState("Swapping...")
     e.preventDefault();
@@ -135,7 +138,7 @@ function Swap() {
       setisUnrwapPossible("Unrwap now")
       //checkWrappedSafe()
       unwrapSafe()
-    }, 6000);
+    }, 8000);
   };
 
   /*
@@ -374,7 +377,8 @@ useEffect(() => { // internal effect
         console.log("Succefully unwrapped : ", confirmation)
       } else {
         console.log("There is nothing to unwrap")
-        setWaccountStatus("Try again")
+        setisUnrwapPossible("Check again")
+        //setWaccountStatus("Try again")
         //setWaccountStatus("No Wrapped account found")
       }
     } catch (e) {
@@ -421,9 +425,11 @@ useEffect(() => { // internal effect
         if (data["parsed"]["info"]["mint"] === NATIVE_MINT.toBase58()) {
           console.log("wrapped safe found on :", account.pubkey.toString());
 
-          setWaccountStatus(`Wrapped Safe found ! : ${<div style={{ color: "red" }}>account.pubkey.toString()</div>} --`)
+          //setWaccountStatus(`Wrapped Safe found ! : ${(<div style={{ color: "red" }}>{account.pubkey.toString()}</div>)}`)
 
-
+          setWaccountStatus(`Wrapped Safe found !`)
+          setAddressFound(account.pubkey.toString())
+          setamountUnwrapped(data["parsed"]["info"]["tokenAmount"]["uiAmount"])
           result.push(account.pubkey)
           console.log(
             `-- Wrapped safe AssociatedAcc : ${account.pubkey.toString()} --` +
@@ -616,7 +622,10 @@ useEffect(() => { // internal effect
                     <div>
 
                       <div style={{ paddingBottom: "20px", textAlign: "center" }}>{waccountStatus}</div>
-                      <div style={{textAlignLast:"center"}}>
+                      <div style={{ paddingBottom: "20px", textAlign: "center" }}>{addressFound}</div>
+                     
+                      <div style={{ textAlignLast: "center" }}>
+                      {!isFinal ? (
                         <Button
                           //color="primary"
                           disableElevation={true}
@@ -629,8 +638,15 @@ useEffect(() => { // internal effect
                           fullWidth={false}>
                           {isUnrwapPossible}
                         </Button>
+                        ) : ("")}
                       </div>
-                      <div style={{ paddingTop: "20px", textAlign: "center" }}>{isFinal ? ("Succefully landed on Native !") : ("")}</div>
+                      <div style={{ paddingTop: "20px", textAlign: "center" }}>
+                        {isFinal ? (
+                          <div>
+                            <div>Succefully landed <a style={{color:"rgb(10, 194, 175)"}}>{amountUnwrapped}</a> Safe on Native.</div>
+                            <div>You may now want to <b><a style={{color:"rgb(10, 194, 175)"}}>stake them </a> </b>?</div>
+                          </div>
+                        ) : ("")}</div>
                     </div>
                   )}
 
