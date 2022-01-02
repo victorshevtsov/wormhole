@@ -1,10 +1,6 @@
-import {
-  CHAIN_ID_ETH,
-} from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
 import { Button, Chip, Container, Divider, Fade, InputBase, ListItemIcon, ListItemText, makeStyles, MenuItem, Paper, TextField, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { VerifiedUser } from "@material-ui/icons";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
@@ -25,7 +21,6 @@ import {
   setSourceChain,
 } from "../../store/transferSlice";
 import ButtonWithLoader from "../ButtonWithLoader";
-import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 import { isMobile } from 'react-device-detect';
 import QKeyAndBalance from "../QKeyAndBalance";
 
@@ -103,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
 
 function Swap() {
 
-
+  const classes = useStyles();
 
   const [wormbalance, setWormBalance] = useState(2);
   const [wrapbalance, setWrapBalance] = useState(0);
@@ -131,39 +126,16 @@ function Swap() {
     }, 2000);
   };
 
+
   const unwrapping = (e: any) => {
     setisUnrwapPossible("Checking")
     e.preventDefault();
     setTimeout(() => {
-      setisUnrwapPossible("Unrwap now")
+      setisUnrwapPossible("Unwrap now")
       //checkWrappedSafe()
       unwrapSafe()
     }, 10000);
   };
-
-  /*
-useEffect(() => { // internal effect
-  const timeoutID = window.setTimeout(() => {
-      setisUnrwapPossible("Unrwap now")
-  }, 7000);
-
-  return () => window.clearTimeout(timeoutID );
-}, []);
-*/
-
-  useEffect(() => { // internal effect
-    if (selectedWallet !== null || selectedWallet !== undefined) {
-      setIsSwappable(true)
-      setWsetInput(2)
-      console.log("useeffect rincé", isSwappable)
-    }
-
-  }, [isSwappable]);
-
-  /*useEffect(() => { // internal effect
-    if (wsafeInput !== 0) { setIsSwappable(true) }
-    console.log("wsafeBal", wsafeInput, "isSwappable ", isSwappable)
-  }, [wsafeInput]);*/
 
 
   const onTextChangeInput = (e: any) => setWsetInput(e.target.value);
@@ -188,9 +160,6 @@ useEffect(() => { // internal effect
   useEffect(() => {
     if (selectedWallet) {
       selectedWallet.on('connect', () => {
-        console.log("IS CONNECTED")
-        //const reRender = () => setIsSwappable(true);
-
         setIsSwappable(true)
         setConnected(true);
       });
@@ -206,8 +175,6 @@ useEffect(() => { // internal effect
 
 
 
-
-  const classes = useStyles();
   const sourceChain = useSelector(selectTransferSourceChain);
 
   const { isReady, statusMessage } = useIsWalletReady(sourceChain);
@@ -268,7 +235,6 @@ useEffect(() => { // internal effect
 
       } else { // no accounts found, create - fund and initializing a NATIVE_MINT account
         const transac = new Transaction();
-        //addLog('Creating a wrapped account');
         const newAccount = new Keypair();
 
         transac.add(
@@ -314,16 +280,13 @@ useEffect(() => { // internal effect
         //addLog('Sending signature request to wallet');
         transac.feePayer = mainPubkey;
 
-        //transac.partialSign(newAccount)
         const signed = await selectedWallet.signTransaction(transac);
-        //signed.serialize()
         signed.partialSign(newAccount)
         const signature2 = await connection2.sendRawTransaction(signed.serialize());
-        //addLog('Sending transaction succes : ' + signature2 + '');
         const confirmation = await connection2.confirmTransaction(signature2, 'singleGossip');
         console.log("Succefully created & funded a wrapped account : ", confirmation)
 
-        setswapBtnState("Unrwap")
+        setswapBtnState("Unwrap")
         setWormBalance(0)
         setWrapBalance(2)
         setWsetInput(0)
@@ -332,17 +295,11 @@ useEffect(() => { // internal effect
       }
 
     } catch (e) {
-      //addLog('ERROR : ' + e);
+      console.log('err : ' + e);
     }
   }
 
-  async function unwrapSafe(
-    /* for implementation
-    connection: Connection,
-    nativemint: PublicKey,
-    owner: PublicKey,
-    assacc: PublicKey[]*/
-  ) {
+  async function unwrapSafe() {
     try {
       const mainPubkey = selectedWallet?.publicKey;
       if (!mainPubkey || !selectedWallet) {
@@ -380,16 +337,13 @@ useEffect(() => { // internal effect
       } else {
         console.log("There is nothing to unwrap")
         setisUnrwapPossible("Check again")
-        //setWaccountStatus("Try again")
-        //setWaccountStatus("No Wrapped account found")
       }
     } catch (e) {
-      console.log(`eeeee`, e);
+      console.log(`error`, e);
     }
   }
 
   async function checkWrappedSafe() {
-
     // 1. fetch account
     // 2. filter associated NATIVE_MINT accounts
     // 3. returns accounts or empty array
@@ -426,9 +380,6 @@ useEffect(() => { // internal effect
         //go through accounts and catch native minted ones
         if (data["parsed"]["info"]["mint"] === NATIVE_MINT.toBase58()) {
           console.log("wrapped safe found on :", account.pubkey.toString());
-
-          //setWaccountStatus(`Wrapped Safe found ! : ${(<div style={{ color: "red" }}>{account.pubkey.toString()}</div>)}`)
-
           setWaccountStatus(" " + ` Wrapped Safe found !`)
           setAddressFound(account.pubkey.toString())
           setamountUnwrapped(data["parsed"]["info"]["tokenAmount"]["uiAmount"])
@@ -474,19 +425,16 @@ useEffect(() => { // internal effect
           <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
             <div>
               <Typography variant="h4">
-                {isSwapped ? ("Unrwapping") : ("Swapping")}<span style={{ color: COLORS.green, fontSize: "40px" }}>.</span>
+                {isSwapped ? ("Unwrapping") : ("Swapping")}<span style={{ color: COLORS.green, fontSize: "40px" }}>.</span>
               </Typography>
               <Typography className={classes.description}>
                 {isSwapped ? (
-                  <div>Let's unrwap them to fully land
+                  <div>Let's unwrap them to fully land
                     <br /> on blockchain with Native Safecoins.</div>
                 ) : (
                   <div>This last part will swap <b>1:1</b> your received
                     <br />wormhole tokens to Wrapped Safe.</div>
-
                 )}
-
-
               </Typography>
             </div>
             <div>
@@ -495,22 +443,10 @@ useEffect(() => { // internal effect
                   {selectedWallet && selectedWallet.connected ? (
                     <div>
                       <div>
-                        {/*shortenAddress(`${selectedWallet.publicKey}`)*/}
-
                       </div>
-                      {/*<div>{selectedWallet.publicKey?.toBase58()}.</div>
-                      <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={checkWrappedSafe}>Check Safe</button>
-                                    
-                                    <button style={{ background: "green", padding: "8px", margin: "6px" }} onClick={unwrapSafe}>unWrap</button>
-                                    <button style={{ color: "white", background: "black", padding: "8px", margin: "6px" }} onClick={() => selectedWallet.disconnect()}>
-                                        Disconnect
-                                    </button>*/}
                     </div>
                   ) : (
                     <div>
-                      {/*<button style={{ background: "green", padding: "3px", margin: "6px" }} onClick={() => setSelectedWallet(urlWallet)}>
-                        Connect to Wallet
-                      </button>*/}
                     </div>
                   )}
 
@@ -537,7 +473,6 @@ useEffect(() => { // internal effect
                             placeholder="0,00"
                             onChange={onTextChangeInput}
                             className={classes.amount}
-                            /*defaultValue="Naked input"*/
                             inputProps={{ style: { textAlign: 'right' }, 'aria-label': 'naked', 'size': 'medium' }}
                           />
                         </div>
@@ -572,23 +507,17 @@ useEffect(() => { // internal effect
                             value={wsafeInput == 0 ? (wsafeInput) :
                               (wsafeInput - 0.0020)
                             }
-                            /*defaultValue="Naked input"*/
                             inputProps={{ style: { textAlign: 'right' }, 'aria-label': 'naked', 'size': 'medium' }}
                           />
                         </div>
                       </div>
                       <div style={{ paddingTop: "8px" }}>
-                        Balance : <b>{wrapbalance}</b> {/* a update apres le clic swap */}
+                        Balance : <b>{wrapbalance}</b>
                       </div>
                       <div>
-
-
-
-
                         {selectedWallet && selectedWallet.connected ? (
 
                           <Button
-                            //color="primary"
                             disableElevation={true}
                             variant="contained"
                             size="medium"
@@ -622,37 +551,33 @@ useEffect(() => { // internal effect
 
                   ) : (
                     <div>
-
                       <div style={{ textAlignLast: "center" }}>
-                      {!isFinal ? (
-                        <div>
-                        <div style={{ paddingBottom: "20px", textAlign: "center" }}>{amountUnwrapped}{waccountStatus}</div>
-                        <div style={{ paddingBottom: "20px", textAlign: "center", fontFamily:"monospace", fontSize:"12px" }}>{addressFound}</div>
-                        
-                        <Button
-                          //color="primary"
-                          disableElevation={true}
-                          variant="contained"
-                          size="medium"
-                          disabled={!isSwappable}
-                          onClick={unwrapping}
-                          className={classes.swppbutton}
-                          startIcon={ isUnrwapPossible === "Check wrapped account" ? (<SearchOutlined/>) : (<SwapVert />) }
-                            
-                          fullWidth={false}>
-                          {isUnrwapPossible}
-                        </Button>
-                        </div>
+                        {!isFinal ? (
+                          <div>
+                            <div style={{ paddingBottom: "20px", textAlign: "center" }}>{amountUnwrapped}{waccountStatus}</div>
+                            <div style={{ paddingBottom: "20px", textAlign: "center", fontFamily: "monospace", fontSize: "12px" }}>{addressFound}</div>
+
+                            <Button
+                              disableElevation={true}
+                              variant="contained"
+                              size="medium"
+                              disabled={!isSwappable}
+                              onClick={unwrapping}
+                              className={classes.swppbutton}
+                              startIcon={isUnrwapPossible === "Check wrapped account" ? (<SearchOutlined />) : (<SwapVert />)}
+                              fullWidth={false}>
+                              {isUnrwapPossible}
+                            </Button>
+                          </div>
                         ) : (
-                          <Fade in={true}><CheckOutlined/></Fade>
-                          
-                          )}
+                          <Fade in={true}><CheckOutlined /></Fade>
+                        )}
                       </div>
                       <div style={{ paddingTop: "20px", textAlign: "center" }}>
                         {isFinal ? (
                           <div>
-                            <div>Succefully landed <b><a style={{color:"rgb(10, 194, 175)"}}>{amountUnwrapped}</a></b> Safe on Native.</div>
-                            <div>You may now want to <b><a style={{color:"rgb(10, 194, 175)"}}>stake them </a> </b>?</div>
+                            <div>Succefully landed <b><a style={{ color: "rgb(10, 194, 175)" }}>{amountUnwrapped}</a></b> Safe on Native.</div>
+                            <div>You may now want to <b><a style={{ color: "rgb(10, 194, 175)" }}>stake them </a> </b>?</div>
                           </div>
                         ) : ("")}</div>
                     </div>
@@ -663,8 +588,6 @@ useEffect(() => { // internal effect
             </div>
           </div>
           <div className={classes.spacer}></div>
-
-
         </>
       )}
     </div>
