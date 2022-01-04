@@ -2,7 +2,7 @@ import {
   CHAIN_ID_ETH,
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, Container, makeStyles, Typography } from "@material-ui/core";
+import { Button, Container, makeStyles, Paper, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback } from "react";
@@ -38,6 +38,7 @@ import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 import { isMobile } from 'react-device-detect';
 import QKeyAndBalance from "../QKeyAndBalance";
+import { COLORS } from "../../muiThemeLight";
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
   description: {
     // marginBottom: theme.spacing(4),
-    textAlign: "center",
+    textAlign: "left",
   },
   spacer: {
     height: theme.spacing(6),
@@ -122,66 +123,79 @@ function Source() {
       {isReady ? (
 
         <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-around", alignItems: "center" }}>
-
-          {/* left part */}
           <div>
-            <div style={isMobile ? {} : { width: "480px" }}>
-              {/* hidden for UX purpose for quicktransfer */}
-              <ChainSelect
-                hidden={true}
-                className={classes.selector}
-                select
-                variant="outlined"
-                fullWidth
-                value={sourceChain}
-                onChange={handleSourceChange}
-                disabled={shouldLockFields}
-                chains={CHAINS}
-              />
-              { /* to remove */ isReady || uiAmountString ? (
-                <div className={classes.transferField}>
-                  <TokenSelector disabled={shouldLockFields} />
-                </div>
-              ) : null}
-              <LowBalanceWarning chainId={sourceChain} />
-              {hasParsedTokenAccount ? (
-                <NumberTextField
+            <Typography variant="h4">
+              <div>Get started<span style={{ color: COLORS.green, fontSize: "40px" }}>.</span></div>
+            </Typography>
+            <Typography className={classes.description}>
+              <div>Select your POWR ERC-20 tokens
+                <br /> from your Ethereum wallet.</div>
+            </Typography>
+          </div>
+          {/* connected */}
+          <div>
+            <Paper elevation={5} style={{ height: "420px", width: "540px", padding: "30px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+              <div style={isMobile ? {} : { width: "auto" }}>
+                {/* hidden for UX purpose for quicktransfer */}
+                <ChainSelect
+                  hidden={true}
+                  className={classes.selector}
+                  select
                   variant="outlined"
-                  label="Amount"
                   fullWidth
-                  className={classes.transferField}
-                  value={amount}
-                  onChange={handleAmountChange}
+                  value={sourceChain}
+                  onChange={handleSourceChange}
                   disabled={shouldLockFields}
-                  onMaxClick={
-                    uiAmountString && !parsedTokenAccount.isNativeAsset
-                      ? handleMaxClick
-                      : undefined
-                  }
+                  chains={CHAINS}
                 />
-              ) : null}
+                { /* to remove */ isReady || uiAmountString ? (
+                  <div className={classes.transferField}>
+                    <TokenSelector disabled={shouldLockFields} />
+                  </div>
+                ) : null}
+                <LowBalanceWarning chainId={sourceChain} />
+                {hasParsedTokenAccount ? (
+                  <NumberTextField
+                    variant="outlined"
+                    label="Amount"
+                    fullWidth
+                    className={classes.transferField}
+                    value={amount}
+                    onChange={handleAmountChange}
+                    disabled={shouldLockFields}
+                    onMaxClick={
+                      uiAmountString && !parsedTokenAccount.isNativeAsset
+                        ? handleMaxClick
+                        : undefined
+                    }
+                  />
+                ) : null}
 
-            </div>
+              </div>
+              <div>
+                <>
+                  { /* to remove */ isReady ? (
+                    <ButtonWithLoader
+                      disabled={!isSourceComplete}
+                      onClick={handleNextClick}
+                      showLoader={false}
+                    /* error={statusMessage || error}*/
+                    >
+                      Next
+                    </ButtonWithLoader>
+                  ) : null}
+                </>
+                <div>{statusMessage || error}</div>
+              </div>
+            </Paper>
           </div>
           {/* right part */}
-          <div>
-            <>
-              { /* to remove */ isReady ? (
-                <ButtonWithLoader
-                  disabled={!isSourceComplete}
-                  onClick={handleNextClick}
-                  showLoader={false}
-                /* error={statusMessage || error}*/
-                >
-                  Next
-                </ButtonWithLoader>
-              ) : null}
-            </>
-            <div>{statusMessage || error}</div>
-          </div>
+
         </div>
       ) : (
+
         <>
+          {/* not connected */}
           <Typography variant="h4">
             Get started
           </Typography>

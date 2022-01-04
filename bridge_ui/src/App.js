@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import sPortal from "./icons/sportal.svg";
+import powerlogo from "./icons/powrlogo.svg"
 import { BarChart, HelpOutline, Send } from "@material-ui/icons";
 import clsx from "clsx";
 import { useCallback } from "react";
@@ -177,11 +178,11 @@ function App() {
               className={clsx(classes.link, classes.brandText)}
             >
               <img
-                src={sPortal}
+                src={powerlogo}
                 alt="sPortal"
                 className={classes.sportalIcon}
               />
-              sPortal
+              Solstice Staking Portal
 
             </Link>
             {CLUSTER === "mainnet" ? null : (

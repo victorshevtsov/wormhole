@@ -101,7 +101,7 @@ function QuickTransfer() {
     completed: {
       '& $line': {
         backgroundImage:
-        'linear-gradient(  95deg,rgb(39 103 129) 0%,rgb(39 103 129) 50%,rgb(39 103 129) 100%)',
+          'linear-gradient(  95deg,rgb(39 103 129) 0%,rgb(39 103 129) 50%,rgb(39 103 129) 100%)',
       },
     },
     line: {
@@ -221,9 +221,9 @@ function QuickTransfer() {
           variant="outlined"
           onClick={() => dispatch(setStep(4))}
         >
-          swap 
+          swap
         </Button>
-        </div>
+      </div>
       <Container maxWidth="md">
         <div className={classes.root}>
           <Stepper activeStep={activeStep} orientation="horizontal" connector={<ColorlibConnector />} alternativeLabel>
@@ -233,7 +233,7 @@ function QuickTransfer() {
               disabled={preventNavigation || isRedeemComplete}
             >
               <StepButton onClick={() => dispatch(setStep(0))}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}><b>ESAFE </b>Source</StepLabel>
+                <StepLabel StepIconComponent={ColorlibStepIcon}><b>POWR </b>Source</StepLabel>
               </StepButton>
               {/*<StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>*/}
             </Step>
@@ -242,7 +242,7 @@ function QuickTransfer() {
               disabled={preventNavigation || isRedeemComplete || activeStep === 0}
             >
               <StepButton onClick={() => dispatch(setStep(1))}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}>Target</StepLabel>
+                <StepLabel StepIconComponent={ColorlibStepIcon}><b>SOLSTICE </b>Target</StepLabel>
               </StepButton>
               {/*<StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>*/}
             </Step>
@@ -271,12 +271,9 @@ function QuickTransfer() {
       </Container>
       <div className={classes.spacer}></div>
       <Container maxWidth="md">
-        <Paper elevation={5} style={activeStep === 4 ?  { display:"none" }:  { padding:"40px"}}>
-          {activeStep === 0 ? <Source /> : <></>}
-          {activeStep === 1 ? <Target /> : <></>}
-          {activeStep === 2 ? <Send /> : <></>}
-          {isRedeemComplete ? <RedeemPreview /> : <></>}
-         
+        <Paper elevation={5} style={{ display: "none" }}>
+
+
           {/*
           {activeStep === 0 ? <Source /> : <SourcePreview />}
           {activeStep === 1 ? <Target /> : <TargetPreview />}
@@ -284,6 +281,10 @@ function QuickTransfer() {
           {isRedeemComplete ? <RedeemPreview /> : <Redeem />}
         */}
         </Paper>
+        {activeStep === 0 ? <Source /> : <></>}
+        {activeStep === 1 ? <Target /> : <></>}
+        {activeStep === 2 ? <Send /> : <></>}
+        {isRedeemComplete ? <RedeemPreview /> : <></>}
         {activeStep === 4 ? <Swap /> : <></>}
         <div className={activeStep === 0 ? classes.preview : classes.preview} >
           {activeStep === 0 ? <SourcePreview /> : <></>}

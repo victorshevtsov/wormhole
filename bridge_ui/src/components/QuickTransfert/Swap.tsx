@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import safeicon from "./../../icons/safecoin.svg";
+import powerlogo from "./../../icons/powrlogo.svg"
 import useIsWalletReady from "../../hooks/useIsWalletReady";
 import {
   selectTransferAmount,
@@ -380,7 +381,7 @@ function Swap() {
         //go through accounts and catch native minted ones
         if (data["parsed"]["info"]["mint"] === NATIVE_MINT.toBase58()) {
           console.log("wrapped safe found on :", account.pubkey.toString());
-          setWaccountStatus(" " + ` Wrapped Safe found !`)
+          setWaccountStatus(" " + ` Wrapped Solstice found !`)
           setAddressFound(account.pubkey.toString())
           setamountUnwrapped(data["parsed"]["info"]["tokenAmount"]["uiAmount"])
           result.push(account.pubkey)
@@ -430,10 +431,10 @@ function Swap() {
               <Typography className={classes.description}>
                 {isSwapped ? (
                   <div>Let's unwrap them to fully land
-                    <br /> on blockchain with Native Safecoins.</div>
+                    <br /> on blockchain with native Solstice.</div>
                 ) : (
                   <div>This last part will swap <b>1:1</b> your received
-                    <br />wormhole tokens to Wrapped Safe.</div>
+                    <br />wormhole tokens to Wrapped Solstice.</div>
                 )}
               </Typography>
             </div>
@@ -457,11 +458,11 @@ function Swap() {
                           <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
                             <MenuItem button={false}>
                               <ListItemIcon className={classes.listItemIcon}>
-                                <img src={safeicon} className={classes.icon} />
+                                <img src={powerlogo} className={classes.icon} />
                               </ListItemIcon>
                               <ListItemText>
-                                <div><b>wWSAFE</b></div>
-                                <div style={{ fontSize: "12px", opacity: "0.7" }}>Wormhole Wrapped Safe</div>
+                                <div><b>wPOWR</b></div>
+                                <div style={{ fontSize: "12px", opacity: "0.7" }}>Wormhole POWR</div>
                               </ListItemText>
                             </MenuItem>
                           </Button>
@@ -488,11 +489,11 @@ function Swap() {
                           <Button disableElevation={true} variant="contained" className={classes.swpbutton} >
                             <MenuItem button={false}>
                               <ListItemIcon className={classes.listItemIcon}>
-                                <img src={safeicon} className={classes.icon} />
+                                <img src={powerlogo} className={classes.icon} style={{filter: "invert(1)"}} />
                               </ListItemIcon>
                               <ListItemText>
-                                <div><b>WSAFE</b></div>
-                                <div style={{ fontSize: "12px", opacity: "0.7" }}>Wrapped Safe</div>
+                                <div><b>wSOLSTICE</b></div>
+                                <div style={{ fontSize: "12px", opacity: "0.7" }}>Wrapped SOLSTICE</div>
                               </ListItemText>
                             </MenuItem>
                           </Button>
@@ -576,7 +577,7 @@ function Swap() {
                       <div style={{ paddingTop: "20px", textAlign: "center" }}>
                         {isFinal ? (
                           <div>
-                            <div>Succefully landed <b><a style={{ color: "rgb(10, 194, 175)" }}>{amountUnwrapped}</a></b> Safe on Native.</div>
+                            <div>Succefully landed <b><a style={{ color: "rgb(10, 194, 175)" }}>{amountUnwrapped}</a></b> native Solstice.</div>
                             <div>You may now want to <b><a style={{ color: "rgb(10, 194, 175)" }}>stake them </a> </b>?</div>
                           </div>
                         ) : ("")}</div>
