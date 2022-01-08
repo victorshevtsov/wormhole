@@ -1,24 +1,31 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   getEmitterAddressEth,
+  getEmitterAddressSafecoin,
   getEmitterAddressSolana,
   getEmitterAddressTerra,
   hexToUint8Array,
   parseSequenceFromLogEth,
+  parseSequenceFromLogSafecoin,
   parseSequenceFromLogSolana,
   parseSequenceFromLogTerra,
   transferFromEth,
   transferFromEthNative,
+  transferFromSafecoin,
   transferFromSolana,
   transferFromTerra,
+  transferNativeSafe,
   transferNativeSol,
   uint8ArrayToHex,
 } from "@certusone/wormhole-sdk";
 import { Alert } from "@material-ui/lab";
-import { WalletContextState } from "@solana/wallet-adapter-react";
-import { Connection } from "@solana/web3.js";
+import { WalletContextState as SafecoinWalletContextState } from "@safecoin/wallet-adapter-react";
+import { WalletContextState as SolanaWalletContextState } from "@solana/wallet-adapter-react";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection} from "@solana/web3.js";
 import {
   ConnectedWallet,
   useConnectedWallet,
@@ -29,6 +36,7 @@ import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   selectTransferAmount,
@@ -50,6 +58,9 @@ import {
 import {
   getBridgeAddressForChain,
   getTokenBridgeAddressForChain,
+  SAFECOIN_HOST,
+  SAFE_BRIDGE_ADDRESS,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOLANA_HOST,
   SOL_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
@@ -58,7 +69,8 @@ import {
 import { isEVMChain } from "../utils/ethereum";
 import { getSignedVAAWithRetry } from "../utils/getSignedVAAWithRetry";
 import parseError from "../utils/parseError";
-import { signSendAndConfirm } from "../utils/solana";
+import { signSendAndConfirm as signSendAndConfirmSafecoin } from "../utils/safecoin";
+import { signSendAndConfirm as signSendAndConfirmSolana } from "../utils/solana";
 import { postWithFees, waitForTerraExecution } from "../utils/terra";
 import useTransferTargetAddressHex from "./useTransferTargetAddress";
 
@@ -127,10 +139,10 @@ async function evm(
   }
 }
 
-async function solana(
+async function safecoin(
   dispatch: any,
   enqueueSnackbar: any,
-  wallet: WalletContextState,
+  wallet: SafecoinWalletContextState,
   payerAddress: string, //TODO: we may not need this since we have wallet
   fromAddress: string,
   mintAddress: string,
@@ -144,7 +156,88 @@ async function solana(
 ) {
   dispatch(setIsSending(true));
   try {
-    const connection = new Connection(SOLANA_HOST, "confirmed");
+    const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+    const amountParsed = parseUnits(amount, decimals).toBigInt();
+    const originAddress = originAddressStr
+      ? zeroPad(hexToUint8Array(originAddressStr), 32)
+      : undefined;
+    const promise = isNative
+      ? transferNativeSafe(
+          connection,
+          SAFE_BRIDGE_ADDRESS,
+          SAFE_TOKEN_BRIDGE_ADDRESS,
+          payerAddress,
+          amountParsed,
+          targetAddress,
+          targetChain
+        )
+      : transferFromSafecoin(
+          connection,
+          SAFE_BRIDGE_ADDRESS,
+          SAFE_TOKEN_BRIDGE_ADDRESS,
+          payerAddress,
+          fromAddress,
+          mintAddress,
+          amountParsed,
+          targetAddress,
+          targetChain,
+          originAddress,
+          originChain
+        );
+    const transaction = await promise;
+    const txid = await signSendAndConfirmSafecoin(wallet, connection, transaction);
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Transaction confirmed</Alert>,
+    });
+    const info = await connection.getTransaction(txid);
+    if (!info) {
+      throw new Error("An error occurred while fetching the transaction info");
+    }
+    dispatch(setTransferTx({ id: txid, block: info.slot }));
+    const sequence = parseSequenceFromLogSafecoin(info);
+    const emitterAddress = await getEmitterAddressSafecoin(
+      SAFE_TOKEN_BRIDGE_ADDRESS
+    );
+    enqueueSnackbar(null, {
+      content: <Alert severity="info">Fetching VAA</Alert>,
+    });
+    const { vaaBytes } = await getSignedVAAWithRetry(
+      CHAIN_ID_SAFECOIN,
+      emitterAddress,
+      sequence
+    );
+
+    dispatch(setSignedVAAHex(uint8ArrayToHex(vaaBytes)));
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Fetched Signed VAA</Alert>,
+    });
+  } catch (e) {
+    console.error(e);
+    enqueueSnackbar(null, {
+      content: <Alert severity="error">{parseError(e)}</Alert>,
+    });
+    dispatch(setIsSending(false));
+  }
+}
+
+async function solana(
+  dispatch: any,
+  enqueueSnackbar: any,
+  wallet: SolanaWalletContextState,
+  payerAddress: string, //TODO: we may not need this since we have wallet
+  fromAddress: string,
+  mintAddress: string,
+  amount: string,
+  decimals: number,
+  targetChain: ChainId,
+  targetAddress: Uint8Array,
+  isNative: boolean,
+  originAddressStr?: string,
+  originChain?: ChainId
+) {
+  dispatch(setIsSending(true));
+  try {
+    const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
     const amountParsed = parseUnits(amount, decimals).toBigInt();
     const originAddress = originAddressStr
       ? zeroPad(hexToUint8Array(originAddressStr), 32)
@@ -173,7 +266,7 @@ async function solana(
           originChain
         );
     const transaction = await promise;
-    const txid = await signSendAndConfirm(wallet, connection, transaction);
+    const txid = await signSendAndConfirmSolana(wallet, connection, transaction);
     enqueueSnackbar(null, {
       content: <Alert severity="success">Transaction confirmed</Alert>,
     });
@@ -284,6 +377,8 @@ export function useHandleTransfer() {
   const isSending = useSelector(selectTransferIsSending);
   const isSendComplete = useSelector(selectTransferIsSendComplete);
   const { signer } = useEthereumProvider();
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const terraWallet = useConnectedWallet();
@@ -314,6 +409,30 @@ export function useHandleTransfer() {
         targetAddress,
         isNative,
         sourceChain
+      );
+    } else if (
+      sourceChain === CHAIN_ID_SAFECOIN &&
+      !!safecoinWallet &&
+      !!safePK &&
+      !!sourceAsset &&
+      !!sourceTokenPublicKey &&
+      !!targetAddress &&
+      decimals !== undefined
+    ) {
+      safecoin(
+        dispatch,
+        enqueueSnackbar,
+        safecoinWallet,
+        safePK.toString(),
+        sourceTokenPublicKey,
+        sourceAsset,
+        amount,
+        decimals,
+        targetChain,
+        targetAddress,
+        isNative,
+        originAsset,
+        originChain
       );
     } else if (
       sourceChain === CHAIN_ID_SOLANA &&
@@ -363,6 +482,8 @@ export function useHandleTransfer() {
     enqueueSnackbar,
     sourceChain,
     signer,
+    safecoinWallet,
+    safePK,
     solanaWallet,
     solPK,
     terraWallet,
