@@ -97,7 +97,7 @@ yargs(hideBin(process.argv))
         const vm = signAndEncodeVM(
             1,
             1,
-            1,
+            6,
             "0x0000000000000000000000000000000000000000000000000000000000000004",
             0,
             data,
