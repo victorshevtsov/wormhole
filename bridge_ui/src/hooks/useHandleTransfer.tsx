@@ -311,56 +311,55 @@ async function terra(
   targetChain: ChainId,
   targetAddress: Uint8Array
 ) {
-  // TODO(Victor): Fix or get rid
-  // dispatch(setIsSending(true));
-  // try {
-  //   const amountParsed = parseUnits(amount, decimals).toString();
-  //   const msgs = await transferFromTerra(
-  //     wallet.terraAddress,
-  //     TERRA_TOKEN_BRIDGE_ADDRESS,
-  //     asset,
-  //     amountParsed,
-  //     targetChain,
-  //     targetAddress
-  //   );
+  dispatch(setIsSending(true));
+  try {
+    const amountParsed = parseUnits(amount, decimals).toString();
+    const msgs = await transferFromTerra(
+      wallet.terraAddress,
+      TERRA_TOKEN_BRIDGE_ADDRESS,
+      asset,
+      amountParsed,
+      targetChain,
+      targetAddress
+    );
 
-  //   const result = await postWithFees(
-  //     wallet,
-  //     msgs,
-  //     "Wormhole - Initiate Transfer"
-  //   );
+    const result = await postWithFees(
+      wallet,
+      msgs,
+      "Wormhole - Initiate Transfer"
+    );
 
-  //   const info = await waitForTerraExecution(result);
-  //   dispatch(setTransferTx({ id: info.txhash, block: info.height }));
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="success">Transaction confirmed</Alert>,
-  //   });
-  //   const sequence = parseSequenceFromLogTerra(info);
-  //   if (!sequence) {
-  //     throw new Error("Sequence not found");
-  //   }
-  //   const emitterAddress = await getEmitterAddressTerra(
-  //     TERRA_TOKEN_BRIDGE_ADDRESS
-  //   );
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="info">Fetching VAA</Alert>,
-  //   });
-  //   const { vaaBytes } = await getSignedVAAWithRetry(
-  //     CHAIN_ID_TERRA,
-  //     emitterAddress,
-  //     sequence
-  //   );
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="success">Fetched Signed VAA</Alert>,
-  //   });
-  //   dispatch(setSignedVAAHex(uint8ArrayToHex(vaaBytes)));
-  // } catch (e) {
-  //   console.error(e);
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="error">{parseError(e)}</Alert>,
-  //   });
-  //   dispatch(setIsSending(false));
-  // }
+    const info = await waitForTerraExecution(result);
+    dispatch(setTransferTx({ id: info.txhash, block: info.height }));
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Transaction confirmed</Alert>,
+    });
+    const sequence = parseSequenceFromLogTerra(info);
+    if (!sequence) {
+      throw new Error("Sequence not found");
+    }
+    const emitterAddress = await getEmitterAddressTerra(
+      TERRA_TOKEN_BRIDGE_ADDRESS
+    );
+    enqueueSnackbar(null, {
+      content: <Alert severity="info">Fetching VAA</Alert>,
+    });
+    const { vaaBytes } = await getSignedVAAWithRetry(
+      CHAIN_ID_TERRA,
+      emitterAddress,
+      sequence
+    );
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Fetched Signed VAA</Alert>,
+    });
+    dispatch(setSignedVAAHex(uint8ArrayToHex(vaaBytes)));
+  } catch (e) {
+    console.error(e);
+    enqueueSnackbar(null, {
+      content: <Alert severity="error">{parseError(e)}</Alert>,
+    });
+    dispatch(setIsSending(false));
+  }
 }
 
 export function useHandleTransfer() {

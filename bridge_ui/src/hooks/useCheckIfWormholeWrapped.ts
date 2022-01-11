@@ -151,18 +151,17 @@ function useCheckIfWormholeWrapped(nft?: boolean) {
           }
         } catch (e) {}
       }
-      // TODO(Victor): Fix or get rid
-      // if (sourceChain === CHAIN_ID_TERRA && sourceAsset) {
-      //   try {
-      //     const lcd = new LCDClient(TERRA_HOST);
-      //     const wrappedInfo = makeStateSafe(
-      //       await getOriginalAssetTerra(lcd, sourceAsset)
-      //     );
-      //     if (!cancelled) {
-      //       dispatch(setSourceWormholeWrappedInfo(wrappedInfo));
-      //     }
-      //   } catch (e) {}
-      // }
+      if (sourceChain === CHAIN_ID_TERRA && sourceAsset) {
+        try {
+          const lcd = new LCDClient(TERRA_HOST);
+          const wrappedInfo = makeStateSafe(
+            await getOriginalAssetTerra(lcd, sourceAsset)
+          );
+          if (!cancelled) {
+            dispatch(setSourceWormholeWrappedInfo(wrappedInfo));
+          }
+        } catch (e) {}
+      }
     })();
     return () => {
       cancelled = true;

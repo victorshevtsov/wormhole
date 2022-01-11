@@ -1,6 +1,5 @@
 import { CHAIN_ID_SAFECOIN } from "@certusone/wormhole-sdk";
-// TODO(Victor): migrateTokens
-// import migrateTokensTx from "@certusone/wormhole-sdk/lib/migration/migrateTokens";
+import { migrateSafecoinTokens } from "@certusone/wormhole-sdk/lib/migration/migrateTokens";
 import getPoolAddress from "@certusone/wormhole-sdk/lib/migration/poolAddress";
 import getToCustodyAddress from "@certusone/wormhole-sdk/lib/migration/toCustodyAddress";
 import { makeStyles, Typography } from "@material-ui/core";
@@ -266,47 +265,46 @@ export default function Workflow({
     End effects
     */
 
-  // TODO(Victor): migrateTokens
-  // const migrateTokens = useCallback(async () => {
-  //   try {
-  //     setError("");
-  //     const instruction = await migrateTokensTx(
-  //       connection,
-  //       wallet?.publicKey?.toString() || "",
-  //       MIGRATION_PROGRAM_ADDRESS,
-  //       fromMint,
-  //       toMint,
-  //       fromTokenAccount || "",
-  //       toTokenAccount || "",
-  //       parseUnits(migrationAmount, fromMintDecimals).toBigInt()
-  //     );
-  //     setMigrationIsProcessing(true);
-  //     signSendAndConfirm(wallet, connection, instruction).then(
-  //       (transaction: any) => {
-  //         setMigrationIsProcessing(false);
-  //         setTransaction(transaction);
-  //       },
-  //       (error) => {
-  //         console.log(error);
-  //         setError("Could not complete the migrateTokens transaction.");
-  //         setMigrationIsProcessing(false);
-  //       }
-  //     );
-  //   } catch (e) {
-  //     console.log(e);
-  //     setError("Could not complete the migrateTokens transaction.");
-  //     setMigrationIsProcessing(false);
-  //   }
-  // }, [
-  //   connection,
-  //   fromMint,
-  //   fromTokenAccount,
-  //   migrationAmount,
-  //   toMint,
-  //   toTokenAccount,
-  //   wallet,
-  //   fromMintDecimals,
-  // ]);
+  const migrateTokens = useCallback(async () => {
+    try {
+      setError("");
+      const instruction = await migrateSafecoinTokens(
+        connection,
+        wallet?.publicKey?.toString() || "",
+        MIGRATION_PROGRAM_ADDRESS,
+        fromMint,
+        toMint,
+        fromTokenAccount || "",
+        toTokenAccount || "",
+        parseUnits(migrationAmount, fromMintDecimals).toBigInt()
+      );
+      setMigrationIsProcessing(true);
+      signSendAndConfirm(wallet, connection, instruction).then(
+        (transaction: any) => {
+          setMigrationIsProcessing(false);
+          setTransaction(transaction);
+        },
+        (error) => {
+          console.log(error);
+          setError("Could not complete the migrateTokens transaction.");
+          setMigrationIsProcessing(false);
+        }
+      );
+    } catch (e) {
+      console.log(e);
+      setError("Could not complete the migrateTokens transaction.");
+      setMigrationIsProcessing(false);
+    }
+  }, [
+    connection,
+    fromMint,
+    fromTokenAccount,
+    migrationAmount,
+    toMint,
+    toTokenAccount,
+    wallet,
+    fromMintDecimals,
+  ]);
 
   const fromParse = (amount: string) => {
     try {
@@ -480,9 +478,7 @@ export default function Workflow({
         <ButtonWithLoader
           disabled={!isReadyToTransfer || migrationIsProcessing}
           showLoader={migrationIsProcessing}
-          // TODO(Victor): migrateTokens
-          // onClick={migrateTokens}
-          onClick={()=> {}}
+          onClick={migrateTokens}
         >
           {migrationAmount && isReadyToTransfer
             ? "Migrate " + migrationAmount + " Tokens"

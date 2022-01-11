@@ -194,31 +194,30 @@ async function terra(
   wallet: ConnectedWallet,
   signedVAA: Uint8Array
 ) {
-  // TODO(Victor): Fix or get rid
-  // dispatch(setIsRedeeming(true));
-  // try {
-  //   const msg = await redeemOnTerra(
-  //     TERRA_TOKEN_BRIDGE_ADDRESS,
-  //     wallet.terraAddress,
-  //     signedVAA
-  //   );
-  //   const result = await postWithFees(
-  //     wallet,
-  //     [msg],
-  //     "Wormhole - Complete Transfer"
-  //   );
-  //   dispatch(
-  //     setRedeemTx({ id: result.result.txhash, block: result.result.height })
-  //   );
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="success">Transaction confirmed</Alert>,
-  //   });
-  // } catch (e) {
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="error">{parseError(e)}</Alert>,
-  //   });
-  //   dispatch(setIsRedeeming(false));
-  // }
+  dispatch(setIsRedeeming(true));
+  try {
+    const msg = await redeemOnTerra(
+      TERRA_TOKEN_BRIDGE_ADDRESS,
+      wallet.terraAddress,
+      signedVAA
+    );
+    const result = await postWithFees(
+      wallet,
+      [msg],
+      "Wormhole - Complete Transfer"
+    );
+    dispatch(
+      setRedeemTx({ id: result.result.txhash, block: result.result.height })
+    );
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Transaction confirmed</Alert>,
+    });
+  } catch (e) {
+    enqueueSnackbar(null, {
+      content: <Alert severity="error">{parseError(e)}</Alert>,
+    });
+    dispatch(setIsRedeeming(false));
+  }
 }
 
 export function useHandleRedeem() {

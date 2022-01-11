@@ -177,37 +177,36 @@ async function terra(
   signedVAA: Uint8Array,
   shouldUpdate: boolean
 ) {
-  // TODO(Victor): Fix or get rid
-  // dispatch(setIsCreating(true));
-  // try {
-  //   const msg = shouldUpdate
-  //     ? await updateWrappedOnTerra(
-  //         TERRA_TOKEN_BRIDGE_ADDRESS,
-  //         wallet.terraAddress,
-  //         signedVAA
-  //       )
-  //     : await createWrappedOnTerra(
-  //         TERRA_TOKEN_BRIDGE_ADDRESS,
-  //         wallet.terraAddress,
-  //         signedVAA
-  //       );
-  //   const result = await postWithFees(
-  //     wallet,
-  //     [msg],
-  //     "Wormhole - Create Wrapped"
-  //   );
-  //   dispatch(
-  //     setCreateTx({ id: result.result.txhash, block: result.result.height })
-  //   );
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="success">Transaction confirmed</Alert>,
-  //   });
-  // } catch (e) {
-  //   enqueueSnackbar(null, {
-  //     content: <Alert severity="error">{parseError(e)}</Alert>,
-  //   });
-  //   dispatch(setIsCreating(false));
-  // }
+  dispatch(setIsCreating(true));
+  try {
+    const msg = shouldUpdate
+      ? await updateWrappedOnTerra(
+          TERRA_TOKEN_BRIDGE_ADDRESS,
+          wallet.terraAddress,
+          signedVAA
+        )
+      : await createWrappedOnTerra(
+          TERRA_TOKEN_BRIDGE_ADDRESS,
+          wallet.terraAddress,
+          signedVAA
+        );
+    const result = await postWithFees(
+      wallet,
+      [msg],
+      "Wormhole - Create Wrapped"
+    );
+    dispatch(
+      setCreateTx({ id: result.result.txhash, block: result.result.height })
+    );
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Transaction confirmed</Alert>,
+    });
+  } catch (e) {
+    enqueueSnackbar(null, {
+      content: <Alert severity="error">{parseError(e)}</Alert>,
+    });
+    dispatch(setIsCreating(false));
+  }
 }
 
 export function useHandleCreateWrapped(shouldUpdate: boolean) {
