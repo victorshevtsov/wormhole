@@ -35,7 +35,7 @@ ADD proto /usr/src/proto
 
 # Solana
 
-RUN curl -sSfL https://release.solana.com/v1.7.10/install | sh
+RUN curl -sSfL https://release.solana.com/v1.8.1/install | sh
 
 RUN --mount=type=cache,target=/root/.cache \
     cargo install --version =2.0.12 spl-token-cli
