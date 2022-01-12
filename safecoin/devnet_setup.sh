@@ -92,6 +92,7 @@ retry token-bridge-client create-bridge "$nft_bridge_address" "$bridge_address"
 
 pushd /usr/src/clients/safecoin/token_bridge
 # Register the Token Bridge Endpoint on ETH
+node main.js safecoin execute_governance_vaa $(node main.js generate_register_chain_vaa 1 0xc69a1b1a65dd336bf1df6a77afb501fc25db7fc0938cb08595a9ef473265cb4f)
 node main.js safecoin execute_governance_vaa $(node main.js generate_register_chain_vaa 2 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)
 node main.js safecoin execute_governance_vaa $(node main.js generate_register_chain_vaa 3 0x000000000000000000000000784999135aaa8a3ca5914468852fdddbddd8789d)
 node main.js safecoin execute_governance_vaa $(node main.js generate_register_chain_vaa 4 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)

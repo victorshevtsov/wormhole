@@ -95,6 +95,7 @@ pushd /usr/src/clients/solana/token_bridge
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 2 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 3 0x000000000000000000000000784999135aaa8a3ca5914468852fdddbddd8789d)
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 4 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)
+node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 6 0x65615c9ab89a167582ec9ae2da9f54be9b5f28ab44e0b1533c06066e93940b7b)
 popd
 
 pushd /usr/src/clients/solana/nft_bridge
