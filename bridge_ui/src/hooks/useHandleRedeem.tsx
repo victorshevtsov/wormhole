@@ -1,17 +1,23 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   isEVMChain,
+  postVaaSafecoinWithRetry,
   postVaaSolanaWithRetry,
+  redeemAndUnwrapOnSafecoin,
   redeemAndUnwrapOnSolana,
   redeemOnEth,
   redeemOnEthNative,
+  redeemOnSafecoin,
   redeemOnSolana,
   redeemOnTerra,
 } from "@certusone/wormhole-sdk";
-import { WalletContextState } from "@solana/wallet-adapter-react";
-import { Connection } from "@solana/web3.js";
+import { WalletContextState as SafecoinWalletContextState } from "@safecoin/wallet-adapter-react";
+import { WalletContextState as SolanaWalletContextState } from "@solana/wallet-adapter-react";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection } from "@solana/web3.js";
 import {
   ConnectedWallet,
   useConnectedWallet,
@@ -21,6 +27,7 @@ import { useSnackbar } from "notistack";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import useTransferSignedVAA from "./useTransferSignedVAA";
 import {
@@ -31,14 +38,19 @@ import {
 import { setIsRedeeming, setRedeemTx } from "../store/transferSlice";
 import {
   getTokenBridgeAddressForChain,
+  MAX_VAA_UPLOAD_RETRIES_SAFECOIN,
   MAX_VAA_UPLOAD_RETRIES_SOLANA,
+  SAFECOIN_HOST,
   SOLANA_HOST,
+  SAFE_BRIDGE_ADDRESS,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOL_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
   TERRA_TOKEN_BRIDGE_ADDRESS,
 } from "../utils/consts";
 import parseError from "../utils/parseError";
-import { signSendAndConfirm } from "../utils/solana";
+import { signSendAndConfirm as signSendAndConfirmSafecoin } from "../utils/safecoin";
+import { signSendAndConfirm as signSendAndConfirmSolana } from "../utils/solana";
 import { Alert } from "@material-ui/lab";
 import { postWithFees } from "../utils/terra";
 
@@ -77,10 +89,10 @@ async function evm(
   }
 }
 
-async function solana(
+async function safecoin(
   dispatch: any,
   enqueueSnackbar: any,
-  wallet: WalletContextState,
+  wallet: SafecoinWalletContextState,
   payerAddress: string, //TODO: we may not need this since we have wallet
   signedVAA: Uint8Array,
   isNative: boolean
@@ -90,7 +102,59 @@ async function solana(
     if (!wallet.signTransaction) {
       throw new Error("wallet.signTransaction is undefined");
     }
-    const connection = new Connection(SOLANA_HOST, "confirmed");
+    const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+    await postVaaSafecoinWithRetry(
+      connection,
+      wallet.signTransaction,
+      SAFE_BRIDGE_ADDRESS,
+      payerAddress,
+      Buffer.from(signedVAA),
+      MAX_VAA_UPLOAD_RETRIES_SAFECOIN
+    );
+    // TODO: how do we retry in between these steps
+    const transaction = isNative
+      ? await redeemAndUnwrapOnSafecoin(
+          connection,
+          SAFE_BRIDGE_ADDRESS,
+          SAFE_TOKEN_BRIDGE_ADDRESS,
+          payerAddress,
+          signedVAA
+        )
+      : await redeemOnSafecoin(
+          connection,
+          SAFE_BRIDGE_ADDRESS,
+          SAFE_TOKEN_BRIDGE_ADDRESS,
+          payerAddress,
+          signedVAA
+        );
+    const txid = await signSendAndConfirmSafecoin(wallet, connection, transaction);
+    // TODO: didn't want to make an info call we didn't need, can we get the block without it by modifying the above call?
+    dispatch(setRedeemTx({ id: txid, block: 1 }));
+    enqueueSnackbar(null, {
+      content: <Alert severity="success">Transaction confirmed</Alert>,
+    });
+  } catch (e) {
+    enqueueSnackbar(null, {
+      content: <Alert severity="error">{parseError(e)}</Alert>,
+    });
+    dispatch(setIsRedeeming(false));
+  }
+}
+
+async function solana(
+  dispatch: any,
+  enqueueSnackbar: any,
+  wallet: SolanaWalletContextState,
+  payerAddress: string, //TODO: we may not need this since we have wallet
+  signedVAA: Uint8Array,
+  isNative: boolean
+) {
+  dispatch(setIsRedeeming(true));
+  try {
+    if (!wallet.signTransaction) {
+      throw new Error("wallet.signTransaction is undefined");
+    }
+    const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
     await postVaaSolanaWithRetry(
       connection,
       wallet.signTransaction,
@@ -115,7 +179,7 @@ async function solana(
           payerAddress,
           signedVAA
         );
-    const txid = await signSendAndConfirm(wallet, connection, transaction);
+    const txid = await signSendAndConfirmSolana(wallet, connection, transaction);
     // TODO: didn't want to make an info call we didn't need, can we get the block without it by modifying the above call?
     dispatch(setRedeemTx({ id: txid, block: 1 }));
     enqueueSnackbar(null, {
@@ -167,6 +231,8 @@ export function useHandleRedeem() {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const targetChain = useSelector(selectTransferTargetChain);
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const { signer } = useEthereumProvider();
@@ -177,6 +243,20 @@ export function useHandleRedeem() {
   const handleRedeemClick = useCallback(() => {
     if (isEVMChain(targetChain) && !!signer && signedVAA) {
       evm(dispatch, enqueueSnackbar, signer, signedVAA, false, targetChain);
+    } else if (
+      targetChain === CHAIN_ID_SAFECOIN &&
+      !!safecoinWallet &&
+      !!safePK &&
+      signedVAA
+    ) {
+      safecoin(
+        dispatch,
+        enqueueSnackbar,
+        safecoinWallet,
+        safePK.toString(),
+        signedVAA,
+        false
+      );
     } else if (
       targetChain === CHAIN_ID_SOLANA &&
       !!solanaWallet &&
@@ -201,6 +281,8 @@ export function useHandleRedeem() {
     targetChain,
     signer,
     signedVAA,
+    safecoinWallet,
+    safePK,
     solanaWallet,
     solPK,
     terraWallet,
@@ -210,6 +292,20 @@ export function useHandleRedeem() {
   const handleRedeemNativeClick = useCallback(() => {
     if (isEVMChain(targetChain) && !!signer && signedVAA) {
       evm(dispatch, enqueueSnackbar, signer, signedVAA, true, targetChain);
+    } else if (
+      targetChain === CHAIN_ID_SAFECOIN &&
+      !!safecoinWallet &&
+      !!safePK &&
+      signedVAA
+    ) {
+      safecoin(
+        dispatch,
+        enqueueSnackbar,
+        safecoinWallet,
+        safePK.toString(),
+        signedVAA,
+        true
+      );
     } else if (
       targetChain === CHAIN_ID_SOLANA &&
       !!solanaWallet &&
@@ -234,6 +330,8 @@ export function useHandleRedeem() {
     targetChain,
     signer,
     signedVAA,
+    safecoinWallet,
+    safePK,
     solanaWallet,
     solPK,
     terraWallet,

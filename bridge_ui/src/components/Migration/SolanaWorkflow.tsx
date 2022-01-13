@@ -1,5 +1,5 @@
 import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
-import migrateTokensTx from "@certusone/wormhole-sdk/lib/esm/migration/migrateTokens";
+import { migrateSolanaTokens } from "@certusone/wormhole-sdk/lib/esm/migration/migrateTokens";
 import getPoolAddress from "@certusone/wormhole-sdk/lib/esm/migration/poolAddress";
 import getToCustodyAddress from "@certusone/wormhole-sdk/lib/esm/migration/toCustodyAddress";
 import { makeStyles, Typography } from "@material-ui/core";
@@ -268,7 +268,7 @@ export default function Workflow({
   const migrateTokens = useCallback(async () => {
     try {
       setError("");
-      const instruction = await migrateTokensTx(
+      const instruction = await migrateSolanaTokens(
         connection,
         wallet?.publicKey?.toString() || "",
         MIGRATION_PROGRAM_ADDRESS,

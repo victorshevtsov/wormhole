@@ -94,12 +94,23 @@ local_resource(
     trigger_mode = trigger_mode,
 )
 
-# wasm
+# solana-wasm
 
 local_resource(
-    name = "wasm-gen",
+    name = "solana-wasm-gen",
     deps = ["solana"],
     dir = "solana",
+    cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
+    env = {"DOCKER_BUILDKIT": "1"},
+    trigger_mode = trigger_mode,
+)
+
+# safecoin-wasm
+
+local_resource(
+    name = "safecoin-wasm-gen",
+    deps = ["safecoin"],
+    dir = "safecoin",
     cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
     env = {"DOCKER_BUILDKIT": "1"},
     trigger_mode = trigger_mode,
@@ -153,7 +164,7 @@ k8s_yaml_with_ns(build_node_yaml())
 
 k8s_resource(
     "guardian",
-    resource_deps = ["proto-gen", "solana-devnet"],
+    resource_deps = ["proto-gen", "safecoin-devnet", "solana-devnet"],
     port_forwards = [
         port_forward(6060, name = "Debug/Status Server [:6060]", host = webHost),
         port_forward(7070, name = "Public gRPC [:7070]", host = webHost),
@@ -176,13 +187,24 @@ k8s_resource(
     trigger_mode = trigger_mode,
 )
 
-# solana client cli (used for devnet setup)
+# Safecoin client cli (used for devnet setup)
 
 docker_build(
-    ref = "bridge-client",
+    ref = "bridge-client-safecoin",
+    context = ".",
+    only = ["./proto", "./safecoin", "./ethereum", "./clients"],
+    dockerfile = "Dockerfile.client.safecoin",
+    # Ignore target folders from local (non-container) development.
+    ignore = ["./safecoin/*/target"],
+)
+
+# Solana client cli (used for devnet setup)
+
+docker_build(
+    ref = "bridge-client-solana",
     context = ".",
     only = ["./proto", "./solana", "./ethereum", "./clients"],
-    dockerfile = "Dockerfile.client",
+    dockerfile = "Dockerfile.client.solana",
     # Ignore target folders from local (non-container) development.
     ignore = ["./solana/*/target"],
 )
@@ -193,6 +215,7 @@ docker_build(
     ref = "solana-contract",
     context = "solana",
     dockerfile = "solana/Dockerfile",
+    ignore = ["./solana/**/target/"],
 )
 
 # solana local devnet
@@ -201,13 +224,36 @@ k8s_yaml_with_ns("devnet/solana-devnet.yaml")
 
 k8s_resource(
     "solana-devnet",
-    resource_deps = ["wasm-gen"],
+    resource_deps = ["solana-wasm-gen"],
     port_forwards = [
         port_forward(8899, name = "Solana RPC [:8899]", host = webHost),
         port_forward(8900, name = "Solana WS [:8900]", host = webHost),
         port_forward(9000, name = "Solana PubSub [:9000]", host = webHost),
     ],
     trigger_mode = trigger_mode,
+)
+
+# safecoin smart contract
+
+docker_build(
+    ref = "safecoin-contract",
+    context = "safecoin",
+    dockerfile = "safecoin/Dockerfile",
+    ignore = ["./safecoin/**/target/"],
+)
+
+# safecoin local devnet
+
+k8s_yaml_with_ns("devnet/safecoin-devnet.yaml")
+
+k8s_resource(
+    "safecoin-devnet",
+    resource_deps = ["safecoin-wasm-gen"],
+    port_forwards = [
+        port_forward(8328, name = "Safecoin RPC [:8328]"),
+        port_forward(8329, name = "Safecoin WS [:8329]"),
+        port_forward(19000, name = "Safecoin PubSub [:19000]"),
+    ],
 )
 
 # eth devnet
@@ -280,7 +326,7 @@ if bridge_ui:
     docker_build(
         ref = "bridge-ui",
         context = ".",
-        only = ["./ethereum", "./sdk", "./bridge_ui"],
+        only = ["./ethereum", "./sdk", "./bridge_ui", "./wallet-adapter"],
         dockerfile = "bridge_ui/Dockerfile",
         live_update = [
             sync("./bridge_ui/src", "/app/bridge_ui/src"),
@@ -291,7 +337,7 @@ if bridge_ui:
 
     k8s_resource(
         "bridge-ui",
-        resource_deps = ["proto-gen-web", "wasm-gen"],
+        resource_deps = ["proto-gen-web", "safecoin-wasm-gen", "solana-wasm-gen"],
         port_forwards = [
             port_forward(3000, name = "Bridge UI [:3000]", host = webHost),
         ],

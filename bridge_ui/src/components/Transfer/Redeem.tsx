@@ -5,9 +5,11 @@ import {
   CHAIN_ID_ETHEREUM_ROPSTEN,
   CHAIN_ID_OASIS,
   CHAIN_ID_POLYGON,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   isEVMChain,
+  WSAFE_ADDRESS,
   WSOL_ADDRESS,
 } from "@certusone/wormhole-sdk";
 import {
@@ -40,6 +42,7 @@ import {
 import ButtonWithLoader from "../ButtonWithLoader";
 import KeyAndBalance from "../KeyAndBalance";
 import SmartAddress from "../SmartAddress";
+import { SafecoinCreateAssociatedAddressAlternate } from "../SafecoinCreateAssociatedAddress";
 import { SolanaCreateAssociatedAddressAlternate } from "../SolanaCreateAssociatedAddress";
 import StepDescription from "../StepDescription";
 import TerraFeeDenomPicker from "../TerraFeeDenomPicker";
@@ -89,6 +92,10 @@ function Redeem() {
     targetChain === CHAIN_ID_OASIS &&
     targetAsset &&
     targetAsset.toLowerCase() === WROSE_ADDRESS.toLowerCase();
+  const isSafeNative =
+    targetChain === CHAIN_ID_SAFECOIN &&
+    targetAsset &&
+    targetAsset === WSAFE_ADDRESS;
   const isSolNative =
     targetChain === CHAIN_ID_SOLANA &&
     targetAsset &&
@@ -100,6 +107,7 @@ function Redeem() {
     isPolygonNative ||
     isAvaxNative ||
     isOasisNative ||
+    isSafeNative ||
     isSolNative;
   const [useNativeRedeem, setUseNativeRedeem] = useState(true);
   const toggleNativeRedeem = useCallback(() => {
@@ -129,7 +137,9 @@ function Redeem() {
           label="Automatically unwrap to native currency"
         />
       )}
-      {targetChain === CHAIN_ID_SOLANA ? (
+      {targetChain === CHAIN_ID_SAFECOIN ? (
+        <SafecoinCreateAssociatedAddressAlternate />
+      ) : targetChain === CHAIN_ID_SOLANA ? (
         <SolanaCreateAssociatedAddressAlternate />
       ) : null}
 

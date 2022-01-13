@@ -23,7 +23,7 @@ export default function SourcePreview() {
   );
   const sourceWalletAddress = useSelector(selectSourceWalletAddress);
   const sourceAmount = useSelector(selectTransferAmount);
-
+  
   const explainerContent =
     sourceChain && sourceParsedTokenAccount ? (
       <>

@@ -11,12 +11,14 @@ import {
 } from "./helpers";
 
 export interface TokenMetadataState {
+  safecoinTokenMap: DataWrapper<TokenInfo[]>;
   solanaTokenMap: DataWrapper<TokenInfo[]>;
   terraTokenMap: DataWrapper<TerraTokenMap>; //TODO make a decent type for this.
   marketsMap: DataWrapper<MarketsMap>;
 }
 
 const initialState: TokenMetadataState = {
+  safecoinTokenMap: getEmptyDataWrapper(),
   solanaTokenMap: getEmptyDataWrapper(),
   terraTokenMap: getEmptyDataWrapper(),
   marketsMap: getEmptyDataWrapper(),
@@ -26,6 +28,16 @@ export const tokenSlice = createSlice({
   name: "tokenInfos",
   initialState,
   reducers: {
+    receiveSafecoinTokenMap: (state, action: PayloadAction<TokenInfo[]>) => {
+      state.safecoinTokenMap = receiveDataWrapper(action.payload);
+    },
+    fetchSafecoinTokenMap: (state) => {
+      state.safecoinTokenMap = fetchDataWrapper();
+    },
+    errorSafecoinTokenMap: (state, action: PayloadAction<string>) => {
+      state.safecoinTokenMap = errorDataWrapper(action.payload);
+    },
+
     receiveSolanaTokenMap: (state, action: PayloadAction<TokenInfo[]>) => {
       state.solanaTokenMap = receiveDataWrapper(action.payload);
     },
@@ -61,6 +73,9 @@ export const tokenSlice = createSlice({
 });
 
 export const {
+  receiveSafecoinTokenMap,
+  fetchSafecoinTokenMap,
+  errorSafecoinTokenMap,
   receiveSolanaTokenMap,
   fetchSolanaTokenMap,
   errorSolanaTokenMap,

@@ -1,8 +1,10 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   getOriginalAssetEth,
+  getOriginalAssetSafe,
   getOriginalAssetSol,
   getOriginalAssetTerra,
   isEVMChain,
@@ -11,9 +13,11 @@ import {
 } from "@certusone/wormhole-sdk";
 import {
   getOriginalAssetEth as getOriginalAssetEthNFT,
+  getOriginalAssetSafe as getOriginalAssetSafeNFT,
   getOriginalAssetSol as getOriginalAssetSolNFT,
 } from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
-import { Connection } from "@solana/web3.js";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection} from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +36,10 @@ import { setSourceWormholeWrappedInfo as setTransferSourceWormholeWrappedInfo } 
 import {
   getNFTBridgeAddressForChain,
   getTokenBridgeAddressForChain,
+  SAFECOIN_HOST,
   SOLANA_HOST,
+  SAFE_NFT_BRIDGE_ADDRESS,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOL_NFT_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
   TERRA_HOST,
@@ -102,9 +109,30 @@ function useCheckIfWormholeWrapped(nft?: boolean) {
           dispatch(setSourceWormholeWrappedInfo(wrappedInfo));
         }
       }
+      if (sourceChain === CHAIN_ID_SAFECOIN && sourceAsset) {
+        try {
+          const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+          const wrappedInfo = makeStateSafe(
+            await (nft
+              ? getOriginalAssetSafeNFT(
+                  connection,
+                  SAFE_NFT_BRIDGE_ADDRESS,
+                  sourceAsset
+                )
+              : getOriginalAssetSafe(
+                  connection,
+                  SAFE_TOKEN_BRIDGE_ADDRESS,
+                  sourceAsset
+                ))
+          );
+          if (!cancelled) {
+            dispatch(setSourceWormholeWrappedInfo(wrappedInfo));
+          }
+        } catch (e) {}
+      }
       if (sourceChain === CHAIN_ID_SOLANA && sourceAsset) {
         try {
-          const connection = new Connection(SOLANA_HOST, "confirmed");
+          const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
           const wrappedInfo = makeStateSafe(
             await (nft
               ? getOriginalAssetSolNFT(

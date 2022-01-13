@@ -1,10 +1,12 @@
-import { PublicKey } from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
-import { ethers } from "ethers";
 import { fromUint8Array } from "js-base64";
-import { CHAIN_ID_SOLANA } from "..";
+import { PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
+import { PublicKey as SolanaPublicKey } from "@solana/web3.js";
+import { ethers } from "ethers";
+import { CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA } from "..";
 import { NFTBridge__factory } from "../ethers-contracts";
-import { importNftWasm } from "../solana/wasm";
+import { importNftWasm as importNftSafecoinWasm } from "../safecoin/wasm";
+import { importNftWasm as importNftSolanaWasm } from "../solana/wasm";
 import { ChainId } from "../utils";
 
 /**
@@ -23,6 +25,15 @@ export async function getForeignAssetEth(
 ): Promise<string | null> {
   const tokenBridge = NFTBridge__factory.connect(tokenBridgeAddress, provider);
   try {
+    if (originChain === CHAIN_ID_SAFECOIN) {
+      // All NFTs from Safecoin are minted to the same address, the originAsset is encoded as the tokenId as
+      // BigNumber.from(new PublicKey(originAsset).toBytes()).toString()
+      const addr = await tokenBridge.wrappedAsset(
+        originChain,
+        "0x0101010101010101010101010101010101010101010101010101010101010101"
+      );
+      return addr;
+    }
     if (originChain === CHAIN_ID_SOLANA) {
       // All NFTs from Solana are minted to the same address, the originAsset is encoded as the tokenId as
       // BigNumber.from(new PublicKey(originAsset).toBytes()).toString()
@@ -72,6 +83,31 @@ export async function getForeignAssetTerra(
 }
 
 /**
+ * Returns a foreign asset address on Safecoin for a provided native chain and asset address
+ * @param tokenBridgeAddress
+ * @param originChain
+ * @param originAsset zero pad to 32 bytes
+ * @returns
+ */
+export async function getForeignAssetSafe(
+  tokenBridgeAddress: string,
+  originChain: ChainId,
+  originAsset: Uint8Array,
+  tokenId: Uint8Array
+) {
+  const { wrapped_address } = await importNftSafecoinWasm();
+  const wrappedAddress = wrapped_address(
+    tokenBridgeAddress,
+    originAsset,
+    originChain,
+    tokenId
+  );
+  const wrappedAddressPK = new SafecoinPublicKey(wrappedAddress);
+  // we don't require NFT accounts to exist, so don't check them.
+  return wrappedAddressPK.toString();
+}
+
+/**
  * Returns a foreign asset address on Solana for a provided native chain and asset address
  * @param tokenBridgeAddress
  * @param originChain
@@ -84,14 +120,14 @@ export async function getForeignAssetSol(
   originAsset: Uint8Array,
   tokenId: Uint8Array
 ): Promise<string> {
-  const { wrapped_address } = await importNftWasm();
+  const { wrapped_address } = await importNftSolanaWasm();
   const wrappedAddress = wrapped_address(
     tokenBridgeAddress,
     originAsset,
     originChain,
     tokenId
   );
-  const wrappedAddressPK = new PublicKey(wrappedAddress);
+  const wrappedAddressPK = new SolanaPublicKey(wrappedAddress);
   // we don't require NFT accounts to exist, so don't check them.
   return wrappedAddressPK.toString();
 }

@@ -100,7 +100,7 @@ spec:
               path: /health
             periodSeconds: 1
         - name: setup
-          image: bridge-client
+          image: bridge-client-solana
           command:
             - /usr/src/solana/devnet_setup.sh
           readinessProbe:

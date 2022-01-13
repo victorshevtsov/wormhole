@@ -63,7 +63,8 @@ export async function getOriginalAssetToken(
         SOL_TOKEN_BRIDGE_ADDRESS,
         foreignNativeStringAddress
       );
-    } else if (foreignChain === CHAIN_ID_TERRA) {
+    }
+    else if (foreignChain === CHAIN_ID_TERRA) {
       const lcd = new LCDClient(TERRA_HOST);
       promise = await getOriginalAssetTerra(lcd, foreignNativeStringAddress);
     }

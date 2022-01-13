@@ -1,10 +1,19 @@
-import { Connection, Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection as SafecoinConnection, Keypair as SafecoinKeypair,
+  PublicKey as SafecoinPublicKey, Transaction as SafecoinTransaction
+} from "@safecoin/web3.js";
+import {
+  Connection as SolanaConnection, Keypair as SolanaKeypair,
+  PublicKey as SolanaPublicKey, Transaction as SolanaTransaction
+} from "@solana/web3.js";
 import { MsgExecuteContract } from "@terra-money/terra.js";
 import { ethers } from "ethers";
 import { isNativeDenom } from "..";
 import { Bridge__factory } from "../ethers-contracts";
-import { getBridgeFeeIx, ixFromRust } from "../solana";
-import { importTokenWasm } from "../solana/wasm";
+import { getBridgeFeeIx as getBridgeFeeIxSafecoin, ixFromRust as ixFromRustSafecoin } from "../safecoin";
+import { importTokenWasm as importTokenSafecoinWasm } from "../safecoin/wasm";
+import { getBridgeFeeIx as getBridgeFeeIxSolana, ixFromRust as ixFromRustSolana } from "../solana";
+import { importTokenWasm as importTokenSolanaWasm } from "../solana/wasm";
 import { createNonce } from "../utils/createNonce";
 
 export async function attestFromEth(
@@ -29,34 +38,34 @@ export async function attestFromTerra(
     create_asset_meta: {
       asset_info: isNativeAsset
         ? {
-            native_token: { denom: asset },
-          }
+          native_token: { denom: asset },
+        }
         : {
-            token: {
-              contract_addr: asset,
-            },
+          token: {
+            contract_addr: asset,
           },
+        },
       nonce: nonce,
     },
   });
 }
 
-export async function attestFromSolana(
-  connection: Connection,
+export async function attestFromSafecoin(
+  connection: SafecoinConnection,
   bridgeAddress: string,
   tokenBridgeAddress: string,
   payerAddress: string,
   mintAddress: string
 ) {
   const nonce = createNonce().readUInt32LE(0);
-  const transferIx = await getBridgeFeeIx(
+  const transferIx = await getBridgeFeeIxSafecoin(
     connection,
     bridgeAddress,
     payerAddress
   );
-  const { attest_ix } = await importTokenWasm();
-  const messageKey = Keypair.generate();
-  const ix = ixFromRust(
+  const { attest_ix } = await importTokenSafecoinWasm();
+  const messageKey = SafecoinKeypair.generate();
+  const ix = ixFromRustSafecoin(
     attest_ix(
       tokenBridgeAddress,
       bridgeAddress,
@@ -66,10 +75,43 @@ export async function attestFromSolana(
       nonce
     )
   );
-  const transaction = new Transaction().add(transferIx, ix);
+  const transaction = new SafecoinTransaction().add(transferIx, ix);
   const { blockhash } = await connection.getRecentBlockhash();
   transaction.recentBlockhash = blockhash;
-  transaction.feePayer = new PublicKey(payerAddress);
+  transaction.feePayer = new SafecoinPublicKey(payerAddress);
+  transaction.partialSign(messageKey);
+  return transaction;
+}
+
+export async function attestFromSolana(
+  connection: SolanaConnection,
+  bridgeAddress: string,
+  tokenBridgeAddress: string,
+  payerAddress: string,
+  mintAddress: string
+) {
+  const nonce = createNonce().readUInt32LE(0);
+  const transferIx = await getBridgeFeeIxSolana(
+    connection,
+    bridgeAddress,
+    payerAddress
+  );
+  const { attest_ix } = await importTokenSolanaWasm();
+  const messageKey = SolanaKeypair.generate();
+  const ix = ixFromRustSolana(
+    attest_ix(
+      tokenBridgeAddress,
+      bridgeAddress,
+      payerAddress,
+      messageKey.publicKey.toString(),
+      mintAddress,
+      nonce
+    )
+  );
+  const transaction = new SolanaTransaction().add(transferIx, ix);
+  const { blockhash } = await connection.getRecentBlockhash();
+  transaction.recentBlockhash = blockhash;
+  transaction.feePayer = new SolanaPublicKey(payerAddress);
   transaction.partialSign(messageKey);
   return transaction;
 }

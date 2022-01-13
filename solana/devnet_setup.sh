@@ -90,14 +90,15 @@ retry token-bridge-client create-bridge "$token_bridge_address" "$bridge_address
 # Initialize the NFT bridge
 retry token-bridge-client create-bridge "$nft_bridge_address" "$bridge_address"
 
-pushd /usr/src/clients/token_bridge
+pushd /usr/src/clients/solana/token_bridge
 # Register the Token Bridge Endpoint on ETH
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 2 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 3 0x000000000000000000000000784999135aaa8a3ca5914468852fdddbddd8789d)
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 4 0x0000000000000000000000000290FB167208Af455bB137780163b7B7a9a10C16)
+node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 9 0x65615c9ab89a167582ec9ae2da9f54be9b5f28ab44e0b1533c06066e93940b7b)
 popd
 
-pushd /usr/src/clients/nft_bridge
+pushd /usr/src/clients/solana/nft_bridge
 # Register the NFT Bridge Endpoint on ETH
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 2 0x00000000000000000000000026b4afb60d6c903165150c6f0aa14f8016be4aec)
 node main.js solana execute_governance_vaa $(node main.js generate_register_chain_vaa 3 0x000000000000000000000000288246bebae560e006d01c675ae332ac8e146bb7)

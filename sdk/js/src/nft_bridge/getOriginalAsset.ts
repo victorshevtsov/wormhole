@@ -1,11 +1,12 @@
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection as SafecoinConnection, PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
+import { Connection as SolanaConnection, PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { BigNumber, ethers } from "ethers";
 import { arrayify, zeroPad } from "ethers/lib/utils";
 import { canonicalAddress, WormholeWrappedInfo } from "..";
 import { TokenImplementation__factory } from "../ethers-contracts";
 import { importNftWasm } from "../solana/wasm";
-import { ChainId, CHAIN_ID_SOLANA, CHAIN_ID_TERRA } from "../utils";
+import { ChainId, CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA, CHAIN_ID_TERRA } from "../utils";
 import { getIsWrappedAssetEth } from "./getIsWrappedAsset";
 
 export interface WormholeWrappedNFTInfo {
@@ -45,7 +46,7 @@ export async function getOriginalAssetEth(
       isWrapped: true,
       chainId,
       assetAddress:
-        chainId === CHAIN_ID_SOLANA
+        chainId === CHAIN_ID_SAFECOIN || CHAIN_ID_SOLANA
           ? arrayify(BigNumber.from(tokenId))
           : arrayify(assetAddress),
       tokenId, // tokenIds are maintained across EVM chains
@@ -66,8 +67,8 @@ export async function getOriginalAssetEth(
  * @param mintAddress
  * @returns
  */
-export async function getOriginalAssetSol(
-  connection: Connection,
+export async function getOriginalAssetSafe(
+  connection: SafecoinConnection,
   tokenBridgeAddress: string,
   mintAddress: string
 ): Promise<WormholeWrappedNFTInfo> {
@@ -76,9 +77,62 @@ export async function getOriginalAssetSol(
     const { parse_wrapped_meta, wrapped_meta_address } = await importNftWasm();
     const wrappedMetaAddress = wrapped_meta_address(
       tokenBridgeAddress,
-      new PublicKey(mintAddress).toBytes()
+      new SafecoinPublicKey(mintAddress).toBytes()
     );
-    const wrappedMetaAddressPK = new PublicKey(wrappedMetaAddress);
+    const wrappedMetaAddressPK = new SafecoinPublicKey(wrappedMetaAddress);
+    const wrappedMetaAccountInfo = await connection.getAccountInfo(
+      wrappedMetaAddressPK
+    );
+    if (wrappedMetaAccountInfo) {
+      const parsed = parse_wrapped_meta(wrappedMetaAccountInfo.data);
+      const token_id_arr = parsed.token_id as BigUint64Array;
+      const token_id_bytes = [];
+      for (let elem of token_id_arr.reverse()) {
+        token_id_bytes.push(...bigToUint8Array(elem));
+      }
+      const token_id = BigNumber.from(token_id_bytes).toString();
+      return {
+        isWrapped: true,
+        chainId: parsed.chain,
+        assetAddress: parsed.token_address,
+        tokenId: token_id,
+      };
+    }
+  }
+  try {
+    return {
+      isWrapped: false,
+      chainId: CHAIN_ID_SAFECOIN,
+      assetAddress: new SafecoinPublicKey(mintAddress).toBytes(),
+    };
+  } catch (e) {}
+  return {
+    isWrapped: false,
+    chainId: CHAIN_ID_SAFECOIN,
+    assetAddress: new Uint8Array(32),
+  };
+}
+
+/**
+ * Returns a origin chain and asset address on {originChain} for a provided Wormhole wrapped address
+ * @param connection
+ * @param tokenBridgeAddress
+ * @param mintAddress
+ * @returns
+ */
+ export async function getOriginalAssetSol(
+  connection: SolanaConnection,
+  tokenBridgeAddress: string,
+  mintAddress: string
+): Promise<WormholeWrappedNFTInfo> {
+  if (mintAddress) {
+    // TODO: share some of this with getIsWrappedAssetSol, like a getWrappedMetaAccountAddress or something
+    const { parse_wrapped_meta, wrapped_meta_address } = await importNftWasm();
+    const wrappedMetaAddress = wrapped_meta_address(
+      tokenBridgeAddress,
+      new SolanaPublicKey(mintAddress).toBytes()
+    );
+    const wrappedMetaAddressPK = new SolanaPublicKey(wrappedMetaAddress);
     const wrappedMetaAccountInfo = await connection.getAccountInfo(
       wrappedMetaAddressPK
     );
@@ -102,7 +156,7 @@ export async function getOriginalAssetSol(
     return {
       isWrapped: false,
       chainId: CHAIN_ID_SOLANA,
-      assetAddress: new PublicKey(mintAddress).toBytes(),
+      assetAddress: new SolanaPublicKey(mintAddress).toBytes(),
     };
   } catch (e) {}
   return {

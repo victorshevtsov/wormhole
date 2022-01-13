@@ -9,6 +9,7 @@ import {
 } from "@certusone/wormhole-sdk";
 import {
   createMetaOnSolana,
+  getForeignAssetSafe,
   getForeignAssetSol,
   isNFTVAASolanaNative,
   redeemOnEth,

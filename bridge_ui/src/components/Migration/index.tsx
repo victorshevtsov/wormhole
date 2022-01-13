@@ -5,15 +5,18 @@ import {
   Paper,
   Typography,
 } from "@material-ui/core";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey as SafecoinPublicKey} from "@solana/web3.js";
+import { PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { RouteComponentProps } from "react-router-dom";
 import { getMigrationAssetMap, MIGRATION_ASSET_MAP } from "../../utils/consts";
+import SafecoinWorkflow from "./SafecoinWorkflow";
 import SolanaWorkflow from "./SolanaWorkflow";
 import { withRouter } from "react-router";
 import { COLORS } from "../../muiTheme";
 import {
   ChainId,
   CHAIN_ID_ETH,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_BSC,
 } from "@certusone/wormhole-sdk";
@@ -46,6 +49,48 @@ interface Migration extends RouteComponentProps<RouteParams> {
   chainId: ChainId;
 }
 
+const SafecoinRoot: React.FC<Migration> = (props) => {
+  const legacyAsset: string = props.match.params.legacyAsset;
+  const fromTokenAccount: string = props.match.params.fromTokenAccount;
+  const targetAsset: string | undefined = MIGRATION_ASSET_MAP.get(legacyAsset);
+
+  let fromMint: string | undefined = "";
+  let toMint: string | undefined = "";
+  let fromTokenAcct: string | undefined = "";
+  try {
+    fromMint = legacyAsset && new SafecoinPublicKey(legacyAsset).toString();
+    toMint = targetAsset && new SafecoinPublicKey(targetAsset).toString();
+    fromTokenAcct =
+      fromTokenAccount && new SafecoinPublicKey(fromTokenAccount).toString();
+  } catch (e) {}
+
+  let content = null;
+
+  if (!fromMint || !toMint) {
+    content = (
+      <Typography style={{ textAlign: "center" }}>
+        This asset is not eligible for migration.
+      </Typography>
+    );
+  } else if (!fromTokenAcct) {
+    content = (
+      <Typography style={{ textAlign: "center" }}>
+        Invalid token account.
+      </Typography>
+    );
+  } else {
+    content = (
+      <SafecoinWorkflow
+        fromMint={fromMint}
+        toMint={toMint}
+        fromTokenAccount={fromTokenAcct}
+      />
+    );
+  }
+
+  return content;
+};
+
 const SolanaRoot: React.FC<Migration> = (props) => {
   const legacyAsset: string = props.match.params.legacyAsset;
   const fromTokenAccount: string = props.match.params.fromTokenAccount;
@@ -55,10 +100,10 @@ const SolanaRoot: React.FC<Migration> = (props) => {
   let toMint: string | undefined = "";
   let fromTokenAcct: string | undefined = "";
   try {
-    fromMint = legacyAsset && new PublicKey(legacyAsset).toString();
-    toMint = targetAsset && new PublicKey(targetAsset).toString();
+    fromMint = legacyAsset && new SolanaPublicKey(legacyAsset).toString();
+    toMint = targetAsset && new SolanaPublicKey(targetAsset).toString();
     fromTokenAcct =
-      fromTokenAccount && new PublicKey(fromTokenAccount).toString();
+      fromTokenAccount && new SolanaPublicKey(fromTokenAccount).toString();
   } catch (e) {}
 
   let content = null;
@@ -113,7 +158,9 @@ const MigrationRoot: React.FC<Migration> = (props) => {
   const classes = useStyles();
   let content = null;
 
-  if (props.chainId === CHAIN_ID_SOLANA) {
+  if (props.chainId === CHAIN_ID_SAFECOIN) {
+    content = <SafecoinRoot {...props} />;
+  } else if (props.chainId === CHAIN_ID_SOLANA) {
     content = <SolanaRoot {...props} />;
   } else if (props.chainId === CHAIN_ID_ETH || props.chainId === CHAIN_ID_BSC) {
     content = <EthereumRoot {...props} />;

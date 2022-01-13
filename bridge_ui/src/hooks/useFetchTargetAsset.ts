@@ -1,9 +1,11 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   getForeignAssetEth,
   getForeignAssetSolana,
+  getForeignAssetSafecoin,
   getForeignAssetTerra,
   hexToNativeString,
   hexToUint8Array,
@@ -11,11 +13,13 @@ import {
 } from "@certusone/wormhole-sdk";
 import {
   getForeignAssetEth as getForeignAssetEthNFT,
+  getForeignAssetSafe as getForeignAssetSafeNFT,
   getForeignAssetSol as getForeignAssetSolNFT,
 } from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
 import { BigNumber } from "@ethersproject/bignumber";
 import { arrayify } from "@ethersproject/bytes";
-import { Connection } from "@solana/web3.js";
+import { Connection as SolanaConnection } from "@solana/web3.js";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
@@ -43,7 +47,10 @@ import {
   getEvmChainId,
   getNFTBridgeAddressForChain,
   getTokenBridgeAddressForChain,
+  SAFECOIN_HOST,
   SOLANA_HOST,
+  SAFE_NFT_BRIDGE_ADDRESS,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOL_NFT_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
   TERRA_HOST,
@@ -172,10 +179,47 @@ function useFetchTargetAsset(nft?: boolean) {
           }
         }
       }
+      if (targetChain === CHAIN_ID_SAFECOIN && originChain && originAsset) {
+        dispatch(setTargetAsset(fetchDataWrapper()));
+        try {
+          const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+          const asset = await (nft
+            ? getForeignAssetSafeNFT(
+                SAFE_NFT_BRIDGE_ADDRESS,
+                originChain,
+                hexToUint8Array(originAsset),
+                arrayify(BigNumber.from(tokenId || "0"))
+              )
+            : getForeignAssetSafecoin(
+                connection,
+                SAFE_TOKEN_BRIDGE_ADDRESS,
+                originChain,
+                hexToUint8Array(originAsset)
+              ));
+          if (!cancelled) {
+            dispatch(
+              setTargetAsset(
+                receiveDataWrapper({ doesExist: !!asset, address: asset })
+              )
+            );
+            setArgs();
+          }
+        } catch (e) {
+          if (!cancelled) {
+            dispatch(
+              setTargetAsset(
+                errorDataWrapper(
+                  "Unable to determine existence of wrapped asset"
+                )
+              )
+            );
+          }
+        }
+      }
       if (targetChain === CHAIN_ID_SOLANA && originChain && originAsset) {
         dispatch(setTargetAsset(fetchDataWrapper()));
         try {
-          const connection = new Connection(SOLANA_HOST, "confirmed");
+          const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
           const asset = await (nft
             ? getForeignAssetSolNFT(
                 SOL_NFT_BRIDGE_ADDRESS,

@@ -2,6 +2,7 @@ import {
   ChainId,
   CHAIN_ID_BSC,
   CHAIN_ID_ETH,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   CHAIN_ID_POLYGON,
@@ -10,7 +11,8 @@ import {
   CHAIN_ID_OASIS,
 } from "./consts";
 import { humanAddress, canonicalAddress, isNativeDenom } from "../terra";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
+import { PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { hexValue, hexZeroPad, stripZeros } from "ethers/lib/utils";
 import { arrayify, zeroPad } from "@ethersproject/bytes";
 
@@ -36,8 +38,10 @@ export const hexToNativeString = (h: string | undefined, c: ChainId) => {
   try {
     return !h
       ? undefined
+      : c === CHAIN_ID_SAFECOIN
+      ? new SafecoinPublicKey(hexToUint8Array(h)).toString()
       : c === CHAIN_ID_SOLANA
-      ? new PublicKey(hexToUint8Array(h)).toString()
+      ? new SolanaPublicKey(hexToUint8Array(h)).toString()
       : isEVMChain(c)
       ? hexZeroPad(hexValue(hexToUint8Array(h)), 20)
       : c === CHAIN_ID_TERRA
@@ -59,8 +63,10 @@ export const nativeToHexString = (
 
   if (isEVMChain(chain)) {
     return uint8ArrayToHex(zeroPad(arrayify(address), 32));
+  } else if (chain === CHAIN_ID_SAFECOIN) {
+    return uint8ArrayToHex(zeroPad(new SafecoinPublicKey(address).toBytes(), 32));
   } else if (chain === CHAIN_ID_SOLANA) {
-    return uint8ArrayToHex(zeroPad(new PublicKey(address).toBytes(), 32));
+    return uint8ArrayToHex(zeroPad(new SolanaPublicKey(address).toBytes(), 32));
   } else if (chain === CHAIN_ID_TERRA) {
     if (isNativeDenom(address)) {
       return (

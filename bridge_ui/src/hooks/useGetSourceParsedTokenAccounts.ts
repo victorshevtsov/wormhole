@@ -5,21 +5,31 @@ import {
   CHAIN_ID_ETH,
   CHAIN_ID_ETHEREUM_ROPSTEN,
   CHAIN_ID_POLYGON,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   CHAIN_ID_OASIS,
   isEVMChain,
+  WSAFE_ADDRESS,
+  WSAFE_DECIMALS,
   WSOL_ADDRESS,
   WSOL_DECIMALS,
 } from "@certusone/wormhole-sdk";
 import { ethers } from "ethers";
 import { Dispatch } from "@reduxjs/toolkit";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_PROGRAM_ID as SAFE_TOKEN_PROGRAM_ID } from "@safecoin/safe-token";
+import { TOKEN_PROGRAM_ID as SPL_TOKEN_PROGRAM_ID} from "@solana/spl-token";
 import {
-  AccountInfo,
-  Connection,
-  ParsedAccountData,
-  PublicKey,
+  AccountInfo as SafecoinAccountInfo,
+  Connection as SafecoinConnection,
+  ParsedAccountData as SafecoinParsedAccountData,
+  PublicKey as SafecoinPublicKey,
+} from "@safecoin/web3.js";
+import {
+  AccountInfo as SolanaAccountInfo,
+  Connection as SolanaConnection,
+  ParsedAccountData as SolanaParsedAccountData,
+  PublicKey as SolanaPublicKey,
 } from "@solana/web3.js";
 import axios from "axios";
 import { formatUnits } from "ethers/lib/utils";
@@ -29,6 +39,7 @@ import {
   Provider,
   useEthereumProvider,
 } from "../contexts/EthereumProviderContext";
+import { useSafecoinWallet } from "../contexts/SafecoinWalletContext";
 import { useSolanaWallet } from "../contexts/SolanaWalletContext";
 import {
   errorSourceParsedTokenAccounts as errorSourceParsedTokenAccountsNFT,
@@ -62,6 +73,7 @@ import {
   logoOverrides,
   ROPSTEN_WETH_ADDRESS,
   ROPSTEN_WETH_DECIMALS,
+  SAFECOIN_HOST,
   SOLANA_HOST,
   WAVAX_ADDRESS,
   WAVAX_DECIMALS,
@@ -75,9 +87,14 @@ import {
   WROSE_DECIMALS,
 } from "../utils/consts";
 import {
-  ExtractedMintInfo,
-  extractMintInfo,
-  getMultipleAccountsRPC,
+  ExtractedMintInfo as ExtractedSafecoinMintInfo,
+  extractMintInfo as extractSafecoinMintInfo,
+  getMultipleAccountsRPC as getMultipleSafecoinAccountsRPC,
+} from "../utils/safecoin";
+import {
+  ExtractedMintInfo as ExtractedSolanaMintInfo,
+  extractMintInfo as extractSolanaMintInfo,
+  getMultipleAccountsRPC as getMultipleSolanaAccountsRPC,
 } from "../utils/solana";
 import avaxIcon from "../icons/avax.svg";
 import bnbIcon from "../icons/bnb.svg";
@@ -149,9 +166,23 @@ export function createNFTParsedTokenAccount(
   };
 }
 
+const createParsedSafecoinTokenAccountFromInfo = (
+  pubkey: SafecoinPublicKey,
+  item: SafecoinAccountInfo<SafecoinParsedAccountData>
+): ParsedTokenAccount => {
+  return {
+    publicKey: pubkey?.toString(),
+    mintKey: item.data.parsed?.info?.mint?.toString(),
+    amount: item.data.parsed?.info?.tokenAmount?.amount,
+    decimals: item.data.parsed?.info?.tokenAmount?.decimals,
+    uiAmount: item.data.parsed?.info?.tokenAmount?.uiAmount,
+    uiAmountString: item.data.parsed?.info?.tokenAmount?.uiAmountString,
+  };
+};
+
 const createParsedTokenAccountFromInfo = (
-  pubkey: PublicKey,
-  item: AccountInfo<ParsedAccountData>
+  pubkey: SolanaPublicKey,
+  item: SolanaAccountInfo<SolanaParsedAccountData>
 ): ParsedTokenAccount => {
   return {
     publicKey: pubkey?.toString(),
@@ -180,13 +211,39 @@ const createParsedTokenAccountFromCovalent = (
   };
 };
 
-const createNativeSolParsedTokenAccount = async (
-  connection: Connection,
+const createNativeSafeParsedTokenAccount = async (
+  connection: SafecoinConnection,
   walletAddress: string
 ) => {
   // const walletAddress = "H69q3Q8E74xm7swmMQpsJLVp2Q9JuBwBbxraAMX5Drzm" // known solana mainnet wallet with tokens
-  const fetchAccounts = await getMultipleAccountsRPC(connection, [
-    new PublicKey(walletAddress),
+  const fetchAccounts = await getMultipleSafecoinAccountsRPC(connection, [
+    new SafecoinPublicKey(walletAddress),
+  ]);
+  if (!fetchAccounts || !fetchAccounts.length || !fetchAccounts[0]) {
+    return null;
+  } else {
+    return createParsedTokenAccount(
+      walletAddress, //publicKey
+      WSAFE_ADDRESS, //Mint key
+      fetchAccounts[0].lamports.toString(), //amount
+      WSAFE_DECIMALS, //decimals, 9
+      parseFloat(formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS)),
+      formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS).toString(),
+      "SAFE",
+      "Safecoin",
+      undefined, //TODO logo. It's in the solana token map, so we could potentially use that URL.
+      true
+    );
+  }
+};
+
+const createNativeSolParsedTokenAccount = async (
+  connection: SolanaConnection,
+  walletAddress: string
+) => {
+  // const walletAddress = "H69q3Q8E74xm7swmMQpsJLVp2Q9JuBwBbxraAMX5Drzm" // known solana mainnet wallet with tokens
+  const fetchAccounts = await getMultipleSolanaAccountsRPC(connection, [
+    new SolanaPublicKey(walletAddress),
   ]);
   if (!fetchAccounts || !fetchAccounts.length || !fetchAccounts[0]) {
     return null;
@@ -438,20 +495,76 @@ const getEthereumAccountsCovalent = async (
   }
 };
 
-const getSolanaParsedTokenAccounts = async (
+const getSafecoinParsedTokenAccounts = async (
   walletAddress: string,
   dispatch: Dispatch,
   nft: boolean
 ) => {
-  const connection = new Connection(SOLANA_HOST, "confirmed");
+  const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
   dispatch(
     nft ? fetchSourceParsedTokenAccountsNFT() : fetchSourceParsedTokenAccounts()
   );
   try {
     //No matter what, we retrieve the spl tokens associated to this address.
     let splParsedTokenAccounts = await connection
-      .getParsedTokenAccountsByOwner(new PublicKey(walletAddress), {
-        programId: new PublicKey(TOKEN_PROGRAM_ID),
+      .getParsedTokenAccountsByOwner(new SafecoinPublicKey(walletAddress), {
+        programId: new SafecoinPublicKey(SAFE_TOKEN_PROGRAM_ID),
+      })
+      .then((result) => {
+        return result.value.map((item) =>
+          createParsedSafecoinTokenAccountFromInfo(item.pubkey, item.account)
+        );
+      });
+
+    // uncomment to test token account in picker, useful for debugging
+    // splParsedTokenAccounts.push({
+    //   amount: "1",
+    //   decimals: 8,
+    //   mintKey: "2Xf2yAXJfg82sWwdLUo2x9mZXy6JCdszdMZkcF1Hf4KV",
+    //   publicKey: "2Xf2yAXJfg82sWwdLUo2x9mZXy6JCdszdMZkcF1Hf4KV",
+    //   uiAmount: 1,
+    //   uiAmountString: "1",
+    //   isNativeAsset: false,
+    // });
+
+    if (nft) {
+      //In the case of NFTs, we are done, and we set the accounts in redux
+      dispatch(receiveSourceParsedTokenAccountsNFT(splParsedTokenAccounts));
+    } else {
+      //In the transfer case, we also pull the SOL balance of the wallet, and prepend it at the beginning of the list.
+      const nativeAccount = await createNativeSafeParsedTokenAccount(
+        connection,
+        walletAddress
+      );
+      if (nativeAccount !== null) {
+        splParsedTokenAccounts.unshift(nativeAccount);
+      }
+      dispatch(receiveSourceParsedTokenAccounts(splParsedTokenAccounts));
+    }
+  } catch (e) {
+    console.error(e);
+    dispatch(
+      nft
+        ? errorSourceParsedTokenAccountsNFT("Failed to load NFT metadata")
+        : errorSourceParsedTokenAccounts("Failed to load token metadata.")
+    );
+  }
+};
+
+const getSolanaParsedTokenAccounts = async (
+  walletAddress: string,
+  dispatch: Dispatch,
+  nft: boolean
+) => {
+  const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
+  dispatch(
+    nft ? fetchSourceParsedTokenAccountsNFT() : fetchSourceParsedTokenAccounts()
+  );
+  try {
+    //No matter what, we retrieve the spl tokens associated to this address.
+    let splParsedTokenAccounts = await connection
+      .getParsedTokenAccountsByOwner(new SolanaPublicKey(walletAddress), {
+        programId: new SolanaPublicKey(SPL_TOKEN_PROGRAM_ID),
       })
       .then((result) => {
         return result.value.map((item) =>
@@ -510,6 +623,10 @@ function useGetAvailableTokens(nft: boolean = false) {
   const lookupChain = useSelector(
     nft ? selectNFTSourceChain : selectTransferSourceChain
   );
+
+  const safecoinWallet = useSafecoinWallet();
+  const safePK = safecoinWallet?.publicKey;
+
   const solanaWallet = useSolanaWallet();
   const solPK = solanaWallet?.publicKey;
   const { provider, signerAddress } = useEthereumProvider();
@@ -526,8 +643,18 @@ function useGetAvailableTokens(nft: boolean = false) {
     string | undefined
   >(undefined);
 
+  const [safecoinMintAccounts, setSafecoinMintAccounts] = useState<
+    Map<string, ExtractedSafecoinMintInfo | null> | undefined
+  >(undefined);
+  const [safecoinMintAccountsLoading, setSafecoinMintAccountsLoading] =
+    useState(false);
+  const [safecoinMintAccountsError, setSafecoinMintAccountsError] = useState<
+    string | undefined
+  >(undefined);
+
+
   const [solanaMintAccounts, setSolanaMintAccounts] = useState<
-    Map<string, ExtractedMintInfo | null> | undefined
+    Map<string, ExtractedSolanaMintInfo | null> | undefined
   >(undefined);
   const [solanaMintAccountsLoading, setSolanaMintAccountsLoading] =
     useState(false);
@@ -540,6 +667,8 @@ function useGetAvailableTokens(nft: boolean = false) {
   );
   const currentSourceWalletAddress: string | undefined = isEVMChain(lookupChain)
     ? signerAddress
+    : lookupChain === CHAIN_ID_SAFECOIN
+    ? safePK?.toString()
     : lookupChain === CHAIN_ID_SOLANA
     ? solPK?.toString()
     : undefined;
@@ -589,6 +718,19 @@ function useGetAvailableTokens(nft: boolean = false) {
     resetSourceAccounts,
   ]);
 
+  //Safecoin accountinfos load
+  useEffect(() => {
+    if (lookupChain === CHAIN_ID_SAFECOIN && safePK) {
+      if (
+        !(tokenAccounts.data || tokenAccounts.isFetching || tokenAccounts.error)
+      ) {
+        getSafecoinParsedTokenAccounts(safePK.toString(), dispatch, nft);
+      }
+    }
+
+    return () => {};
+  }, [dispatch, safecoinWallet, lookupChain, safePK, tokenAccounts, nft]);
+
   //Solana accountinfos load
   useEffect(() => {
     if (lookupChain === CHAIN_ID_SOLANA && solPK) {
@@ -601,6 +743,59 @@ function useGetAvailableTokens(nft: boolean = false) {
 
     return () => {};
   }, [dispatch, solanaWallet, lookupChain, solPK, tokenAccounts, nft]);
+
+  //Safecoin Mint Accounts lookup
+  useEffect(() => {
+    if (lookupChain !== CHAIN_ID_SAFECOIN || !tokenAccounts.data?.length) {
+      return () => {};
+    }
+
+    let cancelled = false;
+    setSafecoinMintAccountsLoading(true);
+    setSafecoinMintAccountsError(undefined);
+    const mintAddresses = tokenAccounts.data.map((x) => x.mintKey);
+    //This is a known wormhole v1 token on testnet
+    // mintAddresses.push("4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn");
+    //SOLT devnet token
+    // mintAddresses.push("2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ");
+    // bad monkey "NFT"
+    // mintAddresses.push("5FJeEJR8576YxXFdGRAu4NBBFcyfmtjsZrXHSsnzNPdS");
+    // degenerate monkey NFT
+    // mintAddresses.push("EzYsbigNNGbNuANRJ3mnnyJYU2Bk7mBYVsxuonUwAX7r");
+
+    const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+    getMultipleSafecoinAccountsRPC(
+      connection,
+      mintAddresses.map((x) => new SafecoinPublicKey(x))
+    ).then(
+      (results) => {
+        if (!cancelled) {
+          const output = new Map<string, ExtractedSafecoinMintInfo | null>();
+
+          results.forEach((result, index) =>
+            output.set(
+              mintAddresses[index],
+              (result && extractSafecoinMintInfo(result)) || null
+            )
+          );
+
+          setSafecoinMintAccounts(output);
+          setSafecoinMintAccountsLoading(false);
+        }
+      },
+      (error) => {
+        if (!cancelled) {
+          setSafecoinMintAccounts(undefined);
+          setSafecoinMintAccountsLoading(false);
+          setSafecoinMintAccountsError(
+            "Could not retrieve Safecoin mint accounts."
+          );
+        }
+      }
+    );
+
+    return () => (cancelled = true);
+  }, [tokenAccounts.data, lookupChain]);
 
   //Solana Mint Accounts lookup
   useEffect(() => {
@@ -621,19 +816,19 @@ function useGetAvailableTokens(nft: boolean = false) {
     // degenerate monkey NFT
     // mintAddresses.push("EzYsbigNNGbNuANRJ3mnnyJYU2Bk7mBYVsxuonUwAX7r");
 
-    const connection = new Connection(SOLANA_HOST, "confirmed");
-    getMultipleAccountsRPC(
+    const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
+    getMultipleSolanaAccountsRPC(
       connection,
-      mintAddresses.map((x) => new PublicKey(x))
+      mintAddresses.map((x) => new SolanaPublicKey(x))
     ).then(
       (results) => {
         if (!cancelled) {
-          const output = new Map<string, ExtractedMintInfo | null>();
+          const output = new Map<string, ExtractedSolanaMintInfo | null>();
 
           results.forEach((result, index) =>
             output.set(
               mintAddresses[index],
-              (result && extractMintInfo(result)) || null
+              (result && extractSolanaMintInfo(result)) || null
             )
           );
 
@@ -949,7 +1144,18 @@ function useGetAvailableTokens(nft: boolean = false) {
     tokenAccounts,
   ]);
 
-  return lookupChain === CHAIN_ID_SOLANA
+  return lookupChain === CHAIN_ID_SAFECOIN
+    ? {
+        tokenAccounts: tokenAccounts,
+        mintAccounts: {
+          data: safecoinMintAccounts,
+          isFetching: safecoinMintAccountsLoading,
+          error: safecoinMintAccountsError,
+          receivedAt: null, //TODO
+        },
+        resetAccounts: resetSourceAccounts,
+      }
+    : lookupChain === CHAIN_ID_SOLANA
     ? {
         tokenAccounts: tokenAccounts,
         mintAccounts: {
