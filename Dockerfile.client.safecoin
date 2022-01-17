@@ -35,6 +35,10 @@ ADD proto /usr/src/proto
 
 # Safecoin
 
+# RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+#     curl -sL https://github.com/Fair-Exchange/Safecoin/releases/download/v.18.12/Safecoin-Linux-1.8.12.tar.gz | \
+#     tar -xzv -C /root/.local/share/safecoin/install/active_release/bin --strip-components=1
+
 # RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
 
 # RUN git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin-install && \

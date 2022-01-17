@@ -14,6 +14,10 @@ RUN apt-get update && \
     rustup component add rustfmt && \
     rustup default nightly-2021-08-01
 
+# RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+#     curl -sL https://github.com/Fair-Exchange/Safecoin/releases/download/v.18.12/Safecoin-Linux-1.8.12.tar.gz | \
+#     tar -xzv -C /root/.local/share/safecoin/install/active_release/bin --strip-components=1
+
 # RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
 
 # RUN --mount=type=cache,target=/root/.cache \
@@ -32,6 +36,9 @@ RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
 
 ENV PATH="/root/.local/share/safecoin/install/active_release/bin:$PATH"
 
+# RUN git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/Safecoin
+# RUN cp -r /usr/src/Safecoin/sdk /root/.local/share/safecoin/install/active_release/bin
+
 RUN mkdir -p /opt/safecoin/deps
 
 # Safecoin does a questionable download at the beginning of a *first* build-bpf call. Trigger and layer-cache it explicitly.
@@ -39,7 +46,9 @@ RUN cargo init --lib /tmp/decoy-crate && \
     cd /tmp/decoy-crate && cargo build-bpf && \
     rm -rf /tmp/decoy-crate
 
-RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library
+RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library && \
+    cd /usr/src/safecoin-program-library && \
+    git checkout 830e1f0e7b5b8cfafabb28b15c02dcada2ece77e
 
 RUN --mount=type=cache,id=safecoin-program-library,target=/usr/src/safecoin-program-library/target \
     cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/token/program/Cargo.toml" && \
