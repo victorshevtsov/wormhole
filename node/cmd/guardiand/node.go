@@ -9,7 +9,6 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/certusone/wormhole/node/pkg/db"
 	"github.com/certusone/wormhole/node/pkg/notify/discord"
