@@ -86,24 +86,24 @@ local_resource(
     trigger_mode = trigger_mode,
 )
 
-local_resource(
-    name = "teal-gen",
-    deps = ["staging/algorand/teal"],
-    cmd = "tilt docker build -- --target teal-export -f Dockerfile.teal -o type=local,dest=. .",
-    env = {"DOCKER_BUILDKIT": "1"},
-    trigger_mode = trigger_mode,
-)
+# local_resource(
+#     name = "teal-gen",
+#     deps = ["staging/algorand/teal"],
+#     cmd = "tilt docker build -- --target teal-export -f Dockerfile.teal -o type=local,dest=. .",
+#     env = {"DOCKER_BUILDKIT": "1"},
+#     trigger_mode = trigger_mode,
+# )
 
 # solana-wasm
 
-local_resource(
-    name = "solana-wasm-gen",
-    deps = ["solana"],
-    dir = "solana",
-    cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
-    env = {"DOCKER_BUILDKIT": "1"},
-    trigger_mode = trigger_mode,
-)
+# local_resource(
+#     name = "solana-wasm-gen",
+#     deps = ["solana"],
+#     dir = "solana",
+#     cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
+#     env = {"DOCKER_BUILDKIT": "1"},
+#     trigger_mode = trigger_mode,
+# )
 
 # safecoin-wasm
 
@@ -164,7 +164,8 @@ k8s_yaml_with_ns(build_node_yaml())
 
 k8s_resource(
     "guardian",
-    resource_deps = ["proto-gen", "safecoin-devnet", "solana-devnet"],
+    resource_deps = ["proto-gen", "safecoin-devnet"],
+    # resource_deps = ["proto-gen", "safecoin-devnet", "solana-devnet"],
     port_forwards = [
         port_forward(6060, name = "Debug/Status Server [:6060]", host = webHost),
         port_forward(7070, name = "Public gRPC [:7070]", host = webHost),
@@ -200,38 +201,38 @@ docker_build(
 
 # Solana client cli (used for devnet setup)
 
-docker_build(
-    ref = "bridge-client-solana",
-    context = ".",
-    only = ["./proto", "./solana", "./ethereum", "./clients"],
-    dockerfile = "Dockerfile.client.solana",
-    # Ignore target folders from local (non-container) development.
-    ignore = ["./solana/*/target"],
-)
+# docker_build(
+#     ref = "bridge-client-solana",
+#     context = ".",
+#     only = ["./proto", "./solana", "./ethereum", "./clients"],
+#     dockerfile = "Dockerfile.client.solana",
+#     # Ignore target folders from local (non-container) development.
+#     ignore = ["./solana/*/target"],
+# )
 
 # solana smart contract
 
-docker_build(
-    ref = "solana-contract",
-    context = "solana",
-    dockerfile = "solana/Dockerfile",
-    ignore = ["./solana/**/target/"],
-)
+# docker_build(
+#     ref = "solana-contract",
+#     context = "solana",
+#     dockerfile = "solana/Dockerfile",
+#     ignore = ["./solana/**/target/"],
+# )
 
 # solana local devnet
 
-k8s_yaml_with_ns("devnet/solana-devnet.yaml")
+# k8s_yaml_with_ns("devnet/solana-devnet.yaml")
 
-k8s_resource(
-    "solana-devnet",
-    resource_deps = ["solana-wasm-gen"],
-    port_forwards = [
-        port_forward(8899, name = "Solana RPC [:8899]", host = webHost),
-        port_forward(8900, name = "Solana WS [:8900]", host = webHost),
-        port_forward(9000, name = "Solana PubSub [:9000]", host = webHost),
-    ],
-    trigger_mode = trigger_mode,
-)
+# k8s_resource(
+#     "solana-devnet",
+#     resource_deps = ["solana-wasm-gen"],
+#     port_forwards = [
+#         port_forward(8899, name = "Solana RPC [:8899]", host = webHost),
+#         port_forward(8900, name = "Solana WS [:8900]", host = webHost),
+#         port_forward(9000, name = "Solana PubSub [:9000]", host = webHost),
+#     ],
+#     trigger_mode = trigger_mode,
+# )
 
 # safecoin smart contract
 
@@ -314,13 +315,13 @@ k8s_resource(
     trigger_mode = trigger_mode,
 )
 
-k8s_resource(
-    "eth-devnet2",
-    port_forwards = [
-        port_forward(8546, name = "Ganache RPC [:8546]", host = webHost),
-    ],
-    trigger_mode = trigger_mode,
-)
+# k8s_resource(
+#     "eth-devnet2",
+#     port_forwards = [
+#         port_forward(8546, name = "Ganache RPC [:8546]", host = webHost),
+#     ],
+#     trigger_mode = trigger_mode,
+# )
 
 if bridge_ui:
     docker_build(
@@ -345,23 +346,23 @@ if bridge_ui:
     )
 
 # algorand
-k8s_yaml_with_ns("devnet/algorand.yaml")
+# k8s_yaml_with_ns("devnet/algorand.yaml")
 
-docker_build(
-    ref = "algorand",
-    context = "third_party/algorand",
-    dockerfile = "third_party/algorand/Dockerfile",
-)
+# docker_build(
+#     ref = "algorand",
+#     context = "third_party/algorand",
+#     dockerfile = "third_party/algorand/Dockerfile",
+# )
 
-k8s_resource(
-    "algorand",
-    resource_deps = ["teal-gen"],
-    port_forwards = [
-        port_forward(4001, name = "Algorand RPC [:4001]", host = webHost),
-        port_forward(4002, name = "Algorand KMD [:4002]", host = webHost),
-    ],
-    trigger_mode = trigger_mode,
-)
+# k8s_resource(
+#     "algorand",
+#     resource_deps = ["teal-gen"],
+#     port_forwards = [
+#         port_forward(4001, name = "Algorand RPC [:4001]", host = webHost),
+#         port_forward(4002, name = "Algorand KMD [:4002]", host = webHost),
+#     ],
+#     trigger_mode = trigger_mode,
+# )
 
 # e2e
 if e2e:
@@ -442,31 +443,31 @@ if explorer:
 
 # terra devnet
 
-docker_build(
-    ref = "terra-image",
-    context = "./terra/devnet",
-    dockerfile = "terra/devnet/Dockerfile",
-)
+# docker_build(
+#     ref = "terra-image",
+#     context = "./terra/devnet",
+#     dockerfile = "terra/devnet/Dockerfile",
+# )
 
-docker_build(
-    ref = "terra-contracts",
-    context = "./terra",
-    dockerfile = "./terra/Dockerfile",
-)
+# docker_build(
+#     ref = "terra-contracts",
+#     context = "./terra",
+#     dockerfile = "./terra/Dockerfile",
+# )
 
-k8s_yaml_with_ns("devnet/terra-devnet.yaml")
+# k8s_yaml_with_ns("devnet/terra-devnet.yaml")
 
-k8s_resource(
-    "terra-terrad",
-    port_forwards = [
-        port_forward(26657, name = "Terra RPC [:26657]", host = webHost),
-        port_forward(1317, name = "Terra LCD [:1317]", host = webHost),
-    ],
-    trigger_mode = trigger_mode,
-)
+# k8s_resource(
+#     "terra-terrad",
+#     port_forwards = [
+#         port_forward(26657, name = "Terra RPC [:26657]", host = webHost),
+#         port_forward(1317, name = "Terra LCD [:1317]", host = webHost),
+#     ],
+#     trigger_mode = trigger_mode,
+# )
 
-k8s_resource(
-    "terra-fcd",
-    port_forwards = [port_forward(3060, name = "Terra FCD [:3060]", host = webHost)],
-    trigger_mode = trigger_mode,
-)
+# k8s_resource(
+#     "terra-fcd",
+#     port_forwards = [port_forward(3060, name = "Terra FCD [:3060]", host = webHost)],
+#     trigger_mode = trigger_mode,
+# )
