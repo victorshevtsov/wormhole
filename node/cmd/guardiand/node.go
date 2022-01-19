@@ -32,7 +32,7 @@ import (
 	"github.com/certusone/wormhole/node/pkg/readiness"
 	"github.com/certusone/wormhole/node/pkg/reporter"
 	"github.com/certusone/wormhole/node/pkg/safecoin"
-	solana "github.com/certusone/wormhole/node/pkg/solana"
+	// solana "github.com/certusone/wormhole/node/pkg/solana"
 	"github.com/certusone/wormhole/node/pkg/supervisor"
 	"github.com/certusone/wormhole/node/pkg/vaa"
 	eth_common "github.com/ethereum/go-ethereum/common"
@@ -42,9 +42,9 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
-	"github.com/certusone/wormhole/node/pkg/terra"
+	// "github.com/certusone/wormhole/node/pkg/terra"
 
-	"github.com/certusone/wormhole/node/pkg/algorand"
+	// "github.com/certusone/wormhole/node/pkg/algorand"
 
 	ipfslog "github.com/ipfs/go-log/v2"
 )
@@ -63,40 +63,40 @@ var (
 	statusAddr *string
 
 	guardianKeyPath *string
-	solanaContract  *string
+	// solanaContract  *string
 
 	ethRPC      *string
 	ethContract *string
 
-	bscRPC      *string
-	bscContract *string
+	// bscRPC      *string
+	// bscContract *string
 
-	polygonRPC      *string
-	polygonContract *string
+	// polygonRPC      *string
+	// polygonContract *string
 
-	ethRopstenRPC      *string
-	ethRopstenContract *string
+	// ethRopstenRPC      *string
+	// ethRopstenContract *string
 
-	avalancheRPC      *string
-	avalancheContract *string
+	// avalancheRPC      *string
+	// avalancheContract *string
 
-	oasisRPC      *string
-	oasisContract *string
+	// oasisRPC      *string
+	// oasisContract *string
 
-	terraWS       *string
-	terraLCD      *string
-	terraContract *string
+	// terraWS       *string
+	// terraLCD      *string
+	// terraContract *string
 
-	algorandRPC      *string
-	algorandToken    *string
-	algorandContract *string
+	// algorandRPC      *string
+	// algorandToken    *string
+	// algorandContract *string
 
 	safecoinWsRPC    *string
 	safecoinRPC      *string
 	safecoinContract *string
 
-	solanaWsRPC *string
-	solanaRPC   *string
+	// solanaWsRPC *string
+	// solanaRPC   *string
 
 	logLevel *string
 
@@ -141,36 +141,36 @@ func init() {
 	dataDir = NodeCmd.Flags().String("dataDir", "", "Data directory")
 
 	guardianKeyPath = NodeCmd.Flags().String("guardianKey", "", "Path to guardian key (required)")
-	solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
+	// solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
 
 	ethRPC = NodeCmd.Flags().String("ethRPC", "", "Ethereum RPC URL")
 	ethContract = NodeCmd.Flags().String("ethContract", "", "Ethereum contract address")
 
-	bscRPC = NodeCmd.Flags().String("bscRPC", "", "Binance Smart Chain RPC URL")
-	bscContract = NodeCmd.Flags().String("bscContract", "", "Binance Smart Chain contract address")
+	// bscRPC = NodeCmd.Flags().String("bscRPC", "", "Binance Smart Chain RPC URL")
+	// bscContract = NodeCmd.Flags().String("bscContract", "", "Binance Smart Chain contract address")
 
-	polygonRPC = NodeCmd.Flags().String("polygonRPC", "", "Polygon RPC URL")
-	polygonContract = NodeCmd.Flags().String("polygonContract", "", "Polygon contract address")
+	// polygonRPC = NodeCmd.Flags().String("polygonRPC", "", "Polygon RPC URL")
+	// polygonContract = NodeCmd.Flags().String("polygonContract", "", "Polygon contract address")
 
-	ethRopstenRPC = NodeCmd.Flags().String("ethRopstenRPC", "", "Ethereum Ropsten RPC URL")
-	ethRopstenContract = NodeCmd.Flags().String("ethRopstenContract", "", "Ethereum Ropsten contract address")
+	// ethRopstenRPC = NodeCmd.Flags().String("ethRopstenRPC", "", "Ethereum Ropsten RPC URL")
+	// ethRopstenContract = NodeCmd.Flags().String("ethRopstenContract", "", "Ethereum Ropsten contract address")
 
-	avalancheRPC = NodeCmd.Flags().String("avalancheRPC", "", "Avalanche RPC URL")
-	avalancheContract = NodeCmd.Flags().String("avalancheContract", "", "Avalanche contract address")
+	// avalancheRPC = NodeCmd.Flags().String("avalancheRPC", "", "Avalanche RPC URL")
+	// avalancheContract = NodeCmd.Flags().String("avalancheContract", "", "Avalanche contract address")
 
-	oasisRPC = NodeCmd.Flags().String("oasisRPC", "", "Oasis RPC URL")
-	oasisContract = NodeCmd.Flags().String("oasisContract", "", "Oasis contract address")
+	// oasisRPC = NodeCmd.Flags().String("oasisRPC", "", "Oasis RPC URL")
+	// oasisContract = NodeCmd.Flags().String("oasisContract", "", "Oasis contract address")
 
-	terraWS = NodeCmd.Flags().String("terraWS", "", "Path to terrad root for websocket connection")
-	terraLCD = NodeCmd.Flags().String("terraLCD", "", "Path to LCD service root for http calls")
-	terraContract = NodeCmd.Flags().String("terraContract", "", "Wormhole contract address on Terra blockchain")
+	// terraWS = NodeCmd.Flags().String("terraWS", "", "Path to terrad root for websocket connection")
+	// terraLCD = NodeCmd.Flags().String("terraLCD", "", "Path to LCD service root for http calls")
+	// terraContract = NodeCmd.Flags().String("terraContract", "", "Wormhole contract address on Terra blockchain")
 
-	algorandRPC = NodeCmd.Flags().String("algorandRPC", "", "Algorand RPC URL")
-	algorandToken = NodeCmd.Flags().String("algorandToken", "", "Algorand access token")
-	algorandContract = NodeCmd.Flags().String("algorandContract", "", "Algorand contract")
+	// algorandRPC = NodeCmd.Flags().String("algorandRPC", "", "Algorand RPC URL")
+	// algorandToken = NodeCmd.Flags().String("algorandToken", "", "Algorand access token")
+	// algorandContract = NodeCmd.Flags().String("algorandContract", "", "Algorand contract")
 
-	solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
-	solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
+	// solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
+	// solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
 
 	safecoinContract = NodeCmd.Flags().String("safecoinContract", "", "Address of the Safecoin program (required)")
 	safecoinWsRPC = NodeCmd.Flags().String("safecoinWS", "", "Safecoin Websocket URL (required")
@@ -281,18 +281,18 @@ func runNode(cmd *cobra.Command, args []string) {
 
 	// Register components for readiness checks.
 	readiness.RegisterComponent(common.ReadinessEthSyncing)
-	readiness.RegisterComponent(common.ReadinessSolanaSyncing)
-	readiness.RegisterComponent(common.ReadinessTerraSyncing)
-	if *unsafeDevMode {
-		readiness.RegisterComponent(common.ReadinessAlgorandSyncing)
-	}
-	readiness.RegisterComponent(common.ReadinessBSCSyncing)
-	readiness.RegisterComponent(common.ReadinessPolygonSyncing)
-	readiness.RegisterComponent(common.ReadinessAvalancheSyncing)
-	readiness.RegisterComponent(common.ReadinessOasisSyncing)
-	if *testnetMode {
-		readiness.RegisterComponent(common.ReadinessEthRopstenSyncing)
-	}
+	// readiness.RegisterComponent(common.ReadinessSolanaSyncing)
+	// readiness.RegisterComponent(common.ReadinessTerraSyncing)
+	// if *unsafeDevMode {
+	// 	readiness.RegisterComponent(common.ReadinessAlgorandSyncing)
+	// }
+	// readiness.RegisterComponent(common.ReadinessBSCSyncing)
+	// readiness.RegisterComponent(common.ReadinessPolygonSyncing)
+	// readiness.RegisterComponent(common.ReadinessAvalancheSyncing)
+	// readiness.RegisterComponent(common.ReadinessOasisSyncing)
+	// if *testnetMode {
+	// 	readiness.RegisterComponent(common.ReadinessEthRopstenSyncing)
+	// }
 	readiness.RegisterComponent(common.ReadinessSafecoinSyncing)
 
 	if *statusAddr != "" {
@@ -332,10 +332,10 @@ func runNode(cmd *cobra.Command, args []string) {
 
 		// Deterministic ganache ETH devnet address.
 		*ethContract = devnet.GanacheWormholeContractAddress.Hex()
-		*bscContract = devnet.GanacheWormholeContractAddress.Hex()
-		*polygonContract = devnet.GanacheWormholeContractAddress.Hex()
-		*avalancheContract = devnet.GanacheWormholeContractAddress.Hex()
-		*oasisContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *bscContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *polygonContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *avalancheContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *oasisContract = devnet.GanacheWormholeContractAddress.Hex()
 	}
 
 	// Verify flags
@@ -358,39 +358,39 @@ func runNode(cmd *cobra.Command, args []string) {
 	if *ethContract == "" {
 		logger.Fatal("Please specify --ethContract")
 	}
-	if *bscRPC == "" {
-		logger.Fatal("Please specify --bscRPC")
-	}
-	if *bscContract == "" {
-		logger.Fatal("Please specify --bscContract")
-	}
-	if *polygonRPC == "" {
-		logger.Fatal("Please specify --polygonRPC")
-	}
-	if *polygonContract == "" {
-		logger.Fatal("Please specify --polygonContract")
-	}
-	if *avalancheRPC == "" {
-		logger.Fatal("Please specify --avalancheRPC")
-	}
-	if *oasisRPC == "" {
-		logger.Fatal("Please specify --oasisRPC")
-	}
-	if *testnetMode {
-		if *ethRopstenRPC == "" {
-			logger.Fatal("Please specify --ethRopstenRPC")
-		}
-		if *ethRopstenContract == "" {
-			logger.Fatal("Please specify --ethRopstenContract")
-		}
-	} else {
-		if *ethRopstenRPC != "" {
-			logger.Fatal("Please do not specify --ethRopstenRPC in non-testnet mode")
-		}
-		if *ethRopstenContract != "" {
-			logger.Fatal("Please do not specify --ethRopstenContract in non-testnet mode")
-		}
-	}
+	// if *bscRPC == "" {
+	// 	logger.Fatal("Please specify --bscRPC")
+	// }
+	// if *bscContract == "" {
+	// 	logger.Fatal("Please specify --bscContract")
+	// }
+	// if *polygonRPC == "" {
+	// 	logger.Fatal("Please specify --polygonRPC")
+	// }
+	// if *polygonContract == "" {
+	// 	logger.Fatal("Please specify --polygonContract")
+	// }
+	// if *avalancheRPC == "" {
+	// 	logger.Fatal("Please specify --avalancheRPC")
+	// }
+	// if *oasisRPC == "" {
+	// 	logger.Fatal("Please specify --oasisRPC")
+	// }
+	// if *testnetMode {
+	// 	if *ethRopstenRPC == "" {
+	// 		logger.Fatal("Please specify --ethRopstenRPC")
+	// 	}
+	// 	if *ethRopstenContract == "" {
+	// 		logger.Fatal("Please specify --ethRopstenContract")
+	// 	}
+	// } else {
+	// 	if *ethRopstenRPC != "" {
+	// 		logger.Fatal("Please do not specify --ethRopstenRPC in non-testnet mode")
+	// 	}
+	// 	if *ethRopstenContract != "" {
+	// 		logger.Fatal("Please do not specify --ethRopstenContract in non-testnet mode")
+	// 	}
+	// }
 	if *nodeName == "" {
 		logger.Fatal("Please specify --nodeName")
 	}
@@ -405,37 +405,37 @@ func runNode(cmd *cobra.Command, args []string) {
 		logger.Fatal("Please specify --safecoinUrl")
 	}
 
-	if *solanaContract == "" {
-		logger.Fatal("Please specify --solanaContract")
-	}
-	if *solanaWsRPC == "" {
-		logger.Fatal("Please specify --solanaWsUrl")
-	}
-	if *solanaRPC == "" {
-		logger.Fatal("Please specify --solanaUrl")
-	}
+	// if *solanaContract == "" {
+	// 	logger.Fatal("Please specify --solanaContract")
+	// }
+	// if *solanaWsRPC == "" {
+	// 	logger.Fatal("Please specify --solanaWsUrl")
+	// }
+	// if *solanaRPC == "" {
+	// 	logger.Fatal("Please specify --solanaUrl")
+	// }
 
-	if *terraWS == "" {
-		logger.Fatal("Please specify --terraWS")
-	}
-	if *terraLCD == "" {
-		logger.Fatal("Please specify --terraLCD")
-	}
-	if *terraContract == "" {
-		logger.Fatal("Please specify --terraContract")
-	}
+	// if *terraWS == "" {
+	// 	logger.Fatal("Please specify --terraWS")
+	// }
+	// if *terraLCD == "" {
+	// 	logger.Fatal("Please specify --terraLCD")
+	// }
+	// if *terraContract == "" {
+	// 	logger.Fatal("Please specify --terraContract")
+	// }
 
-	if *unsafeDevMode {
-		if *algorandRPC == "" {
-			logger.Fatal("Please specify --algorandRPC")
-		}
-		if *algorandToken == "" {
-			logger.Fatal("Please specify --algorandToken")
-		}
-		if *algorandContract == "" {
-			logger.Fatal("Please specify --algorandContract")
-		}
-	}
+	// if *unsafeDevMode {
+	// 	if *algorandRPC == "" {
+	// 		logger.Fatal("Please specify --algorandRPC")
+	// 	}
+	// 	if *algorandToken == "" {
+	// 		logger.Fatal("Please specify --algorandToken")
+	// 	}
+	// 	if *algorandContract == "" {
+	// 		logger.Fatal("Please specify --algorandContract")
+	// 	}
+	// }
 
 	if *bigTablePersistenceEnabled {
 		if *bigTableGCPProject == "" {
@@ -473,27 +473,27 @@ func runNode(cmd *cobra.Command, args []string) {
 	//
 	// Insert "I'm a sign, not a cop" meme.
 	//
-	if strings.Contains(*ethRPC, "mainnet.infura.io") ||
-		strings.Contains(*polygonRPC, "polygon-mainnet.infura.io") {
-		logger.Fatal("Infura is known to send incorrect blocks - please use your own nodes")
-	}
+	// if strings.Contains(*ethRPC, "mainnet.infura.io") ||
+	// 	strings.Contains(*polygonRPC, "polygon-mainnet.infura.io") {
+	// 	logger.Fatal("Infura is known to send incorrect blocks - please use your own nodes")
+	// }
 
 	ethContractAddr := eth_common.HexToAddress(*ethContract)
-	bscContractAddr := eth_common.HexToAddress(*bscContract)
-	polygonContractAddr := eth_common.HexToAddress(*polygonContract)
-	ethRopstenContractAddr := eth_common.HexToAddress(*ethRopstenContract)
-	avalancheContractAddr := eth_common.HexToAddress(*avalancheContract)
-	oasisContractAddr := eth_common.HexToAddress(*oasisContract)
+	// bscContractAddr := eth_common.HexToAddress(*bscContract)
+	// polygonContractAddr := eth_common.HexToAddress(*polygonContract)
+	// ethRopstenContractAddr := eth_common.HexToAddress(*ethRopstenContract)
+	// avalancheContractAddr := eth_common.HexToAddress(*avalancheContract)
+	// oasisContractAddr := eth_common.HexToAddress(*oasisContract)
 
 	safecoinAddress, err := solana_types.PublicKeyFromBase58(*safecoinContract)
 	if err != nil {
 		logger.Fatal("invalid Safecoin contract address", zap.Error(err))
 	}
 
-	solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
-	if err != nil {
-		logger.Fatal("invalid Solana contract address", zap.Error(err))
-	}
+	// solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
+	// if err != nil {
+	// 	logger.Fatal("invalid Solana contract address", zap.Error(err))
+	// }
 
 	// In devnet mode, we generate a deterministic guardian key and write it to disk.
 	if *unsafeDevMode {
@@ -651,61 +651,61 @@ func runNode(cmd *cobra.Command, args []string) {
 			return err
 		}
 
-		if err := supervisor.Run(ctx, "bscwatch",
-			ethereum.NewEthWatcher(*bscRPC, bscContractAddr, "bsc", common.ReadinessBSCSyncing, vaa.ChainIDBSC, lockC, nil, 1).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "bscwatch",
+		// 	ethereum.NewEthWatcher(*bscRPC, bscContractAddr, "bsc", common.ReadinessBSCSyncing, vaa.ChainIDBSC, lockC, nil, 1).Run); err != nil {
+		// 	return err
+		// }
 
-		if err := supervisor.Run(ctx, "polygonwatch",
-			ethereum.NewEthWatcher(
-				*polygonRPC, polygonContractAddr, "polygon", common.ReadinessPolygonSyncing, vaa.ChainIDPolygon, lockC, nil,
-				// Special case: Polygon can fork like PoW Ethereum, and it's not clear what the safe number of blocks is
-				//
-				// Hardcode the minimum number of confirmations to 256 regardless of what the smart contract specifies to protect
-				// developers from accidentally specifying an unsafe number of confirmations. We can remove this restriction as soon
-				// as specific public guidance exists for Polygon developers.
-				256).Run); err != nil {
-			return err
-		}
-		if err := supervisor.Run(ctx, "avalanchewatch",
-			ethereum.NewEthWatcher(*avalancheRPC, avalancheContractAddr, "avalanche", common.ReadinessAvalancheSyncing, vaa.ChainIDAvalanche, lockC, nil, 1).Run); err != nil {
-			return err
-		}
-		if err := supervisor.Run(ctx, "oasiswatch",
-			ethereum.NewEthWatcher(*oasisRPC, oasisContractAddr, "oasis", common.ReadinessOasisSyncing, vaa.ChainIDOasis, lockC, nil, 1).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "polygonwatch",
+		// 	ethereum.NewEthWatcher(
+		// 		*polygonRPC, polygonContractAddr, "polygon", common.ReadinessPolygonSyncing, vaa.ChainIDPolygon, lockC, nil,
+		// 		// Special case: Polygon can fork like PoW Ethereum, and it's not clear what the safe number of blocks is
+		// 		//
+		// 		// Hardcode the minimum number of confirmations to 256 regardless of what the smart contract specifies to protect
+		// 		// developers from accidentally specifying an unsafe number of confirmations. We can remove this restriction as soon
+		// 		// as specific public guidance exists for Polygon developers.
+		// 		256).Run); err != nil {
+		// 	return err
+		// }
+		// if err := supervisor.Run(ctx, "avalanchewatch",
+		// 	ethereum.NewEthWatcher(*avalancheRPC, avalancheContractAddr, "avalanche", common.ReadinessAvalancheSyncing, vaa.ChainIDAvalanche, lockC, nil, 1).Run); err != nil {
+		// 	return err
+		// }
+		// if err := supervisor.Run(ctx, "oasiswatch",
+		// 	ethereum.NewEthWatcher(*oasisRPC, oasisContractAddr, "oasis", common.ReadinessOasisSyncing, vaa.ChainIDOasis, lockC, nil, 1).Run); err != nil {
+		// 	return err
+		// }
 
-		if *testnetMode {
-			if err := supervisor.Run(ctx, "ethropstenwatch",
-				ethereum.NewEthWatcher(*ethRopstenRPC, ethRopstenContractAddr, "ethropsten", common.ReadinessEthRopstenSyncing, vaa.ChainIDEthereumRopsten, lockC, setC, 1).Run); err != nil {
-				return err
-			}
-		}
+		// if *testnetMode {
+		// 	if err := supervisor.Run(ctx, "ethropstenwatch",
+		// 		ethereum.NewEthWatcher(*ethRopstenRPC, ethRopstenContractAddr, "ethropsten", common.ReadinessEthRopstenSyncing, vaa.ChainIDEthereumRopsten, lockC, setC, 1).Run); err != nil {
+		// 		return err
+		// 	}
+		// }
 
 		// Start Terra watcher only if configured
-		logger.Info("Starting Terra watcher")
-		if err := supervisor.Run(ctx, "terrawatch",
-			terra.NewWatcher(*terraWS, *terraLCD, *terraContract, lockC, setC).Run); err != nil {
-			return err
-		}
+		// logger.Info("Starting Terra watcher")
+		// if err := supervisor.Run(ctx, "terrawatch",
+		// 	terra.NewWatcher(*terraWS, *terraLCD, *terraContract, lockC, setC).Run); err != nil {
+		// 	return err
+		// }
 
-		if *unsafeDevMode {
-			if err := supervisor.Run(ctx, "algorandwatch",
-				algorand.NewWatcher(*algorandRPC, *algorandToken, *algorandContract, lockC, setC).Run); err != nil {
-				return err
-			}
-		}
+		// if *unsafeDevMode {
+		// 	if err := supervisor.Run(ctx, "algorandwatch",
+		// 		algorand.NewWatcher(*algorandRPC, *algorandToken, *algorandContract, lockC, setC).Run); err != nil {
+		// 		return err
+		// 	}
+		// }
 
-		if err := supervisor.Run(ctx, "solwatch-confirmed",
-			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "solwatch-confirmed",
+		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
+		// 	return err
+		// }
 
-		if err := supervisor.Run(ctx, "solwatch-finalized",
-			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "solwatch-finalized",
+		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
+		// 	return err
+		// }
 
 		// Start Safecoin watcher
 		if err := supervisor.Run(ctx, "safecoin-confirmed",
@@ -731,8 +731,8 @@ func runNode(cmd *cobra.Command, args []string) {
 			*unsafeDevMode,
 			*devNumGuardians,
 			*ethRPC,
-			*terraLCD,
-			*terraContract,
+			// *terraLCD,
+			// *terraContract,
 			attestationEvents,
 			notifier,
 		)
