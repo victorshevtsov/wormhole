@@ -126,7 +126,7 @@ export default function SmartAddress({
         CLUSTER === "testnet"
           ? "?cluster=testnet"
           : CLUSTER === "devnet"
-          ? "?cluster=devnet"
+          ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
           : ""
       }`
     : chainId === CHAIN_ID_SOLANA

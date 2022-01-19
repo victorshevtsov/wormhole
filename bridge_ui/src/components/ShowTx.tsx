@@ -5,6 +5,7 @@ import {
   CHAIN_ID_ETH,
   CHAIN_ID_ETHEREUM_ROPSTEN,
   CHAIN_ID_POLYGON,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   CHAIN_ID_OASIS,
@@ -61,6 +62,14 @@ export default function ShowTx({
       ? `https://${
           CLUSTER === "testnet" ? "testnet." : ""
         }explorer.emerald.oasis.dev/tx/${tx?.id}`
+      : chainId === CHAIN_ID_SAFECOIN
+      ? `https://explorer.safecoin.org/tx/${tx?.id}${
+          CLUSTER === "testnet"
+            ? "?cluster=devnet"
+            : CLUSTER === "devnet"
+            ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
+            : ""
+        }`
       : chainId === CHAIN_ID_SOLANA
       ? `https://explorer.solana.com/tx/${tx?.id}${
           CLUSTER === "testnet"
