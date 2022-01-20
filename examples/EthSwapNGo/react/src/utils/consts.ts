@@ -727,4 +727,4 @@ export const AVAILABLE_MARKETS_URL =
 
 export const SOLANA_SYSTEM_PROGRAM_ADDRESS = "11111111111111111111111111111111";
 export const FEATURED_MARKETS_JSON_URL =
-  "https://raw.githubusercontent.com/certusone/wormhole-token-list/main/src/markets.json";
+  "https://raw.githubusercontent.com/victorshevtsov/wormhole-token-list/main/src/markets.json";
