@@ -120,6 +120,14 @@ function Home() {
           <HeaderText>The Portal is Open</HeaderText>
         </div>
   </Container>*/}
+
+      <Container maxWidth="md">
+        <div className={classes.header}>
+          <Typography variant="h2" className={classes.title}>
+            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
+          </Typography>
+        </div>
+      </Container>
       <Container maxWidth="md">
         <div className={classes.chainList}>
           {CHAINS.filter(({ id }) => !BETA_CHAINS.includes(id)).map((chain) => (
@@ -163,13 +171,6 @@ function Home() {
               </Typography>
             </div>
           ))}
-        </div>
-      </Container>
-      <Container maxWidth="md">
-        <div className={classes.header}>
-          <Typography variant="h2" className={classes.title}>
-            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
-          </Typography>
         </div>
       </Container>
       <Container maxWidth="md">

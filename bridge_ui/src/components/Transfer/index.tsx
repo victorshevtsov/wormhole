@@ -86,6 +86,7 @@ function Transfer() {
   return (
     <Container maxWidth="md">
       <Stepper activeStep={activeStep} orientation="vertical">
+        <div style={{border:"1px"}}>
         <Step
           expanded={activeStep >= 0}
           disabled={preventNavigation || isRedeemComplete}
@@ -95,6 +96,7 @@ function Transfer() {
             {activeStep === 0 ? <Source /> : <SourcePreview />}
           </StepContent>
         </Step>
+        </div>
         <Step
           expanded={activeStep >= 1}
           disabled={preventNavigation || isRedeemComplete}

@@ -260,13 +260,13 @@ function App() {
           </Hidden>
         </Toolbar>
       </AppBar>
-      {CLUSTER === "mainnet" ? null : (
+      {/*CLUSTER === "mainnet" ? null : (
         <AppBar position="static" className={classes.betaBanner}>
           <Typography style={{ textAlign: "center" }}>
             Caution! You are using the {CLUSTER} build of this app.
           </Typography>
         </AppBar>
-      )}
+      )*/}
       {isBeta ? (
         <AppBar position="static" className={classes.betaBanner}>
           <Typography style={{ textAlign: "center" }}>
