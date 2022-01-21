@@ -1,9 +1,11 @@
 import { ChainId } from "@certusone/wormhole-sdk";
 import {
   Container,
+  makeStyles,
   Step,
   StepButton,
   StepContent,
+  StepLabel,
   Stepper,
 } from "@material-ui/core";
 import { useEffect, useMemo } from "react";
@@ -32,6 +34,26 @@ import Source from "./Source";
 import SourcePreview from "./SourcePreview";
 import Target from "./Target";
 import TargetPreview from "./TargetPreview";
+
+const useStyles = makeStyles((theme) => ({
+  cardstyle: {
+    boxShadow:
+      '-16px 16px 56px -8px rgba(145,158,171,0.18)', // 24th value
+  },
+  steptitle: {
+    "&.MuiStepLabel-active": {
+      fontWeight: 500,
+    },
+    "&.Mui-disabled": {
+      opacity: '0.5',
+      color:'red',
+    },
+
+    fontWeight: 500,
+    fontSize: 21,
+    color: "#484848",
+  },
+}));
 
 function Transfer() {
   useCheckIfWormholeWrapped();
@@ -83,46 +105,64 @@ function Transfer() {
       };
     }
   }, [preventNavigation]);
+
+
+
+  const classes = useStyles();
   return (
     <Container maxWidth="md">
       <Stepper activeStep={activeStep} orientation="vertical">
-        <div style={{border:"1px"}}>
-        <Step
+        <Step className={classes.cardstyle}
           expanded={activeStep >= 0}
           disabled={preventNavigation || isRedeemComplete}
         >
-          <StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>
+          <StepButton style={{ marginTop: '8px' }} onClick={() => dispatch(setStep(0))}>
+            <StepLabel
+              classes={{ label: classes.steptitle }}>Source</StepLabel>
+          </StepButton>
           <StepContent>
-            {activeStep === 0 ? <Source /> : <SourcePreview />}
+            <div style={{ paddingRight: '15px', marginTop: '20px' }}>
+              {activeStep === 0 ? <Source /> : <SourcePreview />}
+            </div>
           </StepContent>
         </Step>
-        </div>
-        <Step
+        <Step className={classes.cardstyle}
           expanded={activeStep >= 1}
           disabled={preventNavigation || isRedeemComplete}
         >
-          <StepButton
+          <StepButton style={{ marginTop: '8px' }}
             disabled={preventNavigation || isRedeemComplete || activeStep === 0}
             onClick={() => dispatch(setStep(1))}
           >
-            Target
+            <StepLabel
+              classes={{ label: classes.steptitle }}>Target
+            </StepLabel>
+
           </StepButton>
           <StepContent>
             {activeStep === 1 ? <Target /> : <TargetPreview />}
           </StepContent>
         </Step>
-        <Step expanded={activeStep >= 2} disabled={isSendComplete}>
-          <StepButton disabled>Send tokens</StepButton>
+        <Step className={classes.cardstyle} expanded={activeStep >= 2} disabled={isSendComplete}>
+          <StepButton style={{ marginTop: '8px' }} disabled>
+            <StepLabel
+              classes={{ label: classes.steptitle }}>Send tokens
+            </StepLabel>
+          </StepButton>
           <StepContent>
             {activeStep === 2 ? <Send /> : <SendPreview />}
           </StepContent>
         </Step>
-        <Step expanded={activeStep >= 3} completed={isRedeemComplete}>
+        <Step className={classes.cardstyle} expanded={activeStep >= 3} completed={isRedeemComplete}>
           <StepButton
+            style={{ marginTop: '8px' }}
             onClick={() => dispatch(setStep(3))}
             disabled={!isSendComplete || isRedeemComplete}
           >
-            Redeem tokens
+            <StepLabel
+              classes={{ label: classes.steptitle }}>Redeem tokens
+            </StepLabel>
+
           </StepButton>
           <StepContent>
             {isRedeemComplete ? <RedeemPreview /> : <Redeem />}

@@ -162,7 +162,7 @@ function App() {
   );
   return (
     <div className={classes.bg}>
-      <AppBar position="static" color="inherit" className={classes.appBar}>
+      <AppBar position="static" color="inherit" elevation={0} className={classes.appBar}>
         <Toolbar>
           <Link component={RouterLink} to="/" className={classes.brandLink}>
             <img
