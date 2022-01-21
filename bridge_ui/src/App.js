@@ -48,7 +48,7 @@ import WithdrawTokensTerra from "./components/WithdrawTokensTerra";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
-    background: COLORS.nearBlackWithMinorTransparency,
+    background: "white",
     "& > .MuiToolbar-root": {
       margin: "auto",
       width: "100%",
@@ -73,9 +73,10 @@ const useStyles = makeStyles((theme) => ({
       color: theme.palette.primary.light,
     },
   },
+
   bg: {
     background:
-      "linear-gradient(160deg, rgba(69,74,117,.1) 0%, rgba(138,146,178,.1) 33%, rgba(69,74,117,.1) 66%, rgba(98,104,143,.1) 100%), linear-gradient(45deg, rgba(153,69,255,.1) 0%, rgba(121,98,231,.1) 20%, rgba(0,209,140,.1) 100%)",
+      "white",
     display: "flex",
     flexDirection: "column",
     minHeight: "100vh",
@@ -99,7 +100,7 @@ const useStyles = makeStyles((theme) => ({
       fontSize: 22,
     },
     fontWeight: "500",
-    background: `linear-gradient(160deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 100%);`,
+    background: `linear-gradient(160deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 100%);`,
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
@@ -121,14 +122,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gradientButton: {
-    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearBlack}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearBlack}50  120%)`,
+    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
     transition: "0.75s",
     backgroundSize: "200% auto",
-    boxShadow: "0 0 20px #222",
+    /*boxShadow: "0 0 20px #222",
     "&:hover": {
       backgroundPosition:
-        "right center" /* change the direction of the change here */,
-    },
+        "right center",
+    },*/
   },
   betaBanner: {
     background: `linear-gradient(to left, ${COLORS.blue}40, ${COLORS.green}40);`,
@@ -170,9 +171,14 @@ function App() {
               className={classes.wormholeIcon}
             />
             <Typography className={clsx(classes.link, classes.brandText)}>
-              wormhole
+              Safebridge
             </Typography>
           </Link>
+          {CLUSTER === "mainnet" ? null : (
+            <Typography style={{ textAlign: "center", position:"absolute", bottom:"2px" }}>
+              {CLUSTER} build
+            </Typography>
+          )}
           <div className={classes.spacer} />
           <Hidden implementation="css" xsDown>
             <div style={{ display: "flex", alignItems: "center" }}>

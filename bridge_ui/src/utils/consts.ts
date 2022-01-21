@@ -80,7 +80,7 @@ export const CHAINS: ChainInfo[] =
         },
       ]
     : CLUSTER === "testnet"
-    ? [
+    ? [/*
         {
           id: CHAIN_ID_AVAX,
           name: "Avalanche",
@@ -95,12 +95,12 @@ export const CHAINS: ChainInfo[] =
           id: CHAIN_ID_BSC,
           name: "Binance Smart Chain",
           logo: bscIcon,
-        },
+        },*/
         {
           id: CHAIN_ID_ETH,
           name: "Ethereum (Goerli)",
           logo: ethIcon,
-        },
+        },/*
         {
           id: CHAIN_ID_ETHEREUM_ROPSTEN,
           name: "Ethereum (Ropsten)",
@@ -110,12 +110,12 @@ export const CHAINS: ChainInfo[] =
           id: CHAIN_ID_POLYGON,
           name: "Polygon",
           logo: polygonIcon,
-        },
+        },*/
         {
           id: CHAIN_ID_SAFECOIN,
           name: "Safecoin",
           logo: safecoinIcon,
-        },
+        },/*
         {
           id: CHAIN_ID_SOLANA,
           name: "Solana",
@@ -125,7 +125,7 @@ export const CHAINS: ChainInfo[] =
           id: CHAIN_ID_TERRA,
           name: "Terra",
           logo: terraIcon,
-        },
+        },*/
       ]
     : [
         {

@@ -13,12 +13,13 @@ import { SolanaWalletProvider } from "./contexts/SolanaWalletContext.tsx";
 import { TerraWalletProvider } from "./contexts/TerraWalletContext.tsx";
 import ErrorBoundary from "./ErrorBoundary";
 import { theme } from "./muiTheme";
+import { themelight } from "./muiThemeLight";
 import { store } from "./store";
 
 ReactDOM.render(
   <ErrorBoundary>
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={themelight}>
         <CssBaseline />
         <ErrorBoundary>
           <SnackbarProvider maxSnack={3}>

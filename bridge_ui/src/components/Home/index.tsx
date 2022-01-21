@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Chip,
   Container,
@@ -7,19 +8,25 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import { BETA_CHAINS, CHAINS, COMING_SOON_CHAINS } from "../../utils/consts";
 import HeaderText from "../HeaderText";
 
 const useStyles = makeStyles((theme) => ({
   header: {
+    textAlign: "center",
     marginTop: theme.spacing(12),
     marginBottom: theme.spacing(8),
     [theme.breakpoints.down("sm")]: {
       marginBottom: theme.spacing(6),
     },
   },
+  title: {
+    marginBottom: theme.spacing(2),
+    color: "#212B36",
+  },
   description: {
+    textAlign: "center",
     marginBottom: theme.spacing(2),
   },
   button: {
@@ -88,17 +95,31 @@ const useStyles = makeStyles((theme) => ({
     right: "50%",
     transform: "translate(50%, -50%)",
   },
+  gradientButton: {
+    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
+    transition: "0.75s",
+    backgroundSize: "200% auto",
+    textAlign: "center",
+    /*boxShadow: "0 0 20px #222",
+    "&:hover": {
+      backgroundPosition:
+        "right center",
+    },*/
+  },
+  hspacer: {
+    width: theme.spacing(5),
+  },
 }));
 
 function Home() {
   const classes = useStyles();
   return (
     <div>
-      <Container maxWidth="md">
+      {/*<Container maxWidth="md">
         <div className={classes.header}>
           <HeaderText>The Portal is Open</HeaderText>
         </div>
-      </Container>
+  </Container>*/}
       <Container maxWidth="md">
         <div className={classes.chainList}>
           {CHAINS.filter(({ id }) => !BETA_CHAINS.includes(id)).map((chain) => (
@@ -145,38 +166,35 @@ function Home() {
         </div>
       </Container>
       <Container maxWidth="md">
-        <Card className={classes.mainCard}>
-          <Typography variant="h4" className={classes.description}>
-            Wormhole v2 is here!
+        <div className={classes.header}>
+          <Typography variant="h2" className={classes.title}>
+            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
           </Typography>
-          <Typography variant="h6" className={classes.description}>
-            The Wormhole Token Bridge allows you to seamlessly transfer
-            tokenized assets across Solana, Ethereum, BSC, Terra, Polygon,
-            Avalanche, and Oasis.
-          </Typography>
-          <div className={classes.spacer} />
-          <Typography variant="subtitle1" className={classes.description}>
-            If you transferred assets using the previous version of Wormhole,
-            most assets can be migrated to v2 on the{" "}
-            <Link component={RouterLink} to="/transfer" noWrap>
-              transfer page
-            </Link>
-            .
-          </Typography>
-          <Typography variant="subtitle1" className={classes.description}>
-            For assets that don't support the migration, the v1 UI can be found
-            at{" "}
-            <Link href="https://v1.wormholebridge.com">
-              v1.wormholebridge.com
-            </Link>
-          </Typography>
-          <Typography variant="subtitle1" className={classes.description}>
-            To learn more about the Wormhole Protocol that powers it, visit{" "}
-            <Link href="https://wormholenetwork.com/en/">
-              wormholenetwork.com
-            </Link>
-          </Typography>
-        </Card>
+        </div>
+      </Container>
+      <Container maxWidth="md">
+        <div className={classes.spacer} />
+        {/*<div className={classes.spacer} />*/}
+        <Typography variant="h5" className={classes.description}>
+          Transfering assets through different chains has never been so easy.
+        </Typography>
+        <div className={classes.spacer} />
+      </Container>
+      <Container maxWidth="md">
+        <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
+          <Button
+            component={RouterLink}
+            to="/quicktransfer"
+            variant="contained"
+            color="primary"
+            size="large"
+            disableElevation={true}
+            className={classes.gradientButton}
+          >
+            Convert now
+          </Button>
+          <div className={classes.hspacer} />
+        </div>
       </Container>
     </div>
   );
