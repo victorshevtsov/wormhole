@@ -14,14 +14,14 @@ import {
 import { clusterApiUrl as clusterApiUrlSafecoin } from "@safecoin/web3.js";
 import { clusterApiUrl as clusterApiUrlSolana } from "@solana/web3.js";
 import { getAddress } from "ethers/lib/utils";
-import avaxIcon from "../icons/avax.svg";
-import bscIcon from "../icons/bsc.svg";
+// import avaxIcon from "../icons/avax.svg";
+// import bscIcon from "../icons/bsc.svg";
 import ethIcon from "../icons/eth.svg";
-import oasisIcon from "../icons/oasis-network-rose-logo.svg";
-import polygonIcon from "../icons/polygon.svg";
+// import oasisIcon from "../icons/oasis-network-rose-logo.svg";
+// import polygonIcon from "../icons/polygon.svg";
 import safecoinIcon from "../icons/safecoin.svg";
-import solanaIcon from "../icons/solana.svg";
-import terraIcon from "../icons/terra.svg";
+// import solanaIcon from "../icons/solana.svg";
+// import terraIcon from "../icons/terra.svg";
 
 export type Cluster = "devnet" | "testnet" | "mainnet";
 export const CLUSTER: Cluster =
@@ -38,46 +38,46 @@ export interface ChainInfo {
 export const CHAINS: ChainInfo[] =
   CLUSTER === "mainnet"
     ? [
-        {
-          id: CHAIN_ID_AVAX,
-          name: "Avalanche",
-          logo: avaxIcon,
-        },
-        {
-          id: CHAIN_ID_OASIS,
-          name: "Oasis",
-          logo: oasisIcon,
-        },
-        {
-          id: CHAIN_ID_BSC,
-          name: "Binance Smart Chain",
-          logo: bscIcon,
-        },
+        // {
+        //   id: CHAIN_ID_AVAX,
+        //   name: "Avalanche",
+        //   logo: avaxIcon,
+        // },
+        // {
+        //   id: CHAIN_ID_OASIS,
+        //   name: "Oasis",
+        //   logo: oasisIcon,
+        // },
+        // {
+        //   id: CHAIN_ID_BSC,
+        //   name: "Binance Smart Chain",
+        //   logo: bscIcon,
+        // },
         {
           id: CHAIN_ID_ETH,
           name: "Ethereum",
           logo: ethIcon,
         },
-        {
-          id: CHAIN_ID_POLYGON,
-          name: "Polygon",
-          logo: polygonIcon,
-        },
+        // {
+        //   id: CHAIN_ID_POLYGON,
+        //   name: "Polygon",
+        //   logo: polygonIcon,
+        // },
         {
           id: CHAIN_ID_SAFECOIN,
           name: "Safecoin",
           logo: safecoinIcon,
         },
-        {
-          id: CHAIN_ID_SOLANA,
-          name: "Solana",
-          logo: solanaIcon,
-        },
-        {
-          id: CHAIN_ID_TERRA,
-          name: "Terra",
-          logo: terraIcon,
-        },
+        // {
+        //   id: CHAIN_ID_SOLANA,
+        //   name: "Solana",
+        //   logo: solanaIcon,
+        // },
+        // {
+        //   id: CHAIN_ID_TERRA,
+        //   name: "Terra",
+        //   logo: terraIcon,
+        // },
       ]
     : CLUSTER === "testnet"
     ? [
