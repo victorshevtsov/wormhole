@@ -113,7 +113,7 @@ export const CHAINS: ChainInfo[] =
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin",
+          name: "Safecoin (Testnet)",
           logo: safecoinIcon,
         },
         {
@@ -135,12 +135,12 @@ export const CHAINS: ChainInfo[] =
         },
         {
           id: CHAIN_ID_ETH,
-          name: "Ethereum",
+          name: "Ethereum (devnet)",
           logo: ethIcon,
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin",
+          name: "Safecoin (devnet)",
           logo: safecoinIcon,
         },
         {
@@ -214,7 +214,7 @@ export const WORMHOLE_RPC_HOSTS =
         "https://wormhole-v2-mainnet.01node.com",
       ]
     : CLUSTER === "testnet"
-    ? ["https://wormhole-v2-testnet-api.certus.one"]
+    ? ["https://guardian.testnet.safebridge.org"]
     : ["http://localhost:7071"];
 export const ETH_NETWORK_CHAIN_ID =
   CLUSTER === "mainnet" ? 1 : CLUSTER === "testnet" ? 5 : 1337;
