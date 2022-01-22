@@ -124,7 +124,7 @@ function Home() {
       <Container maxWidth="md">
         <div className={classes.header}>
           <Typography variant="h2" className={classes.title}>
-            Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
+            Cross-chain <span style={{ color: COLORS.blue }}>interaction</span><span style={{ color: COLORS.green }}>.</span>
           </Typography>
         </div>
       </Container>
@@ -177,6 +177,7 @@ function Home() {
         <div className={classes.spacer} />
         {/*<div className={classes.spacer} />*/}
         <Typography variant="h5" className={classes.description}>
+          Converts your Safe ERC20 tokens to SPL, <span style={{ color: COLORS.blue }}>seamlessly</span><span style={{ color: COLORS.green }}>.</span>
           Transfering assets through different chains has never been so easy.
         </Typography>
         <div className={classes.spacer} />

@@ -1,5 +1,6 @@
 import { Button, makeStyles, Tooltip } from "@material-ui/core";
 import { LinkOff } from "@material-ui/icons";
+import metamast from "../icons/metamaskwhite2.svg";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -27,8 +28,10 @@ const ToggleConnectedButton = ({
     <Tooltip title={pk}>
       <Button
         color="primary"
+        disableElevation={true}
         variant="contained"
-        size="small"
+        size="medium"
+        style={{filter: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.1))'}}
         onClick={disconnect}
         className={classes.button}
         startIcon={<LinkOff />}
@@ -39,11 +42,13 @@ const ToggleConnectedButton = ({
     </Tooltip>
   ) : (
     <Button
+      disableElevation={true}
       color="primary"
       variant="contained"
-      size="small"
+      size="medium"
       onClick={connect}
       className={classes.button}
+      startIcon={<img style={{ width:"30px", height:"auto"}} src={metamast}></img>}
     >
       Connect
     </Button>

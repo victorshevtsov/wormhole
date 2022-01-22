@@ -64,13 +64,17 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: { transform: "rotate(90deg)" },
   },
   transferField: {
-    marginTop: theme.spacing(5),
+    //marginTop: theme.spacing(5),
     width: "100%"
   },
   subtitles: {
+    // marginTop: theme.spacing(3),
     fontWeight: 500,
     paddingBottom: "5px"
   },
+  microblock: {
+    marginTop: "25px"
+  }
 }));
 
 function Source() {
@@ -202,7 +206,7 @@ function Source() {
           <KeyAndBalance chainId={sourceChain} />
         </div>
         {isReady || uiAmountString ? (
-          <div className={classes.transferField}>
+          <div className={classes.microblock}>
             <Typography className={classes.subtitles}>Select the asset</Typography>
             <TokenSelector disabled={shouldLockFields} />
           </div>
@@ -225,28 +229,33 @@ function Source() {
                 sourceAsset={parsedTokenAccount?.mintKey}
               />
               {hasParsedTokenAccount ? (
-                <NumberTextField
-                  variant="outlined"
-                  label="Amount"
-                  fullWidth
-                  className={classes.transferField}
-                  value={amount}
-                  onChange={handleAmountChange}
-                  disabled={shouldLockFields}
-                  onMaxClick={
-                    uiAmountString && !parsedTokenAccount.isNativeAsset
-                      ? handleMaxClick
-                      : undefined
-                  }
-                />
+                <>
+                  <div className={classes.microblock}>
+                    <Typography className={classes.subtitles}>Amount to transfer</Typography>
+                    <NumberTextField
+                      variant="outlined"
+                      //label="Amount"
+                      placeholder="0.00"
+                      fullWidth
+                      className={classes.transferField}
+                      value={amount}
+                      onChange={handleAmountChange}
+                      disabled={shouldLockFields}
+                      onMaxClick={
+                        uiAmountString && !parsedTokenAccount.isNativeAsset
+                          ? handleMaxClick
+                          : undefined
+                      }
+                    />
+                  </div>
+                </>
               ) : null}
-              <div style={isMobile ? {} : { maxWidth:"120px", float: "right" }}>
+              <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px" }}>
                 <ButtonWithLoader
                   disabled={!isSourceComplete}
                   onClick={handleNextClick}
                   showLoader={false}
                   error={statusMessage || error}
-               
                 >
                   Next
                 </ButtonWithLoader>

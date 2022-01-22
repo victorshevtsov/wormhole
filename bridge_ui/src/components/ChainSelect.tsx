@@ -57,7 +57,7 @@ export default function ChainSelect({ chains, ...rest }: ChainSelectProps) {
     [chains, isBeta]
   );
   return (
-    <TextField {...rest}  InputProps={{ disableUnderline: true }} variant="filled" className={clsx(classes.select, rest.className)}>
+    <TextField {...rest}  variant="outlined" className={clsx(classes.select, rest.className)}>
       {filteredChains.map((chain) => createChainMenuItem(chain, classes))}
     </TextField>
   );

@@ -52,8 +52,8 @@ const useStyles = makeStyles((theme) =>
     selectionButtonContainer: {
       //display: "flex",
       textAlign: "center",
-      marginTop: theme.spacing(2),
-      marginBottom: theme.spacing(2),
+      //marginTop: theme.spacing(2),
+      //marginBottom: theme.spacing(2),
     },
     selectionButton: {
       //maxWidth: "100%",
@@ -202,7 +202,7 @@ export const BasicAccountRender = (
       <div>
         {shouldDisplayBalance ? (
           <>
-            <Typography variant="body2">{"Balance"}</Typography>
+            {/*<Typography variant="body2">{"Balance"}</Typography>*/}
             <Typography variant="h6">
               {balancePretty(account.uiAmountString)}
             </Typography>
@@ -611,7 +611,7 @@ export default function TokenPicker({
   const selectionChip = (
     <div className={classes.selectionButtonContainer}>
       <Button
-      fullWidth
+        fullWidth
         onClick={openDialog}
         disabled={disabled}
         variant="outlined"

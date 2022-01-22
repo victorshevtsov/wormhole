@@ -2,7 +2,7 @@ import { createTheme, responsiveFontSizes } from "@material-ui/core";
 
 export const COLORS = {
   blue: "#005779",
-  blueWithTransparency: "rgba(0, 87, 121, 0.8)",
+  blueWithTransparency: "#2A8DCC",
   gray: "#ffffff",
   green: "#0ac2af",
   greenWithTransparency: "rgba(10, 194, 175, 0.8)",
@@ -66,6 +66,18 @@ export const themelight = responsiveFontSizes(
       },
     },
     overrides: {
+      MuiOutlinedInput: {
+        root: {
+          border: '1px solid red',
+          backgroundColor: 'rgba(255,255,255,0.8)',
+          '&:hover': {
+            backgroundColor: 'rgba(255,255,255,1)'
+          },
+          '&.Mui-focused': {
+            backgroundColor: 'rgba(255,255,255,1)'
+          }
+        }
+      },
       MuiCssBaseline: {
         "@global": {
           "*": {
@@ -78,7 +90,7 @@ export const themelight = responsiveFontSizes(
             backgroundColor: COLORS.nearWhiteWithMinorTransparency,
           },
           "*::-webkit-scrollbar-thumb": {
-            backgroundColor: COLORS.gray,
+            backgroundColor: "black",
             borderRadius: "4px",
           },
           "*::-webkit-scrollbar-corner": {
