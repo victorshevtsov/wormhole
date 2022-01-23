@@ -5,7 +5,7 @@ import Github from "../icons/Github.svg";
 import Medium from "../icons/Medium.svg";
 import Telegram from "../icons/Telegram.svg";
 import Twitter from "../icons/Twitter.svg";
-import Wormhole from "../icons/wormhole-network.svg";
+import Safebridge from "../icons/safebridge_l_i.svg";
 
 const useStyles = makeStyles((theme) => ({
   footer: {
@@ -14,25 +14,22 @@ const useStyles = makeStyles((theme) => ({
   },
   socialIcon: {
     "& img": {
+      color:"white",
       height: 24,
       width: 24,
     },
   },
   builtWithContainer: {
+    color:"white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    opacity: 0.5,
+    opacity: 0.7,
     marginTop: theme.spacing(1),
   },
-  wormholeIcon: {
+  safeBridgeIcon: {
     height: 48,
     width: 48,
-    filter: "contrast(0)",
-    transition: "filter 0.5s",
-    "&:hover": {
-      filter: "contrast(1)",
-    },
     verticalAlign: "middle",
     marginRight: theme.spacing(1),
   },
@@ -100,9 +97,9 @@ export default function Footer() {
             rel="noopener noreferrer"
           >
             <img
-              src={Wormhole}
-              alt="Wormhole"
-              className={classes.wormholeIcon}
+              src={Safebridge}
+              alt="safebridge"
+              className={classes.safeBridgeIcon}
             />
           </a>
         </div>

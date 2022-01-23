@@ -68,7 +68,7 @@ export const themelight = responsiveFontSizes(
     overrides: {
       MuiOutlinedInput: {
         root: {
-          border: '1px solid red',
+          border: '1px solid #2a8dcc63',
           backgroundColor: 'rgba(255,255,255,0.8)',
           '&:hover': {
             backgroundColor: 'rgba(255,255,255,1)'

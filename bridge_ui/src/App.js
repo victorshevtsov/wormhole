@@ -43,9 +43,9 @@ import { CLUSTER } from "./utils/consts";
 import Stats from "./components/Stats";
 import TokenOriginVerifier from "./components/TokenOriginVerifier";
 import SolanaQuickMigrate from "./components/Migration/SolanaQuickMigrate";
-import Wormhole from "./icons/wormhole-network.svg";
+import Safebridge from "./icons/safebridge.svg";
 import WithdrawTokensTerra from "./components/WithdrawTokensTerra";
-
+import Image from './icons/bghaiki.svg';
 const useStyles = makeStyles((theme) => ({
   appBar: {
     background: "white",
@@ -75,8 +75,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   bg: {
-    background:
-      "white",
+    backgroundImage: `url(${Image})`,
+    backgroundSize: "cover",
+    backgroundPositionY: "458px",
+    backgroundRepeat:"no-repeat",
     display: "flex",
     flexDirection: "column",
     minHeight: "100vh",
@@ -136,12 +138,8 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1, 0),
   },
   wormholeIcon: {
-    height: 32,
-    filter: "contrast(0)",
+    height: 43,
     transition: "filter 0.5s",
-    "&:hover": {
-      filter: "contrast(1)",
-    },
     verticalAlign: "middle",
     marginRight: theme.spacing(1),
     display: "inline-block",
@@ -166,16 +164,16 @@ function App() {
         <Toolbar>
           <Link component={RouterLink} to="/" className={classes.brandLink}>
             <img
-              src={Wormhole}
+              src={Safebridge}
               alt="Wormhole"
               className={classes.wormholeIcon}
             />
-            <Typography className={clsx(classes.link, classes.brandText)}>
+            {/*<Typography className={clsx(classes.link, classes.brandText)}>
               Safebridge
-            </Typography>
+            </Typography>*/}
           </Link>
           {CLUSTER === "mainnet" ? null : (
-            <Typography style={{ textAlign: "center", position:"absolute", bottom:"2px" }}>
+            <Typography style={{ textAlign: "center", position: "absolute", bottom: "2px" }}>
               {CLUSTER} build
             </Typography>
           )}

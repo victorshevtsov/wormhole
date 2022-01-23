@@ -3,11 +3,13 @@ import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   holeOuterContainer: {
+    backgroundColor:"red",
     maxWidth: "100%",
     width: "100%",
     position: "relative",
   },
   holeInnerContainer: {
+    backgroundColor:"red",
     position: "absolute",
     zIndex: -1,
     left: "50%",
@@ -19,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   holeImage: {
+    backgroundColor:"red",
     width: "max(1200px, 100vw)",
     maxWidth: "1600px",
   },
