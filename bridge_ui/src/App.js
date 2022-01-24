@@ -144,6 +144,15 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     display: "inline-block",
   },
+  build: {
+    textAlign: "center",
+    position: "absolute",
+    bottom: "9px",
+    left: "77px",
+    textTransform: 'uppercase',
+    fontSize: "x-small",
+    opacity: 0.7,
+  },
 }));
 
 function App() {
@@ -173,7 +182,7 @@ function App() {
             </Typography>*/}
           </Link>
           {CLUSTER === "mainnet" ? null : (
-            <Typography style={{ textAlign: "center", position: "absolute", bottom: "2px" }}>
+            <Typography className={classes.build} >
               {CLUSTER} build
             </Typography>
           )}

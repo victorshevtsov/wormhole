@@ -41,6 +41,7 @@ import SolanaCreateAssociatedAddress, {
 } from "../SolanaCreateAssociatedAddress";
 import StepDescription from "../StepDescription";
 import RegisterNowButton from "./RegisterNowButton";
+import { isMobile } from "react-device-detect";
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -128,7 +129,7 @@ function Target() {
   }, [dispatch]);
   return (
     <>
-      <StepDescription>Select a recipient chain and address.</StepDescription>
+      <StepDescription>Select a recipient chain and addresss.</StepDescription>
       <ChainSelect
         variant="outlined"
         select
@@ -138,74 +139,80 @@ function Target() {
         disabled={true}
         chains={chains}
       />
-      <KeyAndBalance chainId={targetChain} />
-      {readableTargetAddress ? (
-        <>
-          {targetAsset ? (
+      <div style={isMobile ? {} : { display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginRight: "auto" }}>
+          <KeyAndBalance chainId={targetChain} />
+        </div>
+        {readableTargetAddress ? (
+          <>
+            {targetAsset ? (
+              <div className={classes.transferField}>
+                <Typography variant="subtitle2">Bridged tokens:</Typography>
+                <Typography component="div">
+                  <SmartAddress
+                    chainId={targetChain}
+                    address={targetAsset}
+                    symbol={symbol}
+                    tokenName={tokenName}
+                    logo={logo}
+                    variant="h6"
+                  />
+                  {`(Amount: ${transferAmount})`}
+                </Typography>
+              </div>
+            ) : null}
             <div className={classes.transferField}>
-              <Typography variant="subtitle2">Bridged tokens:</Typography>
+              <Typography variant="subtitle2">Sent to:</Typography>
               <Typography component="div">
                 <SmartAddress
                   chainId={targetChain}
-                  address={targetAsset}
-                  symbol={symbol}
-                  tokenName={tokenName}
-                  logo={logo}
+                  address={readableTargetAddress}
                   variant="h6"
                 />
-                {`(Amount: ${transferAmount})`}
+                {`(Current balance: ${uiAmountString || "0"})`}
               </Typography>
             </div>
-          ) : null}
-          <div className={classes.transferField}>
-            <Typography variant="subtitle2">Sent to:</Typography>
-            <Typography component="div">
-              <SmartAddress
-                chainId={targetChain}
-                address={readableTargetAddress}
-                variant="h6"
-              />
-              {`(Current balance: ${uiAmountString || "0"})`}
-            </Typography>
-          </div>
-        </>
-      ) : null}
-      {targetChain === CHAIN_ID_SAFECOIN && targetAsset ? (
-        <SafecoinCreateAssociatedAddress
-          mintAddress={targetAsset}
-          readableTargetAddress={readableTargetAddress}
-          associatedAccountExists={associatedSafecoinAccountExists}
-          setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
-        />
-      ) : targetChain === CHAIN_ID_SOLANA && targetAsset ? (
-        <SolanaCreateAssociatedAddress
-          mintAddress={targetAsset}
-          readableTargetAddress={readableTargetAddress}
-          associatedAccountExists={associatedSolanaAccountExists}
-          setAssociatedAccountExists={setAssociatedSolanaAccountExists}
-        />
-      ) : null}
-      <Alert severity="info" variant="outlined" className={classes.alert}>
-        <Typography>
-          You will have to pay transaction fees on{" "}
-          {CHAINS_BY_ID[targetChain].name} to redeem your tokens.
-        </Typography>
-        {(isEVMChain(targetChain) || targetChain === CHAIN_ID_TERRA) && (
-          <GasEstimateSummary methodType="transfer" chainId={targetChain} />
-        )}
-      </Alert>
-      <LowBalanceWarning chainId={targetChain} />
-      <ButtonWithLoader
-        disabled={!isTargetComplete || !associatedSafecoinAccountExists || !associatedSolanaAccountExists}
-        onClick={handleNextClick}
-        showLoader={isLoading}
-        error={
-          statusMessage || (isLoading ? undefined : error || targetAssetError)
-        }
-      >
-        Next
-      </ButtonWithLoader>
-      {!statusMessage && data && !data.doesExist ? <RegisterNowButton /> : null}
+          </>
+        ) : null}
+        {targetChain === CHAIN_ID_SAFECOIN && targetAsset ? (
+          <SafecoinCreateAssociatedAddress
+            mintAddress={targetAsset}
+            readableTargetAddress={readableTargetAddress}
+            associatedAccountExists={associatedSafecoinAccountExists}
+            setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
+          />
+        ) : targetChain === CHAIN_ID_SOLANA && targetAsset ? (
+          <SolanaCreateAssociatedAddress
+            mintAddress={targetAsset}
+            readableTargetAddress={readableTargetAddress}
+            associatedAccountExists={associatedSolanaAccountExists}
+            setAssociatedAccountExists={setAssociatedSolanaAccountExists}
+          />
+        ) : null}
+        <Alert severity="info" variant="outlined" className={classes.alert}>
+          <Typography>
+            You will have to pay transaction fees on{" "}
+            {CHAINS_BY_ID[targetChain].name} to redeem your tokens.
+          </Typography>
+          {(isEVMChain(targetChain) || targetChain === CHAIN_ID_TERRA) && (
+            <GasEstimateSummary methodType="transfer" chainId={targetChain} />
+          )}
+        </Alert>
+        <LowBalanceWarning chainId={targetChain} />
+        <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px", marginLeft:"auto" }}>
+          <ButtonWithLoader
+            disabled={!isTargetComplete || !associatedSafecoinAccountExists || !associatedSolanaAccountExists}
+            onClick={handleNextClick}
+            showLoader={isLoading}
+            error={
+              statusMessage || (isLoading ? undefined : error || targetAssetError)
+            }
+          >
+            Next
+          </ButtonWithLoader>
+          {!statusMessage && data && !data.doesExist ? <RegisterNowButton /> : null}
+        </div>
+      </div>
     </>
   );
 }

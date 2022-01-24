@@ -41,14 +41,6 @@ export default function Footer() {
     <footer className={classes.footer}>
       <div>
         <IconButton
-          href="https://docs.wormholenetwork.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={classes.socialIcon}
-        >
-          <img src={Docs} alt="Docs" />
-        </IconButton>
-        <IconButton
           href="https://discord.gg/wormholecrypto"
           target="_blank"
           rel="noopener noreferrer"
