@@ -46,6 +46,7 @@ import SolanaQuickMigrate from "./components/Migration/SolanaQuickMigrate";
 import Safebridge from "./icons/safebridge.svg";
 import WithdrawTokensTerra from "./components/WithdrawTokensTerra";
 import Image from './icons/bghaiki.svg';
+import QuickTransfer from "./components/QuickTransfer";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -301,6 +302,9 @@ function App() {
         <Switch>
           <Route exact path="/transfer">
             <Transfer />
+          </Route>
+          <Route exact path="/quicktransfer">
+            <QuickTransfer />
           </Route>
           <Route exact path="/nft">
             <NFT />
