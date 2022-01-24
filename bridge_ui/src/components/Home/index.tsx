@@ -96,15 +96,17 @@ const useStyles = makeStyles((theme) => ({
     transform: "translate(50%, -50%)",
   },
   gradientButton: {
-    backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
+    //backgroundImage: `linear-gradient(45deg, ${COLORS.blue} 0%, ${COLORS.nearWhite}20 50%,  ${COLORS.blue}30 62%, ${COLORS.nearWhite}50  120%)`,
     transition: "0.75s",
     backgroundSize: "200% auto",
     textAlign: "center",
-    /*boxShadow: "0 0 20px #222",
+    borderColor: "#ffffffde",
+    color:"#ffffffde",
+    /*boxShadow: "0 0 20px #222",*/
     "&:hover": {
-      backgroundPosition:
-        "right center",
-    },*/
+      borderColor: "#ffffff",
+      color:"#ffffff",
+    },
   },
   hspacer: {
     width: theme.spacing(5),
@@ -187,7 +189,7 @@ function Home() {
           <Button
             component={RouterLink}
             to="/quicktransfer"
-            variant="contained"
+            variant="outlined"
             color="primary"
             size="large"
             disableElevation={true}

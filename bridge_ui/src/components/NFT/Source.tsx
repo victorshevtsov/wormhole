@@ -3,6 +3,7 @@ import { Button, makeStyles } from "@material-ui/core";
 import { VerifiedUser } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import { useCallback } from "react";
+import { isMobile } from "react-device-detect";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
@@ -80,25 +81,31 @@ function Source() {
         </Alert>
       ) : null}
       {sourceChain === CHAIN_ID_SOLANA ? (
-        <Alert severity="info" variant="outlined">
+        <Alert severity="info" >
           Only NFTs with a supply of 1 are supported.
         </Alert>
       ) : null}
-      <KeyAndBalance chainId={sourceChain} />
-      {isReady || uiAmountString ? (
-        <div className={classes.transferField}>
-          <TokenSelector disabled={shouldLockFields} nft={true} />
+      <div style={isMobile ? {} : { display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginRight: "auto" }}>
+          <KeyAndBalance chainId={sourceChain} />
         </div>
-      ) : null}
-      <LowBalanceWarning chainId={sourceChain} />
-      <ButtonWithLoader
-        disabled={!isSourceComplete}
-        onClick={handleNextClick}
-        showLoader={false}
-        error={statusMessage || error}
-      >
-        Next
-      </ButtonWithLoader>
+        {isReady || uiAmountString ? (
+          <div className={classes.transferField}>
+            <TokenSelector disabled={shouldLockFields} nft={true} />
+          </div>
+        ) : null}
+        <LowBalanceWarning chainId={sourceChain} />
+        <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px", marginLeft: "auto" }}>
+          <ButtonWithLoader
+            disabled={!isSourceComplete}
+            onClick={handleNextClick}
+            showLoader={false}
+            error={statusMessage || error}
+          >
+            Next
+          </ButtonWithLoader>
+        </div>
+      </div>
     </>
   );
 }
