@@ -36,17 +36,13 @@ import Target from "./Target";
 import TargetPreview from "./TargetPreview";
 
 const useStyles = makeStyles((theme) => ({
-  cardstyle: {
-    boxShadow:
-      '-16px 16px 56px -8px rgba(145,158,171,0.18)', // 24th value
-  },
   steptitle: {
     "&.MuiStepLabel-active": {
       fontWeight: 500,
     },
     "&.Mui-disabled": {
       opacity: '0.5',
-      color:'red',
+      color: 'red',
     },
 
     fontWeight: 500,
@@ -112,30 +108,28 @@ function Transfer() {
   return (
     <Container maxWidth="md">
       <Stepper activeStep={activeStep} orientation="vertical">
-        <Step className={classes.cardstyle}
+        <Step
           expanded={activeStep >= 0}
           disabled={preventNavigation || isRedeemComplete}
         >
-          <StepButton style={{ marginTop: '8px' }} onClick={() => dispatch(setStep(0))}>
+          <StepButton onClick={() => dispatch(setStep(0))}>
             <StepLabel
-              classes={{ label: classes.steptitle }}>Source</StepLabel>
+            >Source</StepLabel>
           </StepButton>
           <StepContent>
-            <div style={{ paddingRight: '15px', marginTop: '20px' }}>
-              {activeStep === 0 ? <Source /> : <SourcePreview />}
-            </div>
+            {activeStep === 0 ? <Source /> : <SourcePreview />}
           </StepContent>
         </Step>
-        <Step className={classes.cardstyle}
+        <Step
           expanded={activeStep >= 1}
           disabled={preventNavigation || isRedeemComplete}
         >
-          <StepButton style={{ marginTop: '8px' }}
+          <StepButton
             disabled={preventNavigation || isRedeemComplete || activeStep === 0}
             onClick={() => dispatch(setStep(1))}
           >
             <StepLabel
-              classes={{ label: classes.steptitle }}>Target
+            >Target
             </StepLabel>
 
           </StepButton>
@@ -143,24 +137,24 @@ function Transfer() {
             {activeStep === 1 ? <Target /> : <TargetPreview />}
           </StepContent>
         </Step>
-        <Step className={classes.cardstyle} expanded={activeStep >= 2} disabled={isSendComplete}>
-          <StepButton style={{ marginTop: '8px' }} disabled>
+        <Step expanded={activeStep >= 2} disabled={isSendComplete}>
+          <StepButton disabled>
             <StepLabel
-              classes={{ label: classes.steptitle }}>Send tokens
+            >Send tokens
             </StepLabel>
           </StepButton>
           <StepContent>
             {activeStep === 2 ? <Send /> : <SendPreview />}
           </StepContent>
         </Step>
-        <Step className={classes.cardstyle} expanded={activeStep >= 3} completed={isRedeemComplete}>
+        <Step expanded={activeStep >= 3} completed={isRedeemComplete}>
           <StepButton
-            style={{ marginTop: '8px' }}
+
             onClick={() => dispatch(setStep(3))}
             disabled={!isSendComplete || isRedeemComplete}
           >
             <StepLabel
-              classes={{ label: classes.steptitle }}>Redeem tokens
+            >Redeem tokens
             </StepLabel>
 
           </StepButton>

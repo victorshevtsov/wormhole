@@ -32,7 +32,7 @@ import { useBetaContext } from "../contexts/BetaContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import useIsWalletReady from "../hooks/useIsWalletReady";
 import { getMetaplexData } from "../hooks/useMetaplexData";
-import { COLORS } from "../muiTheme";
+import { COLORS } from "../muiThemeLight";
 import { NFTParsedTokenAccount } from "../store/nftSlice";
 import {
   BETA_CHAINS,
@@ -55,7 +55,8 @@ import NFTViewer from "./TokenSelectors/NFTViewer";
 const useStyles = makeStyles((theme) => ({
   mainCard: {
     padding: theme.spacing(2),
-    backgroundColor: COLORS.nearBlackWithMinorTransparency,
+    backgroundColor: COLORS.nearWhiteWithMinorTransparency,
+    
   },
   originHeader: {
     marginTop: theme.spacing(4),
@@ -222,7 +223,7 @@ export default function NFTOriginVerifier() {
         </HeaderText>
       </Container>
       <Container maxWidth="sm">
-        <Card className={classes.mainCard}>
+        <Card className={classes.mainCard} elevation={5}>
           <Alert severity="info" variant="outlined">
             This page allows you to find where a Wormhole-bridged NFT was
             originally minted so you can verify its authenticity.

@@ -138,17 +138,25 @@ export const themelight = responsiveFontSizes(
         elevation5: {
           boxShadow: [
             // 23 default values of 'shadows' array from https://material-ui-1dab0.firebaseapp.com/customization/themes/
-                '-16px 16px 56px -8px rgba(145,158,171,0.18)', // 24th value
+                '-16px 16px 56px -8px rgba(145,158,171,0.22)', // 24th value
               ],
         },
-    
         rounded: {
           backgroundColor: '#fff',
           borderRadius: "16px",
           boxShadow:
           "0px 3px 1px -2px red,0px 2px 2px 0px rgba(0,0,200,0.9),0px 1px 5px 0px rgba(0,0,0,0.12)",
-         
         },
+      },
+      MuiCard: {
+        root: {
+          backgroundColor: '#fff',
+          boxShadow: [
+            // 23 default values of 'shadows' array from https://material-ui-1dab0.firebaseapp.com/customization/themes/
+                '-16px 16px 56px -8px rgba(145,158,171,0.22)', // 24th value
+              ],
+        },
+        
       },
       MuiStepper: {
         root: {
@@ -157,10 +165,15 @@ export const themelight = responsiveFontSizes(
         },
       },
       MuiStep: {
+
         root: {
           backgroundColor: COLORS.nearWhiteWithMinorTransparency,
           borderRadius: "16px",
           padding: 16,
+          boxShadow: [
+            // 23 default values of 'shadows' array from https://material-ui-1dab0.firebaseapp.com/customization/themes/
+                '-16px 16px 56px -8px rgba(145,158,171,0.22)', // 24th value
+              ],
         },
       },
       MuiStepConnector: {
@@ -170,18 +183,32 @@ export const themelight = responsiveFontSizes(
       },
       MuiStepContent: {
         root: {
+          paddingRight: '15px',
+           marginTop: '0px',
           borderLeftWidth: 0,
         },
       },
+      MuiCollapse: {
+        root: {
+          marginTop: '14px',
+          marginBottom: '14px',
+          paddingRight: '10px',
+        }
+      },
+      MuiStepButton: {
+        root: {
+          //marginTop: '8px',
+        }
+      },
       MuiStepLabel: {
         label: {
-          fontSize: 16,
-          fontWeight: "300",
+          fontSize: 21,
+          color: "#484848",
           "&.MuiStepLabel-active": {
-            fontWeight: "300",
+            fontWeight: "500",
           },
           "&.MuiStepLabel-completed": {
-            fontWeight: "300",
+            fontWeight: "400",
           },
         },
       },
