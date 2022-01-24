@@ -42,6 +42,7 @@ import NumberTextField from "../NumberTextField";
 import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 import SourceAssetWarning from "./SourceAssetWarning";
+import { isMobile } from 'react-device-detect';
 
 const useStyles = makeStyles((theme) => ({
   chainSelectWrapper: {
@@ -63,8 +64,17 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down("sm")]: { transform: "rotate(90deg)" },
   },
   transferField: {
-    marginTop: theme.spacing(5),
+    //marginTop: theme.spacing(5),
+    width: "100%"
   },
+  subtitles: {
+    // marginTop: theme.spacing(3),
+    fontWeight: 500,
+    paddingBottom: "5px"
+  },
+  microblock: {
+    marginTop: "25px"
+  }
 }));
 
 function Source() {
@@ -143,7 +153,7 @@ function Source() {
     <>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
-          Select tokens to send through the Wormhole Bridge.
+          <div style={{ opacity: 0.7 }}>Select tokens to send through the Wormhole Bridge.</div>
           <div style={{ flexGrow: 1 }} />
           <div>
             <Button
@@ -160,16 +170,15 @@ function Source() {
       </StepDescription>
       <div className={classes.chainSelectWrapper}>
         <div className={classes.chainSelectContainer}>
-          <Typography variant="caption">Source</Typography>
+          <Typography className={classes.subtitles}>Chain source</Typography>
           <ChainSelect
             select
-            variant="outlined"
+            //variant="outlined"
             fullWidth
             value={sourceChain}
             onChange={handleSourceChange}
             disabled={shouldLockFields}
-            chains={CHAINS}
-          />
+            chains={CHAINS} variant={"outlined"} />
         </div>
         <div className={classes.chainSelectArrow}>
           <ChainSelectArrow
@@ -180,7 +189,7 @@ function Source() {
           />
         </div>
         <div className={classes.chainSelectContainer}>
-          <Typography variant="caption">Target</Typography>
+          <Typography className={classes.subtitles}>Chain target</Typography>
           <ChainSelect
             variant="outlined"
             select
@@ -192,55 +201,71 @@ function Source() {
           />
         </div>
       </div>
-      <KeyAndBalance chainId={sourceChain} />
-      {isReady || uiAmountString ? (
-        <div className={classes.transferField}>
-          <TokenSelector disabled={shouldLockFields} />
+      <div style={isMobile ? {} : { display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginRight: "auto" }}>
+          <KeyAndBalance chainId={sourceChain} />
         </div>
-      ) : null}
-      {isMigrationAsset ? (
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          onClick={handleMigrationClick}
-        >
-          Go to Migration Page
-        </Button>
-      ) : (
-        <>
-          <LowBalanceWarning chainId={sourceChain} />
-          <SourceAssetWarning
-            sourceChain={sourceChain}
-            sourceAsset={parsedTokenAccount?.mintKey}
-          />
-          {hasParsedTokenAccount ? (
-            <NumberTextField
-              variant="outlined"
-              label="Amount"
-              fullWidth
-              className={classes.transferField}
-              value={amount}
-              onChange={handleAmountChange}
-              disabled={shouldLockFields}
-              onMaxClick={
-                uiAmountString && !parsedTokenAccount.isNativeAsset
-                  ? handleMaxClick
-                  : undefined
-              }
-            />
-          ) : null}
-          <ButtonWithLoader
-            disabled={!isSourceComplete}
-            onClick={handleNextClick}
-            showLoader={false}
-            error={statusMessage || error}
+        {isReady || uiAmountString ? (
+          <div className={classes.microblock}>
+            <Typography className={classes.subtitles}>Select the asset</Typography>
+            <TokenSelector disabled={shouldLockFields} />
+          </div>
+        ) : null}
+        {isMigrationAsset ? (
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleMigrationClick}
           >
-            Next
-          </ButtonWithLoader>
-        </>
-      )}
+            Go to Migration Page
+          </Button>
+        ) : (
+          <>
+            <div>
+              <LowBalanceWarning chainId={sourceChain} />
+              <SourceAssetWarning
+                sourceChain={sourceChain}
+                sourceAsset={parsedTokenAccount?.mintKey}
+              />
+              {hasParsedTokenAccount ? (
+                <>
+                  <div className={classes.microblock}>
+                    <Typography className={classes.subtitles}>Amount to transfer</Typography>
+                    <NumberTextField
+                      variant="outlined"
+                      //label="Amount"
+                      placeholder="0.00"
+                      fullWidth
+                      className={classes.transferField}
+                      value={amount}
+                      onChange={handleAmountChange}
+                      disabled={shouldLockFields}
+                      onMaxClick={
+                        uiAmountString && !parsedTokenAccount.isNativeAsset
+                          ? handleMaxClick
+                          : undefined
+                      }
+                    />
+                  </div>
+                </>
+              ) : null}
+              <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px" }}>
+                <ButtonWithLoader
+                  disabled={!isSourceComplete}
+                  onClick={handleNextClick}
+                  showLoader={false}
+                  error={statusMessage || error}
+                >
+                  Next
+                </ButtonWithLoader>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
     </>
+
   );
 }
 

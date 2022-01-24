@@ -11,11 +11,20 @@ import { useMemo } from "react";
 import { useBetaContext } from "../contexts/BetaContext";
 import { BETA_CHAINS, ChainInfo } from "../utils/consts";
 
+
 const useStyles = makeStyles((theme) => ({
   select: {
     "& .MuiSelect-root": {
+      
       display: "flex",
       alignItems: "center",
+    },
+    "& .MuiFilledInput-root": {
+      borderRadius:"10px",
+
+    },
+    "& .MuiFilledInput-input": {
+      padding: "12px 12px 10px",
     },
   },
   listItemIcon: {
@@ -26,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 24,
   },
 }));
-
 const createChainMenuItem = ({ id, name, logo }: ChainInfo, classes: any) => (
   <MenuItem key={id} value={id}>
     <ListItemIcon className={classes.listItemIcon}>
@@ -49,7 +57,7 @@ export default function ChainSelect({ chains, ...rest }: ChainSelectProps) {
     [chains, isBeta]
   );
   return (
-    <TextField {...rest} className={clsx(classes.select, rest.className)}>
+    <TextField {...rest}  variant="outlined" className={clsx(classes.select, rest.className)}>
       {filteredChains.map((chain) => createChainMenuItem(chain, classes))}
     </TextField>
   );

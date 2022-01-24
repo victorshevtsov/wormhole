@@ -56,8 +56,7 @@ const useStyles = makeStyles((theme) =>
       marginBottom: theme.spacing(2),
     },
     selectionButton: {
-      maxWidth: "100%",
-      width: theme.breakpoints.values.sm,
+      width: "100%",
     },
     tokenOverviewContainer: {
       display: "flex",
@@ -611,6 +610,7 @@ export default function TokenPicker({
   const selectionChip = (
     <div className={classes.selectionButtonContainer}>
       <Button
+        fullWidth
         onClick={openDialog}
         disabled={disabled}
         variant="outlined"

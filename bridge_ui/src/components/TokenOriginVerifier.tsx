@@ -23,7 +23,7 @@ import useFetchForeignAsset, {
 import useIsWalletReady from "../hooks/useIsWalletReady";
 import useMetadata from "../hooks/useMetadata";
 import useOriginalAsset, { OriginalAssetInfo } from "../hooks/useOriginalAsset";
-import { COLORS } from "../muiTheme";
+import { COLORS } from "../muiThemeLight";
 import { BETA_CHAINS, CHAINS, CHAINS_BY_ID } from "../utils/consts";
 import HeaderText from "./HeaderText";
 import KeyAndBalance from "./KeyAndBalance";

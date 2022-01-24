@@ -12,7 +12,7 @@ import { getMigrationAssetMap, MIGRATION_ASSET_MAP } from "../../utils/consts";
 import SafecoinWorkflow from "./SafecoinWorkflow";
 import SolanaWorkflow from "./SolanaWorkflow";
 import { withRouter } from "react-router";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import {
   ChainId,
   CHAIN_ID_ETH,

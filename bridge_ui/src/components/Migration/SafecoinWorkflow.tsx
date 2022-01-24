@@ -15,7 +15,7 @@ import { useSafecoinWallet } from "../../contexts/SafecoinWalletContext";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
 import useMetaplexData from "../../hooks/useMetaplexData";
 import useSafecoinTokenMap from "../../hooks/useSafecoinTokenMap";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import { MIGRATION_PROGRAM_ADDRESS, SAFECOIN_HOST } from "../../utils/consts";
 import { getMultipleAccounts, signSendAndConfirm } from "../../utils/safecoin";
 import ButtonWithLoader from "../ButtonWithLoader";

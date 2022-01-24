@@ -1,7 +1,7 @@
 import { makeStyles, Typography } from "@material-ui/core";
 import clsx from "clsx";
 import { ReactChild } from "react";
-import { COLORS } from "../muiTheme";
+import { COLORS } from "../muiThemeLight";
 
 const useStyles = makeStyles((theme) => ({
   centeredContainer: {

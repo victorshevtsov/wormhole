@@ -17,7 +17,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
 import useSolanaMigratorInformation from "../../hooks/useSolanaMigratorInformation";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import {
   CHAINS_BY_ID,
   getMigrationAssetMap,
