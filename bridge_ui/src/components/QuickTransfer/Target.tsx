@@ -5,7 +5,7 @@ import {
   hexToNativeString,
   isEVMChain,
 } from "@certusone/wormhole-sdk";
-import { makeStyles, Typography } from "@material-ui/core";
+import { Card, makeStyles, Typography } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,6 +41,8 @@ import SolanaCreateAssociatedAddress, {
 } from "../SolanaCreateAssociatedAddress";
 import StepDescription from "../StepDescription";
 import RegisterNowButton from "./RegisterNowButton";
+import { isMobile } from "react-device-detect";
+import { COLORS } from "../../muiThemeLight";
 
 const useStyles = makeStyles((theme) => ({
   transferField: {
@@ -50,6 +52,17 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  description: {
+    // marginBottom: theme.spacing(4),
+    textAlign: "left",
+  },
+  spacer: {
+    height: theme.spacing(6),
+  },
+  cardcontrols: {
+    padding: "20px",
+
+  }
 }));
 
 export const useTargetInfo = () => {
@@ -128,84 +141,111 @@ function Target() {
   }, [dispatch]);
   return (
     <>
-      <StepDescription>Select a recipient chain and address.</StepDescription>
-      <ChainSelect
-        variant="outlined"
-        select
-        fullWidth
-        value={targetChain}
-        onChange={handleTargetChange}
-        disabled={true}
-        chains={chains}
-      />
-      <KeyAndBalance chainId={targetChain} />
-      {readableTargetAddress ? (
-        <>
-          {targetAsset ? (
-            <div className={classes.transferField}>
-              <Typography variant="subtitle2">Bridged tokens:</Typography>
-              <Typography component="div">
-                <SmartAddress
-                  chainId={targetChain}
-                  address={targetAsset}
-                  symbol={symbol}
-                  tokenName={tokenName}
-                  logo={logo}
-                  variant="h6"
-                />
-                {`(Amount: ${transferAmount})`}
-              </Typography>
-            </div>
-          ) : null}
-          <div className={classes.transferField}>
-            <Typography variant="subtitle2">Sent to:</Typography>
-            <Typography component="div">
-              <SmartAddress
-                chainId={targetChain}
-                address={readableTargetAddress}
-                variant="h6"
-              />
-              {`(Current balance: ${uiAmountString || "0"})`}
+      <div className={classes.spacer}></div>
+      <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <>
+            {/* not connected */}
+            <Typography variant="h4">
+              Get started<span style={{ color: COLORS.green, fontSize: "40px" }}>.</span>
             </Typography>
+            <Typography className={classes.description}>
+              <div>Connect your Ethereum wallet
+                <br />and select your POWR.
+              </div>
+            </Typography>
+            <div className={classes.spacer}></div>
+          </>
+        </div>
+        <Card className={classes.cardcontrols} style={isMobile ? {} : { width: "60%" }}>
+          <StepDescription>Select a recipient chain and address.</StepDescription>
+          <ChainSelect
+            variant="outlined"
+            select
+            fullWidth
+            value={targetChain}
+            onChange={handleTargetChange}
+            disabled={true}
+            chains={chains}
+          />
+          <div>
+          <KeyAndBalance chainId={targetChain} />
           </div>
-        </>
-      ) : null}
-      {targetChain === CHAIN_ID_SAFECOIN && targetAsset ? (
-        <SafecoinCreateAssociatedAddress
-          mintAddress={targetAsset}
-          readableTargetAddress={readableTargetAddress}
-          associatedAccountExists={associatedSafecoinAccountExists}
-          setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
-        />
-      ) : targetChain === CHAIN_ID_SOLANA && targetAsset ? (
-        <SolanaCreateAssociatedAddress
-          mintAddress={targetAsset}
-          readableTargetAddress={readableTargetAddress}
-          associatedAccountExists={associatedSolanaAccountExists}
-          setAssociatedAccountExists={setAssociatedSolanaAccountExists}
-        />
-      ) : null}
-      <Alert severity="info" variant="outlined" className={classes.alert}>
-        <Typography>
-          You will have to pay transaction fees on{" "}
-          {CHAINS_BY_ID[targetChain].name} to redeem your tokens.
-        </Typography>
-        {(isEVMChain(targetChain) || targetChain === CHAIN_ID_TERRA) && (
-          <GasEstimateSummary methodType="transfer" chainId={targetChain} />
-        )}
-      </Alert>
-      <LowBalanceWarning chainId={targetChain} />
-      <ButtonWithLoader
-        disabled={!isTargetComplete || !associatedSafecoinAccountExists || !associatedSolanaAccountExists}
-        onClick={handleNextClick}
-        showLoader={isLoading}
-        error={
-          statusMessage || (isLoading ? undefined : error || targetAssetError)
-        }
-      >
-        Next
-      </ButtonWithLoader>
-      {!statusMessage && data && !data.doesExist ? <RegisterNowButton /> : null}
+          {readableTargetAddress ? (
+            <>
+              {targetAsset ? (
+                <div className={classes.transferField}>
+                  <Typography variant="subtitle2">Bridged tokens:</Typography>
+                  <Typography component="div">
+                    <SmartAddress
+                      chainId={targetChain}
+                      address={targetAsset}
+                      symbol={symbol}
+                      tokenName={tokenName}
+                      logo={logo}
+                      variant="h6"
+                    />
+                    {`(Amount: ${transferAmount})`}
+                  </Typography>
+                </div>
+              ) : null}
+              <div className={classes.transferField}>
+                <Typography variant="subtitle2">Sent to:</Typography>
+                <Typography component="div">
+                  <SmartAddress
+                    chainId={targetChain}
+                    address={readableTargetAddress}
+                    variant="h6"
+                  />
+                  {`(Current balance: ${uiAmountString || "0"})`}
+                </Typography>
+              </div>
+            </>
+          ) : null}
+          {targetChain === CHAIN_ID_SAFECOIN && targetAsset ? (
+            <SafecoinCreateAssociatedAddress
+              mintAddress={targetAsset}
+              readableTargetAddress={readableTargetAddress}
+              associatedAccountExists={associatedSafecoinAccountExists}
+              setAssociatedAccountExists={setAssociatedSafecoinAccountExists}
+            />
+          ) : targetChain === CHAIN_ID_SOLANA && targetAsset ? (
+            <SolanaCreateAssociatedAddress
+              mintAddress={targetAsset}
+              readableTargetAddress={readableTargetAddress}
+              associatedAccountExists={associatedSolanaAccountExists}
+              setAssociatedAccountExists={setAssociatedSolanaAccountExists}
+            />
+          ) : null}
+          <Alert severity="info" variant="outlined" className={classes.alert}>
+            <Typography>
+              You will have to pay transaction fees on{" "}
+              {CHAINS_BY_ID[targetChain].name} to redeem your tokens.
+            </Typography>
+            {(isEVMChain(targetChain) || targetChain === CHAIN_ID_TERRA) && (
+              <GasEstimateSummary methodType="transfer" chainId={targetChain} />
+            )}
+          </Alert>
+          <LowBalanceWarning chainId={targetChain} />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'end'
+          }}>
+            <ButtonWithLoader
+              disabled={!isTargetComplete || !associatedSafecoinAccountExists || !associatedSolanaAccountExists}
+              onClick={handleNextClick}
+              showLoader={isLoading}
+              error={
+                statusMessage || (isLoading ? undefined : error || targetAssetError)
+              }
+            >
+              Next
+            </ButtonWithLoader>
+            {!statusMessage && data && !data.doesExist ? <RegisterNowButton /> : null}
+          </div>
+        </Card>
+      </div>
     </>
   );
 }

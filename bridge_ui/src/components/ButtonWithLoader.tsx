@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 6,
   },
   error: {
-    marginTop: theme.spacing(1),
+   // marginTop: theme.spacing(1),
     textAlign: "center",
   },
 }));

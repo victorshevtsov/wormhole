@@ -222,7 +222,8 @@ export const themelight = responsiveFontSizes(
       },
       MuiAlert: {
         root: {
-          marginTop:"8px",
+          marginTop:"20px",
+          marginBottom:"20px",
         }
       }
     },
