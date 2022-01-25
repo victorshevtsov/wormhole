@@ -190,8 +190,10 @@ function QuickTransfer() {
 
   const useStepsStyle = makeStyles({
     root: {
-      backgroundColor: 'inherit',
-
+      backgroundColor: "inherit",
+      borderRadius: "16px",
+      padding: 16,
+      boxShadow: "inherit",
     },
   });
 
@@ -290,8 +292,6 @@ function QuickTransfer() {
       <div className={classes.spacer}></div>
       <Container maxWidth="md">
         <Paper elevation={5} style={{ display: "none" }}>
-
-
           {/*
           {activeStep === 0 ? <Source /> : <SourcePreview />}
           {activeStep === 1 ? <Target /> : <TargetPreview />}

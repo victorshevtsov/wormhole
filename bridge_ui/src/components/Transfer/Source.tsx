@@ -250,7 +250,7 @@ function Source() {
                   </div>
                 </>
               ) : null}
-              <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px" }}>
+              <div style={isMobile ? {} : { float: "right", marginTop: "25px" }}>
                 <ButtonWithLoader
                   disabled={!isSourceComplete}
                   onClick={handleNextClick}

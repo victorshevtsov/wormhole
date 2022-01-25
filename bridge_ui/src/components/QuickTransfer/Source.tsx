@@ -4,7 +4,7 @@ import {
   CHAIN_ID_SOLANA,
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, makeStyles, Typography } from "@material-ui/core";
+import { Button, Card, makeStyles, Paper, Typography } from "@material-ui/core";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,6 +43,7 @@ import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 import SourceAssetWarning from "./SourceAssetWarning";
 import { isMobile } from 'react-device-detect';
+import { COLORS } from "../../muiThemeLight";
 
 const useStyles = makeStyles((theme) => ({
   chainSelectWrapper: {
@@ -74,6 +75,17 @@ const useStyles = makeStyles((theme) => ({
   },
   microblock: {
     marginTop: "25px"
+  },
+  description: {
+    // marginBottom: theme.spacing(4),
+    textAlign: "left",
+  },
+  spacer: {
+    height: theme.spacing(6),
+  },
+  cardcontrols: {
+    padding: "20px",
+
   }
 }));
 
@@ -151,24 +163,94 @@ function Source() {
 
   return (
     <>
-      <StepDescription>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ opacity: 0.7 }}>Select tokens to send through the Wormhole Bridge.</div>
-          <div style={{ flexGrow: 1 }} />
-          <div>
-            <Button
-              component={Link}
-              to="/token-origin-verifier"
-              size="small"
-              variant="outlined"
-              endIcon={<VerifiedUser />}
-            >
-              Token Origin Verifier
-            </Button>
-          </div>
+      <div className={classes.spacer}></div>
+      <div style={isMobile ? {} : { display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <>
+            {/* not connected */}
+            <Typography variant="h4">
+              Get started<span style={{ color: COLORS.green, fontSize: "40px" }}>.</span>
+            </Typography>
+            <Typography className={classes.description}>
+              <div>Connect your Ethereum wallet
+                <br />and select your POWR.
+              </div>
+            </Typography>
+            <div className={classes.spacer}></div>
+          </>
         </div>
-      </StepDescription>
-      <div className={classes.chainSelectWrapper}>
+        <Card className={classes.cardcontrols} style={isMobile ? {} : { width: "60%" }}>
+          <div style={isMobile ? {} : { display: 'flex', flexDirection: 'column' }}>
+            <div style={isReady ? { } : {  paddingTop:"18px" }}>
+              <KeyAndBalance chainId={sourceChain} />
+            </div>
+            {isReady || uiAmountString ? (
+              <div className={classes.microblock}>
+                <Typography className={classes.subtitles}>Select your <b>POWR</b></Typography>
+                <TokenSelector disabled={shouldLockFields} />
+              </div>
+            ) : null}
+            {isMigrationAsset ? (
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                onClick={handleMigrationClick}
+              >
+                Go to Migration Page
+              </Button>
+            ) : (
+              <>
+                <div>
+                  <LowBalanceWarning chainId={sourceChain} />
+                  <SourceAssetWarning
+                    sourceChain={sourceChain}
+                    sourceAsset={parsedTokenAccount?.mintKey}
+                  />
+                  {hasParsedTokenAccount ? (
+                    <>
+                      <div className={classes.microblock}>
+                        <Typography className={classes.subtitles}>Amount to transfer</Typography>
+                        <NumberTextField
+                          variant="outlined"
+                          //label="Amount"
+                          placeholder="0.00"
+                          fullWidth
+                          className={classes.transferField}
+                          value={amount}
+                          onChange={handleAmountChange}
+                          disabled={shouldLockFields}
+                          onMaxClick={
+                            uiAmountString && !parsedTokenAccount.isNativeAsset
+                              ? handleMaxClick
+                              : undefined
+                          }
+                        />
+                      </div>
+                    </>
+                  ) : null}
+                  <div style={isMobile ? {} : { display:'flex', justifyContent: 'right', marginTop: "25px" }}>
+                    {isReady ? (
+                      <div className={classes.microblock}>
+                        <ButtonWithLoader
+                          disabled={!isSourceComplete}
+                          onClick={handleNextClick}
+                          showLoader={false}
+                          error={statusMessage || error}
+                        >
+                          Next
+                        </ButtonWithLoader>
+                      </div>
+                    ) : null}
+
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </Card>
+      </div>
+      <div className={classes.chainSelectWrapper} style={{ display: "none" }}>
         <div className={classes.chainSelectContainer}>
           <Typography className={classes.subtitles}>Chain source</Typography>
           <ChainSelect
@@ -201,71 +283,7 @@ function Source() {
           />
         </div>
       </div>
-      <div style={isMobile ? {} : { display: 'flex', flexDirection: 'column' }}>
-        <div style={{ marginRight: "auto" }}>
-          <KeyAndBalance chainId={sourceChain} />
-        </div>
-        {isReady || uiAmountString ? (
-          <div className={classes.microblock}>
-            <Typography className={classes.subtitles}>Select the asset</Typography>
-            <TokenSelector disabled={shouldLockFields} />
-          </div>
-        ) : null}
-        {isMigrationAsset ? (
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleMigrationClick}
-          >
-            Go to Migration Page
-          </Button>
-        ) : (
-          <>
-            <div>
-              <LowBalanceWarning chainId={sourceChain} />
-              <SourceAssetWarning
-                sourceChain={sourceChain}
-                sourceAsset={parsedTokenAccount?.mintKey}
-              />
-              {hasParsedTokenAccount ? (
-                <>
-                  <div className={classes.microblock}>
-                    <Typography className={classes.subtitles}>Amount to transfer</Typography>
-                    <NumberTextField
-                      variant="outlined"
-                      //label="Amount"
-                      placeholder="0.00"
-                      fullWidth
-                      className={classes.transferField}
-                      value={amount}
-                      onChange={handleAmountChange}
-                      disabled={shouldLockFields}
-                      onMaxClick={
-                        uiAmountString && !parsedTokenAccount.isNativeAsset
-                          ? handleMaxClick
-                          : undefined
-                      }
-                    />
-                  </div>
-                </>
-              ) : null}
-              <div style={isMobile ? {} : { maxWidth: "120px", float: "right", marginTop: "25px" }}>
-                <ButtonWithLoader
-                  disabled={!isSourceComplete}
-                  onClick={handleNextClick}
-                  showLoader={false}
-                  error={statusMessage || error}
-                >
-                  Next
-                </ButtonWithLoader>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
     </>
-
   );
 }
 

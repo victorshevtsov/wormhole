@@ -11,9 +11,9 @@ const useStyles = makeStyles((theme) => ({
     position: "relative",
   },
   button: {
-    marginTop: theme.spacing(2),
+    //marginTop: theme.spacing(2),
     textTransform: "none",
-    width: "100%",
+    width: "30%",
   },
   loader: {
     position: "absolute",
@@ -44,29 +44,35 @@ export default function ButtonWithLoader({
   const classes = useStyles();
   return (
     <>
+
       <div className={classes.root}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.button}
-          disabled={disabled}
-          onClick={onClick}
-        >
-          {children}
-        </Button>
-        {showLoader ? (
-          <CircularProgress
-            size={24}
-            color="inherit"
-            className={classes.loader}
-          />
-        ) : null}
+        <div style={{ display: "flex", alignItems: 'center' }}>
+          <div >
+          {error ? (
+            <Typography variant="body2"  color="error" className={classes.error}>
+              {error}
+            </Typography>
+          ) : null}
+          </div>
+          <Button
+            color="primary"
+            variant="contained"
+            className={classes.button}
+            disabled={disabled}
+            onClick={onClick}
+          >
+            {children}
+          </Button>
+          {showLoader ? (
+            <CircularProgress
+              size={24}
+              color="inherit"
+              className={classes.loader}
+            />
+          ) : null}
+        </div>
+
       </div>
-      {error ? (
-        <Typography variant="body2" color="error" className={classes.error}>
-          {error}
-        </Typography>
-      ) : null}
     </>
   );
 }
