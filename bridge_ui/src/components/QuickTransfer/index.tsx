@@ -17,6 +17,7 @@ import {
 } from "@material-ui/core";
 import clsx from "clsx";
 import { useEffect, useMemo } from "react";
+import { isMobile } from "react-device-detect";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
 import useCheckIfWormholeWrapped from "../../hooks/useCheckIfWormholeWrapped";
@@ -60,30 +61,6 @@ function QuickTransfer() {
   const pathSourceChain = query.get("sourceChain");
   const pathTargetChain = query.get("targetChain");
 
-
-  const useQontoStepIconStyles = makeStyles({
-    root: {
-      color: '#eaeaf0',
-      display: 'flex',
-      height: 22,
-      alignItems: 'center',
-    },
-    active: {
-      color: '#784af4',
-    },
-    circle: {
-      width: 8,
-      height: 8,
-      borderRadius: '50%',
-      backgroundColor: 'currentColor',
-    },
-    completed: {
-      color: '#784af4',
-      zIndex: 1,
-      fontSize: 18,
-    },
-  });
-
   const ColorlibConnector = withStyles({
     alternativeLabel: {
       top: 39,
@@ -109,9 +86,6 @@ function QuickTransfer() {
       borderRadius: 1,
     },
   })(StepConnector);
-
-
-
 
   const useColorlibStepIconStyles = makeStyles({
     root: {
@@ -199,7 +173,24 @@ function QuickTransfer() {
 
   const clstep = useStepsStyle();
 
+  const useStepsStyleMobile = makeStyles({
+    root: {
+      backgroundColor: "inherit",
+      borderRadius: "16px",
+      padding: 0,
+      boxShadow: "inherit",
+    },
+  });
+  const clstepmob = useStepsStyleMobile();
 
+  function useColorlibStepIcon() {
+    if (isMobile) {
+      return undefined
+    } else {
+      return ColorlibStepIcon;
+    }
+
+  }
   //This effect initializes the state based on the path params
   useEffect(() => {
     if (!pathSourceChain && !pathTargetChain) {
@@ -235,55 +226,46 @@ function QuickTransfer() {
   }, [preventNavigation]);
   return (
     <>
-      <div>
-        <Button
-          size="small"
-          variant="outlined"
-          /*onClick={() => dispatch(setStep(4))}*/
-        >
-          swap
-        </Button>
-      </div>
       <Container maxWidth="md">
         <div className={classes.root}>
-          <Stepper activeStep={activeStep} orientation="horizontal" connector={<ColorlibConnector />} alternativeLabel>
+          <Stepper activeStep={activeStep} orientation={isMobile ? ("vertical") : ("horizontal")} connector={isMobile ? (undefined) : (<ColorlibConnector />)} alternativeLabel={isMobile ? (false) : (true)}>
             {/* Pre select with disabled dropdown ethereum */}
-            <Step className={clstep.root}
+            <Step className={isMobile ? clstepmob.root : clstep.root}
               expanded={activeStep >= 0}
               disabled={preventNavigation || isRedeemComplete}
             >
               <StepButton onClick={() => dispatch(setStep(0))}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}><b>POWR </b>Source</StepLabel>
+                <StepLabel StepIconComponent={useColorlibStepIcon()}><b>POWR </b>Source</StepLabel>
               </StepButton>
               {/*<StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>*/}
             </Step>
-            <Step className={clstep.root}
+            <Step className={isMobile ? clstepmob.root : clstep.root}
               expanded={activeStep >= 1}
               disabled={preventNavigation || isRedeemComplete || activeStep === 0}
             >
               <StepButton onClick={() => dispatch(setStep(1))}>
-                <StepLabel StepIconComponent={ColorlibStepIcon}><b>SOLSTICE </b>Target</StepLabel>
+                <StepLabel StepIconComponent={useColorlibStepIcon()}><b>SOLSTICE </b>Target</StepLabel>
               </StepButton>
               {/*<StepButton onClick={() => dispatch(setStep(0))}>Source</StepButton>*/}
             </Step>
-            <Step className={clstep.root} expanded={activeStep >= 2} disabled={isSendComplete}>
+            <Step className={isMobile ? clstepmob.root : clstep.root} expanded={activeStep >= 2} disabled={isSendComplete}>
               <StepButton>
-                <StepLabel StepIconComponent={ColorlibStepIcon}>Send tokens</StepLabel>
+                <StepLabel StepIconComponent={useColorlibStepIcon()}>Send tokens</StepLabel>
               </StepButton>
             </Step>
-            <Step className={clstep.root} expanded={activeStep >= 3}>
+            <Step className={isMobile ? clstepmob.root : clstep.root} expanded={activeStep >= 3}>
               <StepButton
                 onClick={() => dispatch(setStep(3))}
                 disabled={!isSendComplete}
               >
-                <StepLabel StepIconComponent={ColorlibStepIcon}>Redeem tokens</StepLabel>
+                <StepLabel StepIconComponent={useColorlibStepIcon()}>Redeem tokens</StepLabel>
               </StepButton>
             </Step>
-            <Step className={clstep.root} expanded={activeStep >= 4}>
+            <Step className={isMobile ? clstepmob.root : clstep.root} expanded={activeStep >= 4}>
               <StepButton
-                /*onClick={() => dispatch(setStep(4))}*/
+              /*onClick={() => dispatch(setStep(4))}*/
               >
-                <StepLabel StepIconComponent={ColorlibStepIcon}>Swap</StepLabel>
+                <StepLabel StepIconComponent={useColorlibStepIcon()}>Swap</StepLabel>
               </StepButton>
             </Step>
           </Stepper>
