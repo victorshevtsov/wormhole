@@ -100,7 +100,7 @@ yargs(hideBin(process.argv))
         const vm = signAndEncodeVM(
             1,
             1,
-            9,
+            1,
             "0x0000000000000000000000000000000000000000000000000000000000000004",
             Math.floor(Math.random() * 100000000),
             data,
