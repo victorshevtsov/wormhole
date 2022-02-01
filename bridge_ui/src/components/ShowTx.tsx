@@ -65,7 +65,7 @@ export default function ShowTx({
       : chainId === CHAIN_ID_SAFECOIN
       ? `https://explorer.safecoin.org/tx/${tx?.id}${
           CLUSTER === "testnet"
-            ? "?cluster=devnet"
+            ? "?cluster=testnet"
             : CLUSTER === "devnet"
             ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
             : ""
