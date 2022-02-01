@@ -2,7 +2,7 @@
   "name": "wormhole-client-safecoin",
   "version": "1.0.0",
   "dependencies": {
-    "@safecoin/web3.js": "^1.29.3",
+    "@safecoin/web3.js": "=1.29.3",
     "@typechain/ethers-v5": "^7.0.1",
     "bn.js": "^5.2.0",
     "bs58": "^4.0.1",

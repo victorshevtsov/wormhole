@@ -57,8 +57,8 @@
   },
   "dependencies": {
     "@improbable-eng/grpc-web": "^0.14.0",
-    "@safecoin/safe-token": "^0.1.7",
-    "@safecoin/web3.js": "^1.29.3",
+    "@safecoin/safe-token": "=0.1.7",
+    "@safecoin/web3.js": "=1.29.3",
     "@solana/spl-token": "^0.1.8",
     "@solana/web3.js": "^1.27.0",
     "@terra-money/terra.js": "^2.0.14",
