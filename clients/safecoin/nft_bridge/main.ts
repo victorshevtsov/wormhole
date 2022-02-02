@@ -94,10 +94,13 @@ yargs(hideBin(process.argv))
             ethers.utils.defaultAbiCoder.encode(["bytes32"], [argv.contract_address]).substring(2),
         ].join('')
 
+        // emitterChain should be set to:
+        // 1 - to generate a VAA to register a chain on Ethereum chain
+        // 9 - to generate a VAA to register a chain on SafeCoin chain 
         const vm = signAndEncodeVM(
             1,
             1,
-            1,
+            9, // emitterChain
             "0x0000000000000000000000000000000000000000000000000000000000000004",
             0,
             data,
