@@ -60,8 +60,6 @@ func (s *PublicrpcServer) GetLastHeartbeats(ctx context.Context, req *publicrpcv
 }
 
 func (s *PublicrpcServer) GetSignedVAA(ctx context.Context, req *publicrpcv1.GetSignedVAARequest) (*publicrpcv1.GetSignedVAAResponse, error) {
-	s.logger.Error("======= GetSignedVAA", zap.Any("request", req))
-
 	address, err := hex.DecodeString(req.MessageId.EmitterAddress)
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("failed to decode address: %v", err))
