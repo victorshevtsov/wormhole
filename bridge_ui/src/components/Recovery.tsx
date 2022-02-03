@@ -337,6 +337,10 @@ export default function Recovery() {
               targetAddress: parsedPayload.targetAddress,
               originChain: parsedPayload.originChain,
               originAddress: parsedPayload.originAddress,
+              amount:
+                "amount" in parsedPayload
+                  ? parsedPayload.amount.toString()
+                  : "",
             },
           })
         );

@@ -10,12 +10,12 @@ import {
 import { clusterApiUrl as clusterApiUrlSafecoin } from "@safecoin/web3.js";
 import { clusterApiUrl as clusterApiUrlSolana } from "@solana/web3.js";
 import { getAddress } from "ethers/lib/utils";
-import bscIcon from "../icons/bsc.svg";
+// import bscIcon from "../icons/bsc.svg";
 import ethIcon from "../icons/eth.svg";
-import polygonIcon from "../icons/polygon.svg";
+// import polygonIcon from "../icons/polygon.svg";
 import safecoinIcon from "../icons/safecoin.svg";
-import solanaIcon from "../icons/solana.svg";
-import terraIcon from "../icons/terra.svg";
+// import solanaIcon from "../icons/solana.svg";
+// import terraIcon from "../icons/terra.svg";
 
 export type Cluster = "devnet" | "testnet" | "mainnet";
 export const CLUSTER: Cluster =
@@ -32,81 +32,81 @@ export interface ChainInfo {
 export const CHAINS =
   CLUSTER === "mainnet"
     ? [
-        {
-          id: CHAIN_ID_BSC,
-          name: "Binance Smart Chain",
-          logo: bscIcon,
-        },
+        // {
+        //   id: CHAIN_ID_BSC,
+        //   name: "Binance Smart Chain",
+        //   logo: bscIcon,
+        // },
         {
           id: CHAIN_ID_ETH,
           name: "Ethereum",
           logo: ethIcon,
         },
-        {
-          id: CHAIN_ID_POLYGON,
-          name: "Polygon",
-          logo: polygonIcon,
-        },
+        // {
+        //   id: CHAIN_ID_POLYGON,
+        //   name: "Polygon",
+        //   logo: polygonIcon,
+        // },
         {
           id: CHAIN_ID_SAFECOIN,
           name: "Safecoin",
           logo: safecoinIcon,
         },
-        {
-          id: CHAIN_ID_SOLANA,
-          name: "Solana",
-          logo: solanaIcon,
-        },
-        {
-          id: CHAIN_ID_TERRA,
-          name: "Terra",
-          logo: terraIcon,
-        },
+        // {
+        //   id: CHAIN_ID_SOLANA,
+        //   name: "Solana",
+        //   logo: solanaIcon,
+        // },
+        // {
+        //   id: CHAIN_ID_TERRA,
+        //   name: "Terra",
+        //   logo: terraIcon,
+        // },
       ]
     : CLUSTER === "testnet"
     ? [
         {
           id: CHAIN_ID_ETH,
-          name: "Ethereum",
+          name: "Ethereum (Goerli)",
           logo: ethIcon,
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin",
+          name: "Safecoin (Testnet)",
           logo: safecoinIcon,
         },
-        {
-          id: CHAIN_ID_SOLANA,
-          name: "Solana",
-          logo: solanaIcon,
-        },
+        // {
+        //   id: CHAIN_ID_SOLANA,
+        //   name: "Solana",
+        //   logo: solanaIcon,
+        // },
       ]
     : [
-        {
-          id: CHAIN_ID_BSC,
-          name: "Binance Smart Chain",
-          logo: bscIcon,
-        },
+        // {
+        //   id: CHAIN_ID_BSC,
+        //   name: "Binance Smart Chain",
+        //   logo: bscIcon,
+        // },
         {
           id: CHAIN_ID_ETH,
-          name: "Ethereum",
+          name: "Ethereum (devnet)",
           logo: ethIcon,
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin",
+          name: "Safecoin (devent)",
           logo: safecoinIcon,
         },
-        {
-          id: CHAIN_ID_SOLANA,
-          name: "Solana",
-          logo: solanaIcon,
-        },
-        {
-          id: CHAIN_ID_TERRA,
-          name: "Terra",
-          logo: terraIcon,
-        },
+        // {
+        //   id: CHAIN_ID_SOLANA,
+        //   name: "Solana",
+        //   logo: solanaIcon,
+        // },
+        // {
+        //   id: CHAIN_ID_TERRA,
+        //   name: "Terra",
+        //   logo: terraIcon,
+        // },
       ];
 export const BETA_CHAINS: ChainId[] = CLUSTER === "mainnet" ? [] : [];
 export const CHAINS_WITH_NFT_SUPPORT = CHAINS.filter(
@@ -157,13 +157,7 @@ export const WORMHOLE_RPC_HOSTS =
         "https://wormhole-v2-mainnet-api.chainlayer.network",
       ]
     : CLUSTER === "testnet"
-    ? [
-        "https://wormhole-v2-testnet-api.certus.one",
-        "https://wormhole-v2-testnet-api.mcf.rocks",
-        "https://wormhole-v2-testnet-api.chainlayer.network",
-        "https://wormhole-v2-testnet-api.staking.fund",
-        "https://wormhole-v2-testnet-api.chainlayer.network",
-      ]
+    ? ["https://guardian.testnet.safebridge.org"]
     : ["http://localhost:7071"];
 export const ETH_NETWORK_CHAIN_ID =
   CLUSTER === "mainnet" ? 1 : CLUSTER === "testnet" ? 5 : 1337;
@@ -192,7 +186,7 @@ export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   ? clusterApiUrlSolana("mainnet-beta")
   : CLUSTER === "testnet"
   ? clusterApiUrlSolana("testnet")
-  : "http://localhost:8899";
+  : "http://localhost:18899";
 
 export const TERRA_HOST =
   CLUSTER === "mainnet"
@@ -280,19 +274,19 @@ export const SAFE_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
     ? "worm2ZoG2kUd4vFXhvjh93UUH596ayRfgQ2MgjNMTth"
     : CLUSTER === "testnet"
-    ? "Brdguy7BmNB4qwEbcqqMbyV5CyJd2sxQNUn6NEpMSsUb"
+    ? "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
     : "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj";
 export const SAFE_NFT_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
     ? "WnFt12ZrnzZrFZkt2xsNsaNWoQribnuQ5B5FrDbwDhD"
     : CLUSTER === "testnet"
-    ? "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA" // TODO: test address
+    ? "ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD" // TODO: test address
     : "ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD";
 export const SAFE_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
     ? "wormDTUJ6AWPNvk59vGQbDvGJmqbDTdgWgAqcLBCgUb"
     : CLUSTER === "testnet"
-    ? "A4Us8EhCC76XdGAN17L4KpRNEK423nMivVHZzZqFqqBg"
+    ? "tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj"
     : "tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj";
 
 export const SOL_BRIDGE_ADDRESS =

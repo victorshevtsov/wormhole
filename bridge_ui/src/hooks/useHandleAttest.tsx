@@ -293,6 +293,8 @@ export function useHandleAttest() {
     enqueueSnackbar,
     sourceChain,
     signer,
+    safecoinWallet,
+    safecoinPK,
     solanaWallet,
     solPK,
     terraWallet,

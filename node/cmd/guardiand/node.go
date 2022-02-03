@@ -8,7 +8,8 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"path"
-	"strings"
+
+	// "strings"
 	"syscall"
 
 	"github.com/certusone/wormhole/node/pkg/notify/discord"
@@ -38,11 +39,12 @@ import (
 	"github.com/certusone/wormhole/node/pkg/readiness"
 	"github.com/certusone/wormhole/node/pkg/reporter"
 	"github.com/certusone/wormhole/node/pkg/safecoin"
-	solana "github.com/certusone/wormhole/node/pkg/solana"
+
+	// solana "github.com/certusone/wormhole/node/pkg/solana"
 	"github.com/certusone/wormhole/node/pkg/supervisor"
 	"github.com/certusone/wormhole/node/pkg/vaa"
 
-	"github.com/certusone/wormhole/node/pkg/terra"
+	// "github.com/certusone/wormhole/node/pkg/terra"
 
 	ipfslog "github.com/ipfs/go-log/v2"
 )
@@ -61,27 +63,27 @@ var (
 	statusAddr *string
 
 	guardianKeyPath *string
-	solanaContract  *string
+	// solanaContract  *string
 
 	ethRPC      *string
 	ethContract *string
 
-	bscRPC      *string
-	bscContract *string
+	// bscRPC      *string
+	// bscContract *string
 
-	polygonRPC      *string
-	polygonContract *string
+	// polygonRPC      *string
+	// polygonContract *string
 
-	terraWS       *string
-	terraLCD      *string
-	terraContract *string
+	// terraWS       *string
+	// terraLCD      *string
+	// terraContract *string
 
 	safecoinWsRPC    *string
 	safecoinRPC      *string
 	safecoinContract *string
 
-	solanaWsRPC *string
-	solanaRPC   *string
+	// solanaWsRPC *string
+	// solanaRPC   *string
 
 	logLevel *string
 
@@ -121,23 +123,23 @@ func init() {
 	dataDir = NodeCmd.Flags().String("dataDir", "", "Data directory")
 
 	guardianKeyPath = NodeCmd.Flags().String("guardianKey", "", "Path to guardian key (required)")
-	solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
+	// solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
 
 	ethRPC = NodeCmd.Flags().String("ethRPC", "", "Ethereum RPC URL")
 	ethContract = NodeCmd.Flags().String("ethContract", "", "Ethereum contract address")
 
-	bscRPC = NodeCmd.Flags().String("bscRPC", "", "Binance Smart Chain RPC URL")
-	bscContract = NodeCmd.Flags().String("bscContract", "", "Binance Smart Chain contract address")
+	// bscRPC = NodeCmd.Flags().String("bscRPC", "", "Binance Smart Chain RPC URL")
+	// bscContract = NodeCmd.Flags().String("bscContract", "", "Binance Smart Chain contract address")
 
-	polygonRPC = NodeCmd.Flags().String("polygonRPC", "", "Polygon RPC URL")
-	polygonContract = NodeCmd.Flags().String("polygonContract", "", "Polygon contract address")
+	// polygonRPC = NodeCmd.Flags().String("polygonRPC", "", "Polygon RPC URL")
+	// polygonContract = NodeCmd.Flags().String("polygonContract", "", "Polygon contract address")
 
-	terraWS = NodeCmd.Flags().String("terraWS", "", "Path to terrad root for websocket connection")
-	terraLCD = NodeCmd.Flags().String("terraLCD", "", "Path to LCD service root for http calls")
-	terraContract = NodeCmd.Flags().String("terraContract", "", "Wormhole contract address on Terra blockchain")
+	// terraWS = NodeCmd.Flags().String("terraWS", "", "Path to terrad root for websocket connection")
+	// terraLCD = NodeCmd.Flags().String("terraLCD", "", "Path to LCD service root for http calls")
+	// terraContract = NodeCmd.Flags().String("terraContract", "", "Wormhole contract address on Terra blockchain")
 
-	solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
-	solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
+	// solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
+	// solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
 
 	safecoinContract = NodeCmd.Flags().String("safecoinContract", "", "Address of the Safecoin program (required)")
 	safecoinWsRPC = NodeCmd.Flags().String("safecoinWS", "", "Safecoin Websocket URL (required")
@@ -256,10 +258,10 @@ func runNode(cmd *cobra.Command, args []string) {
 
 	// Register components for readiness checks.
 	readiness.RegisterComponent(common.ReadinessEthSyncing)
-	readiness.RegisterComponent(common.ReadinessSolanaSyncing)
-	readiness.RegisterComponent(common.ReadinessTerraSyncing)
-	readiness.RegisterComponent(common.ReadinessBSCSyncing)
-	readiness.RegisterComponent(common.ReadinessPolygonSyncing)
+	// readiness.RegisterComponent(common.ReadinessSolanaSyncing)
+	// readiness.RegisterComponent(common.ReadinessTerraSyncing)
+	// readiness.RegisterComponent(common.ReadinessBSCSyncing)
+	// readiness.RegisterComponent(common.ReadinessPolygonSyncing)
 	readiness.RegisterComponent(common.ReadinessSafecoinSyncing)
 
 	if *statusAddr != "" {
@@ -299,8 +301,8 @@ func runNode(cmd *cobra.Command, args []string) {
 
 		// Deterministic ganache ETH devnet address.
 		*ethContract = devnet.GanacheWormholeContractAddress.Hex()
-		*bscContract = devnet.GanacheWormholeContractAddress.Hex()
-		*polygonContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *bscContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *polygonContract = devnet.GanacheWormholeContractAddress.Hex()
 
 		// Use the hostname as nodeName. For production, we don't want to do this to
 		// prevent accidentally leaking sensitive hostnames.
@@ -331,18 +333,18 @@ func runNode(cmd *cobra.Command, args []string) {
 	if *ethContract == "" {
 		logger.Fatal("Please specify --ethContract")
 	}
-	if *bscRPC == "" {
-		logger.Fatal("Please specify --bscRPC")
-	}
-	if *bscContract == "" {
-		logger.Fatal("Please specify --bscContract")
-	}
-	if *polygonRPC == "" {
-		logger.Fatal("Please specify --polygonRPC")
-	}
-	if *polygonContract == "" {
-		logger.Fatal("Please specify --polygonContract")
-	}
+	// if *bscRPC == "" {
+	// 	logger.Fatal("Please specify --bscRPC")
+	// }
+	// if *bscContract == "" {
+	// 	logger.Fatal("Please specify --bscContract")
+	// }
+	// if *polygonRPC == "" {
+	// 	logger.Fatal("Please specify --polygonRPC")
+	// }
+	// if *polygonContract == "" {
+	// 	logger.Fatal("Please specify --polygonContract")
+	// }
 	if *nodeName == "" {
 		logger.Fatal("Please specify --nodeName")
 	}
@@ -357,25 +359,25 @@ func runNode(cmd *cobra.Command, args []string) {
 		logger.Fatal("Please specify --safecoinUrl")
 	}
 
-	if *solanaContract == "" {
-		logger.Fatal("Please specify --solanaContract")
-	}
-	if *solanaWsRPC == "" {
-		logger.Fatal("Please specify --solanaWsUrl")
-	}
-	if *solanaRPC == "" {
-		logger.Fatal("Please specify --solanaUrl")
-	}
+	// if *solanaContract == "" {
+	// 	logger.Fatal("Please specify --solanaContract")
+	// }
+	// if *solanaWsRPC == "" {
+	// 	logger.Fatal("Please specify --solanaWsUrl")
+	// }
+	// if *solanaRPC == "" {
+	// 	logger.Fatal("Please specify --solanaUrl")
+	// }
 
-	if *terraWS == "" {
-		logger.Fatal("Please specify --terraWS")
-	}
-	if *terraLCD == "" {
-		logger.Fatal("Please specify --terraLCD")
-	}
-	if *terraContract == "" {
-		logger.Fatal("Please specify --terraContract")
-	}
+	// if *terraWS == "" {
+	// 	logger.Fatal("Please specify --terraWS")
+	// }
+	// if *terraLCD == "" {
+	// 	logger.Fatal("Please specify --terraLCD")
+	// }
+	// if *terraContract == "" {
+	// 	logger.Fatal("Please specify --terraContract")
+	// }
 
 	if *bigTablePersistenceEnabled {
 		if *bigTableGCPProject == "" {
@@ -410,24 +412,24 @@ func runNode(cmd *cobra.Command, args []string) {
 	//
 	// Insert "I'm a sign, not a cop" meme.
 	//
-	if strings.Contains(*ethRPC, "mainnet.infura.io") ||
-		strings.Contains(*polygonRPC, "polygon-mainnet.infura.io") {
-		logger.Fatal("Infura is known to send incorrect blocks - please use your own nodes")
-	}
+	// if strings.Contains(*ethRPC, "mainnet.infura.io") ||
+	// 	strings.Contains(*polygonRPC, "polygon-mainnet.infura.io") {
+	// 	logger.Fatal("Infura is known to send incorrect blocks - please use your own nodes")
+	// }
 
 	ethContractAddr := eth_common.HexToAddress(*ethContract)
-	bscContractAddr := eth_common.HexToAddress(*bscContract)
-	polygonContractAddr := eth_common.HexToAddress(*polygonContract)
+	// bscContractAddr := eth_common.HexToAddress(*bscContract)
+	// polygonContractAddr := eth_common.HexToAddress(*polygonContract)
 
 	safecoinAddress, err := solana_types.PublicKeyFromBase58(*safecoinContract)
 	if err != nil {
 		logger.Fatal("invalid Safecoin contract address", zap.Error(err))
 	}
 
-	solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
-	if err != nil {
-		logger.Fatal("invalid Solana contract address", zap.Error(err))
-	}
+	// solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
+	// if err != nil {
+	// 	logger.Fatal("invalid Solana contract address", zap.Error(err))
+	// }
 
 	// In devnet mode, we generate a deterministic guardian key and write it to disk.
 	if *unsafeDevMode {
@@ -546,32 +548,32 @@ func runNode(cmd *cobra.Command, args []string) {
 			return err
 		}
 
-		if err := supervisor.Run(ctx, "bscwatch",
-			ethereum.NewEthWatcher(*bscRPC, bscContractAddr, "bsc", common.ReadinessBSCSyncing, vaa.ChainIDBSC, lockC, nil).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "bscwatch",
+		// 	ethereum.NewEthWatcher(*bscRPC, bscContractAddr, "bsc", common.ReadinessBSCSyncing, vaa.ChainIDBSC, lockC, nil).Run); err != nil {
+		// 	return err
+		// }
 
-		if err := supervisor.Run(ctx, "polygonwatch",
-			ethereum.NewEthWatcher(*polygonRPC, polygonContractAddr, "polygon", common.ReadinessPolygonSyncing, vaa.ChainIDPolygon, lockC, nil).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "polygonwatch",
+		// 	ethereum.NewEthWatcher(*polygonRPC, polygonContractAddr, "polygon", common.ReadinessPolygonSyncing, vaa.ChainIDPolygon, lockC, nil).Run); err != nil {
+		// 	return err
+		// }
 
-		// Start Terra watcher only if configured
-		logger.Info("Starting Terra watcher")
-		if err := supervisor.Run(ctx, "terrawatch",
-			terra.NewWatcher(*terraWS, *terraLCD, *terraContract, lockC, setC).Run); err != nil {
-			return err
-		}
+		// // Start Terra watcher only if configured
+		// logger.Info("Starting Terra watcher")
+		// if err := supervisor.Run(ctx, "terrawatch",
+		// 	terra.NewWatcher(*terraWS, *terraLCD, *terraContract, lockC, setC).Run); err != nil {
+		// 	return err
+		// }
 
-		if err := supervisor.Run(ctx, "solwatch-confirmed",
-			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "solwatch-confirmed",
+		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
+		// 	return err
+		// }
 
-		if err := supervisor.Run(ctx, "solwatch-finalized",
-			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
-			return err
-		}
+		// if err := supervisor.Run(ctx, "solwatch-finalized",
+		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
+		// 	return err
+		// }
 
 		// Start Safecoin watcher
 		if err := supervisor.Run(ctx, "safecoin-confirmed",
@@ -597,8 +599,8 @@ func runNode(cmd *cobra.Command, args []string) {
 			*unsafeDevMode,
 			*devNumGuardians,
 			*ethRPC,
-			*terraLCD,
-			*terraContract,
+			// *terraLCD,
+			// *terraContract,
 			attestationEvents,
 			notifier,
 		)

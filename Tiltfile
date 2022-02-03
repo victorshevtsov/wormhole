@@ -75,14 +75,14 @@ local_resource(
 
 # solana-wasm
 
-local_resource(
-    name = "solana-wasm-gen",
-    deps = ["solana"],
-    dir = "solana",
-    cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
-    env = {"DOCKER_BUILDKIT": "1"},
-    allow_parallel = True,
-)
+# local_resource(
+#     name = "solana-wasm-gen",
+#     deps = ["solana"],
+#     dir = "solana",
+#     cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
+#     env = {"DOCKER_BUILDKIT": "1"},
+#     allow_parallel = True,
+# )
 
 # safecoin-wasm
 
@@ -139,7 +139,7 @@ def build_node_yaml():
 
 k8s_yaml_with_ns(build_node_yaml())
 
-k8s_resource("guardian", resource_deps = ["proto-gen", "safecoin-devnet", "solana-devnet"], port_forwards = [
+k8s_resource("guardian", resource_deps = ["proto-gen", "safecoin-devnet"], port_forwards = [
     port_forward(6060, name = "Debug/Status Server [:6060]"),
     port_forward(7070, name = "Public gRPC [:7070]"),
     port_forward(7071, name = "Public REST [:7071]"),
@@ -159,37 +159,37 @@ docker_build(
 
 # Solana client cli (used for devnet setup)
 
-docker_build(
-    ref = "bridge-client-solana",
-    context = ".",
-    only = ["./proto", "./solana", "./ethereum", "./clients"],
-    dockerfile = "Dockerfile.client.solana",
-    # Ignore target folders from local (non-container) development.
-    ignore = ["./solana/*/target"],
-)
+# docker_build(
+#     ref = "bridge-client-solana",
+#     context = ".",
+#     only = ["./proto", "./solana", "./ethereum", "./clients"],
+#     dockerfile = "Dockerfile.client.solana",
+#     # Ignore target folders from local (non-container) development.
+#     ignore = ["./solana/*/target"],
+# )
 
 # solana smart contract
 
-docker_build(
-    ref = "solana-contract",
-    context = "solana",
-    dockerfile = "solana/Dockerfile",
-    ignore = ["./solana/**/target/"],
-)
+# docker_build(
+#     ref = "solana-contract",
+#     context = "solana",
+#     dockerfile = "solana/Dockerfile",
+#     ignore = ["./solana/**/target/"],
+# )
 
 # solana local devnet
 
-k8s_yaml_with_ns("devnet/solana-devnet.yaml")
+# k8s_yaml_with_ns("devnet/solana-devnet.yaml")
 
-k8s_resource(
-    "solana-devnet",
-    resource_deps = ["solana-wasm-gen"],
-    port_forwards = [
-        port_forward(8899, name = "Solana RPC [:8899]"),
-        port_forward(8900, name = "Solana WS [:8900]"),
-        port_forward(9000, name = "Solana PubSub [:9000]"),
-    ],
-)
+# k8s_resource(
+#     "solana-devnet",
+#     resource_deps = ["solana-wasm-gen"],
+#     port_forwards = [
+#         port_forward(8899, name = "Solana RPC [:8899]"),
+#         port_forward(8900, name = "Solana WS [:8900]"),
+#         port_forward(9000, name = "Solana PubSub [:9000]"),
+#     ],
+# )
 
 # safecoin smart contract
 
@@ -210,7 +210,7 @@ k8s_resource(
     port_forwards = [
         port_forward(8328, name = "Safecoin RPC [:8328]"),
         port_forward(8329, name = "Safecoin WS [:8329]"),
-        port_forward(19000, name = "Safecoin PubSub [:19000]"),
+        port_forward(9000, name = "Safecoin PubSub [:9000]"),
     ],
 )
 
@@ -267,9 +267,9 @@ k8s_resource("eth-devnet", port_forwards = [
     port_forward(8545, name = "Ganache RPC [:8545]"),
 ])
 
-k8s_resource("eth-devnet2", port_forwards = [
-    port_forward(8546, name = "Ganache RPC [:8546]"),
-])
+# k8s_resource("eth-devnet2", port_forwards = [
+#     port_forward(8546, name = "Ganache RPC [:8546]"),
+# ])
 
 if bridge_ui:
 
@@ -395,29 +395,29 @@ if explorer:
 
 # terra devnet
 
-docker_build(
-    ref = "terra-image",
-    context = "./terra/devnet",
-    dockerfile = "terra/devnet/Dockerfile",
-)
+# docker_build(
+#     ref = "terra-image",
+#     context = "./terra/devnet",
+#     dockerfile = "terra/devnet/Dockerfile",
+# )
 
-docker_build(
-    ref = "terra-contracts",
-    context = "./terra",
-    dockerfile = "./terra/Dockerfile",
-)
+# docker_build(
+#     ref = "terra-contracts",
+#     context = "./terra",
+#     dockerfile = "./terra/Dockerfile",
+# )
 
-k8s_yaml_with_ns("devnet/terra-devnet.yaml")
+# k8s_yaml_with_ns("devnet/terra-devnet.yaml")
 
-k8s_resource(
-    "terra-terrad",
-    port_forwards = [
-        port_forward(26657, name = "Terra RPC [:26657]"),
-        port_forward(1317, name = "Terra LCD [:1317]"),
-    ],
-)
+# k8s_resource(
+#     "terra-terrad",
+#     port_forwards = [
+#         port_forward(26657, name = "Terra RPC [:26657]"),
+#         port_forward(1317, name = "Terra LCD [:1317]"),
+#     ],
+# )
 
-k8s_resource(
-    "terra-fcd",
-    port_forwards = [port_forward(3060, name = "Terra FCD [:3060]")],
-)
+# k8s_resource(
+#     "terra-fcd",
+#     port_forwards = [port_forward(3060, name = "Terra FCD [:3060]")],
+# )

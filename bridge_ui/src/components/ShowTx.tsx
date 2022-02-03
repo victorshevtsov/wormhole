@@ -3,6 +3,7 @@ import {
   CHAIN_ID_BSC,
   CHAIN_ID_ETH,
   CHAIN_ID_POLYGON,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
 } from "@certusone/wormhole-sdk";
@@ -42,6 +43,14 @@ export default function ShowTx({
       ? `https://bscscan.com/tx/${tx?.id}`
       : chainId === CHAIN_ID_POLYGON
       ? `https://polygonscan.com/tx/${tx?.id}`
+      : chainId === CHAIN_ID_SAFECOIN
+      ? `https://explorer.safecoin.org/tx/${tx?.id}${
+          CLUSTER === "testnet"
+            ? "?cluster=testnet"
+            : CLUSTER === "devnet"
+            ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
+            : ""
+        }`
       : chainId === CHAIN_ID_SOLANA
       ? `https://explorer.solana.com/tx/${tx?.id}${
           CLUSTER === "testnet"

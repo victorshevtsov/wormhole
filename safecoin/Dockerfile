@@ -39,7 +39,9 @@ RUN cargo init --lib /tmp/decoy-crate && \
     cd /tmp/decoy-crate && cargo build-bpf && \
     rm -rf /tmp/decoy-crate
 
-RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library
+RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library && \
+    cd /usr/src/safecoin-program-library && \
+    git checkout 830e1f0e7b5b8cfafabb28b15c02dcada2ece77e
 
 RUN --mount=type=cache,id=safecoin-program-library,target=/usr/src/safecoin-program-library/target \
     cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/token/program/Cargo.toml" && \

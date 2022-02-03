@@ -3,8 +3,9 @@ package processor
 import (
 	"context"
 	"crypto/ecdsa"
-	"github.com/certusone/wormhole/node/pkg/notify/discord"
 	"time"
+
+	"github.com/certusone/wormhole/node/pkg/notify/discord"
 
 	"github.com/certusone/wormhole/node/pkg/db"
 
@@ -75,8 +76,8 @@ type Processor struct {
 	devnetNumGuardians uint
 	devnetEthRPC       string
 
-	terraLCD      string
-	terraContract string
+	// terraLCD      string
+	// terraContract string
 
 	attestationEvents *reporter.AttestationEventReporter
 
@@ -116,8 +117,8 @@ func NewProcessor(
 	devnetMode bool,
 	devnetNumGuardians uint,
 	devnetEthRPC string,
-	terraLCD string,
-	terraContract string,
+	// terraLCD string,
+	// terraContract string,
 	attestationEvents *reporter.AttestationEventReporter,
 	notifier *discord.DiscordNotifier,
 ) *Processor {
@@ -136,8 +137,8 @@ func NewProcessor(
 		devnetEthRPC:       devnetEthRPC,
 		db:                 db,
 
-		terraLCD:      terraLCD,
-		terraContract: terraContract,
+		// terraLCD:      terraLCD,
+		// terraContract: terraContract,
 
 		attestationEvents: attestationEvents,
 
