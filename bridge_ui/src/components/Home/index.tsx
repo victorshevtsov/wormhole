@@ -188,7 +188,7 @@ function Home() {
         <div style={{ textAlign: "center", display: "flex", justifyContent: "center" }}>
           <Button
             component={RouterLink}
-            to="/quicktransfer"
+            to="/transfer"
             variant="outlined"
             color="primary"
             size="large"
