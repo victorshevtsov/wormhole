@@ -4,7 +4,7 @@ import {
   CHAIN_ID_SOLANA,
 } from "@certusone/wormhole-sdk";
 import { getAddress } from "@ethersproject/address";
-import { Button, makeStyles } from "@material-ui/core";
+import { Button, makeStyles, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { VerifiedUser } from "@material-ui/icons";
 import { useCallback } from "react";
@@ -40,9 +40,36 @@ import StepDescription from "../StepDescription";
 import { TokenSelector } from "../TokenSelectors/SourceTokenSelector";
 
 const useStyles = makeStyles((theme) => ({
-  transferField: {
-    marginTop: theme.spacing(5),
+  chainSelectWrapper: {
+    display: "flex",
+    alignItems: "center",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+    },
   },
+  chainSelectContainer: {
+    flexBasis: "100%",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+    },
+  },
+  chainSelectArrow: {
+    position: "relative",
+    top: "12px",
+    [theme.breakpoints.down("sm")]: { transform: "rotate(90deg)" },
+  },
+  transferField: {
+    //marginTop: theme.spacing(5),
+    width: "100%"
+  },
+  subtitles: {
+     marginTop: theme.spacing(3),
+    fontWeight: 500,
+    paddingBottom: "5px"
+  },
+  microblock: {
+    marginTop: "25px"
+  }
 }));
 
 function Source() {
@@ -109,7 +136,7 @@ function Source() {
     <>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
-          Select tokens to send through the Wormhole Bridge.
+          <div style={{ opacity: 0.7 }}>Select tokens to send through the Wormhole Bridge.</div>
           <div style={{ flexGrow: 1 }} />
           <div>
             <Button
@@ -124,16 +151,23 @@ function Source() {
           </div>
         </div>
       </StepDescription>
-      <ChainSelect
-        select
-        variant="outlined"
-        fullWidth
-        value={sourceChain}
-        onChange={handleSourceChange}
-        disabled={shouldLockFields}
-        chains={CHAINS}
-      />
-      <KeyAndBalance chainId={sourceChain} />
+      <div className={classes.chainSelectContainer}>
+        <Typography className={classes.subtitles}>Select your chain source</Typography>
+        <ChainSelect
+          select
+          variant="outlined"
+          fullWidth
+          value={sourceChain}
+          onChange={handleSourceChange}
+          disabled={shouldLockFields}
+          chains={CHAINS}
+        />
+      </div>
+      <Typography className={classes.subtitles}>Connect your wallet provider</Typography>
+      <div style={{ marginRight: "auto", float: "left" }}>
+
+        <KeyAndBalance chainId={sourceChain} />
+      </div>
       {isReady || uiAmountString ? (
         <div className={classes.transferField}>
           <TokenSelector disabled={shouldLockFields} />

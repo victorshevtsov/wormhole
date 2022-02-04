@@ -47,6 +47,7 @@ export default function ButtonWithLoader({
       <div className={classes.root}>
         <Button
           color="primary"
+          size="large"
           variant="contained"
           className={classes.button}
           disabled={disabled}
