@@ -14,7 +14,7 @@ import { TerraWalletProvider } from "./contexts/TerraWalletContext.tsx";
 import ErrorBoundary from "./ErrorBoundary";
 import { theme } from "./muiTheme";
 import { store } from "./store";
-
+{/* test */}
 ReactDOM.render(
   <ErrorBoundary>
     <Provider store={store}>
