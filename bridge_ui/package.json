@@ -17,7 +17,7 @@
     "@safecoin/wallet-adapter-react": "file:../../wallet-adapter/packages/core/react",
     "@safecoin/wallet-adapter-safecoin": "file:../../wallet-adapter/packages/wallets/safecoin",
     "@safecoin/wallet-adapter-wallets": "file:../../wallet-adapter/packages/core/wallets",
-    "@safecoin/web3.js": "^1.29.3",
+    "@safecoin/web3.js": "^1.29.4",
     "@solana/spl-token": "^0.1.6",
     "@solana/spl-token-registry": "^0.2.216",
     "@solana/wallet-adapter-base": "^0.5.2",

@@ -49,7 +49,7 @@ export const CHAINS =
         // },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin",
+          name: "SafeCoin",
           logo: safecoinIcon,
         },
         // {
@@ -72,7 +72,7 @@ export const CHAINS =
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin (Testnet)",
+          name: "SafeCoin (Testnet)",
           logo: safecoinIcon,
         },
         // {
@@ -94,7 +94,7 @@ export const CHAINS =
         },
         {
           id: CHAIN_ID_SAFECOIN,
-          name: "Safecoin (devent)",
+          name: "SafeCoin (devent)",
           logo: safecoinIcon,
         },
         // {
@@ -210,21 +210,21 @@ export const ETH_BRIDGE_ADDRESS = getAddress(
   CLUSTER === "mainnet"
     ? "0x98f3c9e6E3fAce36bAAd05FE09d375Ef1464288B"
     : CLUSTER === "testnet"
-    ? "0x44F3e7c20850B3B5f3031114726A9240911D912a"
+    ? "0x316339dF7Ef916718e48Df716887798425b0cFce"
     : "0xC89Ce4735882C9F0f0FE26686c53074E09B0D550"
 );
 export const ETH_NFT_BRIDGE_ADDRESS = getAddress(
   CLUSTER === "mainnet"
     ? "0x6FFd7EdE62328b3Af38FCD61461Bbfc52F5651fE"
     : CLUSTER === "testnet"
-    ? "0x26b4afb60d6c903165150c6f0aa14f8016be4aec" // TODO: test address
+    ? "0x7ba5c2466BAa023EC6E8fb303bEDE3A50DE236F8" // TODO: test address
     : "0x26b4afb60d6c903165150c6f0aa14f8016be4aec"
 );
 export const ETH_TOKEN_BRIDGE_ADDRESS = getAddress(
   CLUSTER === "mainnet"
     ? "0x3ee18B2214AFF97000D974cf647E7C347E8fa585"
     : CLUSTER === "testnet"
-    ? "0xa6CDAddA6e4B6704705b065E01E52e2486c0FBf6"
+    ? "0x5084AC48f1B9A26db94CABE2A1fc003fe82140D5"
     : "0x0290FB167208Af455bB137780163b7B7a9a10C16"
 );
 export const BSC_BRIDGE_ADDRESS = getAddress(
@@ -401,7 +401,7 @@ export const WETH_ADDRESS =
   CLUSTER === "mainnet"
     ? "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
     : CLUSTER === "testnet"
-    ? "0x0000000000000000000000000000000000000000"
+    ? "0xA04F30280d04952c4D38B2E268F95EC11Fe9D9D0"
     : "0xDDb64fE46a91D46ee29420539FC25FD07c5FEa3E";
 export const WETH_DECIMALS = 18;
 

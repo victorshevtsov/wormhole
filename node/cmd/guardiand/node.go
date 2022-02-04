@@ -300,7 +300,7 @@ func runNode(cmd *cobra.Command, args []string) {
 		*p2pBootstrap = fmt.Sprintf("/dns4/guardian-0.guardian/udp/%d/quic/p2p/%s", *p2pPort, g0key.String())
 
 		// Deterministic ganache ETH devnet address.
-		*ethContract = devnet.GanacheWormholeContractAddress.Hex()
+		// *ethContract = devnet.GanacheWormholeContractAddress.Hex()
 		// *bscContract = devnet.GanacheWormholeContractAddress.Hex()
 		// *polygonContract = devnet.GanacheWormholeContractAddress.Hex()
 

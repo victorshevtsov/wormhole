@@ -218,7 +218,7 @@ const createNativeSafeParsedTokenAccount = async (
       parseFloat(formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS)),
       formatUnits(fetchAccounts[0].lamports, WSAFE_DECIMALS).toString(),
       "SAFE",
-      "Safecoin",
+      "SafeCoin",
       undefined, //TODO logo. It's in the solana token map, so we could potentially use that URL.
       true
     );

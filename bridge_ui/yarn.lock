@@ -1244,6 +1244,8 @@
   version "0.0.10"
   dependencies:
     "@improbable-eng/grpc-web" "^0.14.0"
+    "@safecoin/safe-token" "^0.1.7"
+    "@safecoin/web3.js" "^1.29.3"
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.27.0"
     "@terra-money/terra.js" "^2.0.14"
@@ -2310,6 +2312,26 @@
   version "1.29.3"
   resolved "https://registry.yarnpkg.com/@safecoin/web3.js/-/web3.js-1.29.3.tgz#6be1217e03ea530d431fdad69702581d81815ba6"
   integrity sha512-PRTs9HRGFVlriTyfNtsfr+fN/FjFxGLzNeVbMrIug70v2cwEfQMpAfHkumxQwjsWl8puWPJ9gnP2hk5vgDJ15g==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@solana/buffer-layout" "^3.0.0"
+    bn.js "^5.0.0"
+    borsh "^0.4.0"
+    bs58 "^4.0.1"
+    buffer "6.0.1"
+    cross-fetch "^3.1.4"
+    crypto-hash "^1.2.2"
+    jayson "^3.4.4"
+    js-sha3 "^0.8.0"
+    rpc-websockets "^7.4.2"
+    secp256k1 "^4.0.2"
+    superstruct "^0.14.2"
+    tweetnacl "^1.0.0"
+
+"@safecoin/web3.js@^1.29.4":
+  version "1.29.4"
+  resolved "https://registry.yarnpkg.com/@safecoin/web3.js/-/web3.js-1.29.4.tgz#7593735166e5b3eca81fb10d0db38df280b8e003"
+  integrity sha512-IPU1EL30feLyDw6qDMjKXP9r70KPQI52n1Sh9R9QXD4EjBRQs0DJm7dVqSGjJiMrqvM4p8I6rGMwljtSPdr5vA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@solana/buffer-layout" "^3.0.0"
