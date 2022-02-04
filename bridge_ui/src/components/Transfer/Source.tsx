@@ -164,12 +164,12 @@ function Source() {
         />
       </div>
       <Typography className={classes.subtitles}>Connect your wallet provider</Typography>
-      <div style={{ marginRight: "auto" }}>
+      <div style={{ marginRight: "auto", justifyContent: "flex-start", display:"grid"  }}>
 
         <KeyAndBalance chainId={sourceChain} />
       </div>
       {isReady || uiAmountString ? (
-        <div className={classes.transferField}>
+        <div className={classes.transferField} style={{marginTop:"15px", marginBottom:"15px"}}>
           <TokenSelector disabled={shouldLockFields} />
         </div>
       ) : null}
