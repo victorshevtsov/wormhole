@@ -29,7 +29,7 @@ import { useBetaContext } from "../contexts/BetaContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import useIsWalletReady from "../hooks/useIsWalletReady";
 import { getMetaplexData } from "../hooks/useMetaplexData";
-import { COLORS } from "../muiTheme";
+import { COLORS } from "../muiThemeLight";
 import { NFTParsedTokenAccount } from "../store/nftSlice";
 import {
   BETA_CHAINS,

@@ -11,7 +11,7 @@ import clsx from "clsx";
 import numeral from "numeral";
 import { useMemo } from "react";
 import useTVL from "../../hooks/useTVL";
-import { COLORS } from "../../muiTheme";
+import { COLORS } from "../../muiThemeLight";
 import SmartAddress from "../SmartAddress";
 import { balancePretty } from "../TokenSelectors/TokenPicker";
 import CustodyAddresses from "./CustodyAddresses";

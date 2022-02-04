@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
 
 const tooltipStyles = {
   tooltip: {
+    backgroundColor: "white",
+    color:"black",
     minWidth: "max-content",
     textAlign: "center",
     "& > *": {
