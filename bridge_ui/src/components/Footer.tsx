@@ -41,7 +41,7 @@ export default function Footer() {
     <footer className={classes.footer}>
       <div>
         <IconButton
-          href="https://discord.gg/wormholecrypto"
+          href="https://discord.gg/c6hWAkQ"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.socialIcon}
@@ -49,7 +49,7 @@ export default function Footer() {
           <img src={Discord} alt="Discord" />
         </IconButton>
         <IconButton
-          href="https://github.com/certusone/wormhole"
+          href=""
           target="_blank"
           rel="noopener noreferrer"
           className={classes.socialIcon}
@@ -57,7 +57,7 @@ export default function Footer() {
           <img src={Github} alt="Github" />
         </IconButton>
         <IconButton
-          href="http://wormholecrypto.medium.com"
+          href="https://safecoin.medium.com/"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.socialIcon}
@@ -65,7 +65,7 @@ export default function Footer() {
           <img src={Medium} alt="Medium" />
         </IconButton>
         <IconButton
-          href="https://t.me/wormholecrypto"
+          href="https://t.me/SafeCoinEN"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.socialIcon}
@@ -73,7 +73,7 @@ export default function Footer() {
           <img src={Telegram} alt="Telegram" />
         </IconButton>
         <IconButton
-          href="https://twitter.com/wormholecrypto"
+          href="https://twitter.com/safecoin"
           target="_blank"
           rel="noopener noreferrer"
           className={classes.socialIcon}
@@ -84,7 +84,7 @@ export default function Footer() {
       <div className={classes.builtWithContainer}>
         <div>
           <a
-            href="https://wormholenetwork.com/"
+            href=""
             target="_blank"
             rel="noopener noreferrer"
           >
