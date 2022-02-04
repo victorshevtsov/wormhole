@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%"
   },
   subtitles: {
-     marginTop: theme.spacing(3),
+    marginTop: theme.spacing(3),
     fontWeight: 500,
     paddingBottom: "5px"
   },
@@ -164,7 +164,7 @@ function Source() {
         />
       </div>
       <Typography className={classes.subtitles}>Connect your wallet provider</Typography>
-      <div style={{ marginRight: "auto", float: "left" }}>
+      <div style={{ marginRight: "auto" }}>
 
         <KeyAndBalance chainId={sourceChain} />
       </div>
