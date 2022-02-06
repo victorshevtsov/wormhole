@@ -191,6 +191,7 @@ function App() {
             <div style={{ display: "flex", alignItems: "center" }}>
               {isHomepage ? (
                 <>
+                {/* 
                   <Tooltip title="View wormhole network stats">
                     <IconButton
                       component={NavLink}
@@ -200,7 +201,8 @@ function App() {
                     >
                       <BarChart />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip>                
+                */}
                   <Button
                     component={RouterLink}
                     to="/transfer"
@@ -226,13 +228,13 @@ function App() {
                   </Button>
                 </Tooltip>
                 */}</>
-                
+
               )}
             </div>
           </Hidden>
           <Hidden implementation="css" smUp>
             {isHomepage ? (
-              <>
+              <>{/*
                 <Tooltip title="View wormhole network stats">
                   <IconButton
                     component={NavLink}
@@ -243,6 +245,8 @@ function App() {
                     <BarChart />
                   </IconButton>
                 </Tooltip>
+              */ }
+
                 <Tooltip title="Transfer tokens to another blockchain">
                   <IconButton
                     component={NavLink}
