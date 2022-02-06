@@ -10,9 +10,9 @@ export const COLORS = {
   lightBlue: "#83b9fc",
   pureWhite: "#ffffff",
   nearWhite: "#f3f6ff",
-  nearWhiteWithMinorTransparency: "rgba(255,255,255,.92)",
+  nearWhiteWithMinorTransparency: "rgba(255,255,255,1)",
   nearBlack: "#f3f6ff",
-  nearBlackWithMinorTransparency: "rgba(255,255,255,.85)",
+  nearBlackWithMinorTransparency: "rgba(255,255,255,1)",
   red: "#aa0818",
   darkRed: "#810612",
 };

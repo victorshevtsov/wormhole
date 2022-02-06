@@ -213,6 +213,7 @@ function App() {
                   </Button>
                 </>
               ) : (
+                <>{/* 
                 <Tooltip title="View the FAQ">
                   <Button
                     href="https://docs.wormholenetwork.com/wormhole/faqs"
@@ -224,6 +225,8 @@ function App() {
                     FAQ
                   </Button>
                 </Tooltip>
+                */}</>
+                
               )}
             </div>
           </Hidden>

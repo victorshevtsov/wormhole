@@ -76,7 +76,7 @@ export const EthereumProviderProvider = ({
                 })
                 .catch(() => {
                   setProviderError(
-                    "An error occurred while getting the signer address"
+                    "An error occurred while getting the signer address, try reconnecting"
                   );
                 });
               // TODO: try using ethers directly
@@ -100,7 +100,7 @@ export const EthereumProviderProvider = ({
                       })
                       .catch(() => {
                         setProviderError(
-                          "An error occurred while getting the signer address"
+                          "An error occurred while getting the signer address, try reconnecting"
                         );
                       });
                   } catch (e) {}

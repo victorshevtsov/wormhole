@@ -43,14 +43,15 @@ const useStyles = makeStyles((theme) =>
       overflowX: "hidden",
     },
     selectionButtonContainer: {
+      width:"100%",
       //display: "flex",
       textAlign: "center",
-      marginTop: theme.spacing(2),
+      //marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2),
     },
     selectionButton: {
-      maxWidth: "100%",
-      width: theme.breakpoints.values.sm,
+     // maxWidth: "100%",
+      width: "100%",
     },
     tokenOverviewContainer: {
       display: "flex",

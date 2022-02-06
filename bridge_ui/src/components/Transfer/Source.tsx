@@ -164,14 +164,17 @@ function Source() {
         />
       </div>
       <Typography className={classes.subtitles}>Connect your wallet provider</Typography>
-      <div style={{ marginRight: "auto", justifyContent: "flex-start", display:"grid"  }}>
+      <div style={{ marginRight: "auto", justifyContent: "flex-start", display: "grid" }}>
 
         <KeyAndBalance chainId={sourceChain} />
       </div>
       {isReady || uiAmountString ? (
-        <div className={classes.transferField} style={{marginTop:"15px", marginBottom:"15px"}}>
-          <TokenSelector disabled={shouldLockFields} />
-        </div>
+        <>
+          <Typography className={classes.subtitles}>Select a token to send</Typography>
+          <div className={classes.transferField} style={{ marginBottom: "15px" }}>
+            <TokenSelector disabled={shouldLockFields} />
+          </div>
+        </>
       ) : null}
       {isMigrationAsset ? (
         <Button
@@ -186,20 +189,24 @@ function Source() {
         <>
           <LowBalanceWarning chainId={sourceChain} />
           {hasParsedTokenAccount ? (
-            <NumberTextField
-              variant="outlined"
-              label="Amount"
-              fullWidth
-              className={classes.transferField}
-              value={amount}
-              onChange={handleAmountChange}
-              disabled={shouldLockFields}
-              onMaxClick={
-                uiAmountString && !parsedTokenAccount.isNativeAsset
-                  ? handleMaxClick
-                  : undefined
-              }
-            />
+            <>
+              <Typography className={classes.subtitles}>Amount to send</Typography>
+              <NumberTextField
+                variant="outlined"
+                //label="Amount"
+                placeholder="0.00"
+                fullWidth
+                //className={classes.transferField}
+                value={amount}
+                onChange={handleAmountChange}
+                disabled={shouldLockFields}
+                onMaxClick={
+                  uiAmountString && !parsedTokenAccount.isNativeAsset
+                    ? handleMaxClick
+                    : undefined
+                }
+              />
+            </>
           ) : null}
           <ButtonWithLoader
             disabled={!isSourceComplete}
