@@ -7,17 +7,36 @@ import {
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
 } from "@certusone/wormhole-sdk";
-import { Button, makeStyles, Typography } from "@material-ui/core";
+import { Button, createTheme, makeStyles, Theme, ThemeProvider, Typography, withStyles } from "@material-ui/core";
+import { green } from "@material-ui/core/colors";
+import { Alert } from "@material-ui/lab";
 import { Transaction } from "../store/transferSlice";
 import { CLUSTER, getExplorerName } from "../utils/consts";
+import etherscan from "../images/etherscan.svg"
+import { isMobile } from "react-device-detect";
+const theme = createTheme({
+  palette: {
+    primary: green,
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: "5px",
+        textTransform: "none",
+      },
+    },
+  },
+});
 
 const useStyles = makeStyles((theme) => ({
   tx: {
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(2),
     textAlign: "center",
   },
   viewButton: {
-    marginTop: theme.spacing(1),
+    //background: "red",
+    marginTop:"8px",
+    // marginTop: theme.spacing(1),
   },
 }));
 
@@ -36,57 +55,57 @@ export default function ShowTx({
       (chainId === CHAIN_ID_SOLANA || chainId === CHAIN_ID_TERRA));
   const explorerAddress =
     chainId === CHAIN_ID_ETH
-      ? `https://${CLUSTER === "testnet" ? "goerli." : ""}etherscan.io/tx/${
-          tx?.id
-        }`
+      ? `https://${CLUSTER === "testnet" ? "goerli." : ""}etherscan.io/tx/${tx?.id
+      }`
       : chainId === CHAIN_ID_BSC
-      ? `https://bscscan.com/tx/${tx?.id}`
-      : chainId === CHAIN_ID_POLYGON
-      ? `https://polygonscan.com/tx/${tx?.id}`
-      : chainId === CHAIN_ID_SAFECOIN
-      ? `https://explorer.safecoin.org/tx/${tx?.id}${
-          CLUSTER === "testnet"
-            ? "?cluster=testnet"
-            : CLUSTER === "devnet"
-            ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
-            : ""
-        }`
-      : chainId === CHAIN_ID_SOLANA
-      ? `https://explorer.solana.com/tx/${tx?.id}${
-          CLUSTER === "testnet"
-            ? "?cluster=testnet"
-            : CLUSTER === "devnet"
-            ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8899"
-            : ""
-        }`
-      : chainId === CHAIN_ID_TERRA
-      ? `https://finder.terra.money/${
-          CLUSTER === "devnet"
-            ? "localterra"
-            : CLUSTER === "testnet"
-            ? "bombay-12"
-            : "columbus-5"
-        }/tx/${tx?.id}`
-      : undefined;
+        ? `https://bscscan.com/tx/${tx?.id}`
+        : chainId === CHAIN_ID_POLYGON
+          ? `https://polygonscan.com/tx/${tx?.id}`
+          : chainId === CHAIN_ID_SAFECOIN
+            ? `https://explorer.safecoin.org/tx/${tx?.id}${CLUSTER === "testnet"
+              ? "?cluster=testnet"
+              : CLUSTER === "devnet"
+                ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8328"
+                : ""
+            }`
+            : chainId === CHAIN_ID_SOLANA
+              ? `https://explorer.solana.com/tx/${tx?.id}${CLUSTER === "testnet"
+                ? "?cluster=testnet"
+                : CLUSTER === "devnet"
+                  ? "?cluster=custom&customUrl=http%3A%2F%2Flocalhost%3A8899"
+                  : ""
+              }`
+              : chainId === CHAIN_ID_TERRA
+                ? `https://finder.terra.money/${CLUSTER === "devnet"
+                  ? "localterra"
+                  : CLUSTER === "testnet"
+                    ? "bombay-12"
+                    : "columbus-5"
+                }/tx/${tx?.id}`
+                : undefined;
   const explorerName = getExplorerName(chainId);
 
   return (
-    <div className={classes.tx}>
-      <Typography noWrap component="div" variant="body2">
+    <div className={classes.tx} style={isMobile ? {} : { display: 'flex', justifyContent:"space-around" }}>
+      <Alert severity="success">
         {tx.id}
-      </Typography>
+      </Alert>
       {showExplorerLink && explorerAddress ? (
-        <Button
-          href={explorerAddress}
-          target="_blank"
-          rel="noopener noreferrer"
-          size="small"
-          variant="outlined"
-          className={classes.viewButton}
-        >
-          View on {explorerName}
-        </Button>
+        <ThemeProvider theme={theme}>
+          <Button
+            href={explorerAddress}
+            target="_blank"
+            rel="noopener noreferrer"
+            size="small"
+            variant="text"
+            className={classes.viewButton}
+            startIcon={<img style={{ width:"22px", height:"auto"}} src={etherscan}></img>}
+          >
+            View on {explorerName}
+          </Button>
+        </ThemeProvider>
       ) : null}
+
     </div>
   );
 }

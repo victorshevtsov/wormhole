@@ -9,6 +9,7 @@ import {
 } from "@certusone/wormhole-sdk";
 import { Checkbox, FormControlLabel } from "@material-ui/core";
 import { useCallback, useState } from "react";
+import { isMobile } from "react-device-detect";
 import { useSelector } from "react-redux";
 import { useHandleRedeem } from "../../hooks/useHandleRedeem";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
@@ -61,36 +62,39 @@ function Redeem() {
   return (
     <>
       <StepDescription>Receive the tokens on the target chain</StepDescription>
-      <KeyAndBalance chainId={targetChain} />
-      {isNativeEligible && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={useNativeRedeem}
-              onChange={toggleNativeRedeem}
-              color="primary"
-            />
+      <div style={isMobile ? {} : { display: 'flex', flexDirection: "column" }}>
+        <KeyAndBalance chainId={targetChain} />
+        {isNativeEligible && (
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={useNativeRedeem}
+                onChange={toggleNativeRedeem}
+                color="primary"
+              />
+            }
+            label="Automatically unwrap to native currency"
+          />
+        )}
+        {targetChain === CHAIN_ID_SAFECOIN ? (
+          <SafecoinCreateAssociatedAddressAlternate />
+        ) : targetChain === CHAIN_ID_SOLANA ? (
+          <SolanaCreateAssociatedAddressAlternate />
+        ) : null}
+      </div>
+      <div style={{ paddingTop: "15px" }}>
+        <ButtonWithLoader
+          //TODO disable when the associated token account is confirmed to not exist
+          disabled={!isReady || disabled}
+          onClick={
+            isNativeEligible && useNativeRedeem ? handleNativeClick : handleClick
           }
-          label="Automatically unwrap to native currency"
-        />
-      )}
-      {targetChain === CHAIN_ID_SAFECOIN ? (
-        <SafecoinCreateAssociatedAddressAlternate />
-      ) : targetChain === CHAIN_ID_SOLANA ? (
-        <SolanaCreateAssociatedAddressAlternate />
-      ) : null}
-
-      <ButtonWithLoader
-        //TODO disable when the associated token account is confirmed to not exist
-        disabled={!isReady || disabled}
-        onClick={
-          isNativeEligible && useNativeRedeem ? handleNativeClick : handleClick
-        }
-        showLoader={showLoader}
-        error={statusMessage}
-      >
-        Redeem
-      </ButtonWithLoader>
+          showLoader={showLoader}
+          error={statusMessage}
+        >
+          Redeem
+        </ButtonWithLoader>
+      </div>
       <WaitingForWalletMessage />
     </>
   );

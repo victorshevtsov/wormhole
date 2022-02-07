@@ -50,6 +50,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
   },
+  subtitles: {
+    marginTop: theme.spacing(3),
+    fontWeight: 500,
+    paddingBottom: "5px"
+  },
 }));
 
 export const useTargetInfo = () => {
@@ -129,6 +134,7 @@ function Target() {
   return (
     <>
       <StepDescription>Select a recipient chain and address.</StepDescription>
+      <Typography className={classes.subtitles}>Select your target chain</Typography>
       <ChainSelect
         variant="outlined"
         select
@@ -138,7 +144,10 @@ function Target() {
         disabled={shouldLockFields}
         chains={chains}
       />
-      <KeyAndBalance chainId={targetChain} />
+      <Typography className={classes.subtitles}>Connect your wallet for the {CHAINS_BY_ID[targetChain].name} blockchain</Typography>
+      <div style={{ marginRight: "auto", justifyContent: "flex-start", display: "grid" }}>
+        <KeyAndBalance chainId={targetChain} />
+      </div>
       {readableTargetAddress ? (
         <>
           {targetAsset ? (
@@ -185,7 +194,7 @@ function Target() {
           setAssociatedAccountExists={setAssociatedSolanaAccountExists}
         />
       ) : null}
-      <Alert severity="info" variant="outlined" className={classes.alert}>
+      <Alert severity="info" className={classes.alert}>
         <Typography>
           You will have to pay transaction fees on{" "}
           {CHAINS_BY_ID[targetChain].name} to redeem your tokens.
