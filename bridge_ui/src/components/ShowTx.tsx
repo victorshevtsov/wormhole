@@ -13,6 +13,7 @@ import { Alert } from "@material-ui/lab";
 import { Transaction } from "../store/transferSlice";
 import { CLUSTER, getExplorerName } from "../utils/consts";
 import etherscan from "../images/etherscan.svg"
+import safecoinssmall from "../icons/safecoinssmall.svg"
 import { isMobile } from "react-device-detect";
 const theme = createTheme({
   palette: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   viewButton: {
     //background: "red",
-    marginTop:"8px",
+    marginTop: "8px",
     // marginTop: theme.spacing(1),
   },
 }));
@@ -85,10 +86,22 @@ export default function ShowTx({
                 : undefined;
   const explorerName = getExplorerName(chainId);
 
+  function explIcon() {
+    if (chainId === 2) {
+      return (
+        <img style={{ width: "22px", height: "auto" }} src={etherscan}></img>
+      )
+    } else {
+      return (
+      <img style={{ width: "22px", height: "auto" }} src={safecoinssmall}></img>
+      )
+    }
+  }
+
   return (
-    <div className={classes.tx} style={isMobile ? {} : { display: 'flex', justifyContent:"space-around" }}>
+    <div className={classes.tx} style={isMobile ? {} : { display: 'flex', justifyContent: "space-around" }}>
       <Alert severity="success">
-        {tx.id}
+        <div style={{ fontSize: "12px" }}>{tx.id}</div>
       </Alert>
       {showExplorerLink && explorerAddress ? (
         <ThemeProvider theme={theme}>
@@ -99,7 +112,7 @@ export default function ShowTx({
             size="small"
             variant="text"
             className={classes.viewButton}
-            startIcon={<img style={{ width:"22px", height:"auto"}} src={etherscan}></img>}
+            startIcon={explIcon()}
           >
             View on {explorerName}
           </Button>
