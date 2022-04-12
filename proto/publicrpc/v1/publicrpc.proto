@@ -9,16 +9,12 @@ import "google/api/annotations.proto";
 
 enum ChainID {
   CHAIN_ID_UNSPECIFIED = 0;
-  // TODO(Victor): Dirty hack to workaround unresolved issues
-  // CHAIN_ID_SOLANA = 1;
-  CHAIN_ID_SOLANA = 6;
+  CHAIN_ID_SOLANA = 1;
   CHAIN_ID_ETHEREUM = 2;
   CHAIN_ID_TERRA = 3;
   CHAIN_ID_BSC = 4;
   CHAIN_ID_POLYGON = 5;
-  // TODO(Victor): Dirty hack to workaround unresolved issues
-  // CHAIN_ID_SAFECOIN = 6;
-  CHAIN_ID_SAFECOIN = 1;
+  CHAIN_ID_SAFECOIN = 19165;
 }
 
 // MessageID is a VAA's globally unique identifier (see data availability design document).

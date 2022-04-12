@@ -125,9 +125,7 @@ func ChainIDFromString(s string) (ChainID, error) {
 const (
 	ChainIDUnset ChainID = 0
 	// ChainIDSolana is the ChainID of Solana
-	// TODO(Victor): ChainId workaround
-	// ChainIDSolana ChainID = 1
-	ChainIDSolana ChainID = 6
+	ChainIDSolana ChainID = 1
 	// ChainIDEthereum is the ChainID of Ethereum
 	ChainIDEthereum ChainID = 2
 	// ChainIDTerra is the ChainID of Terra
@@ -137,9 +135,7 @@ const (
 	// ChainIDPolygon is the ChainID of Polygon
 	ChainIDPolygon ChainID = 5
 	// ChainIDSafecoin is the ChainID of Safecoin
-	// TODO(Victor): ChainId workaround
-	// ChainIDSafecoin ChainID = 6
-	ChainIDSafecoin ChainID = 1
+	ChainIDSafecoin ChainID = 19165
 
 	minVAALength        = 1 + 4 + 52 + 4 + 1 + 1
 	SupportedVAAVersion = 0x01
