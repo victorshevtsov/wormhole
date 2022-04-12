@@ -40,6 +40,7 @@ config.define_string("webHost", False, "Public hostname for port forwards")
 # Components
 config.define_bool("algorand", False, "Enable Algorand component")
 config.define_bool("solana", False, "Enable Solana component")
+config.define_bool("safecoin", False, "Enable Safecoin component")
 config.define_bool("explorer", False, "Enable explorer component")
 config.define_bool("bridge_ui", False, "Enable bridge UI component")
 config.define_bool("e2e", False, "Enable E2E testing stack")
@@ -55,6 +56,7 @@ bigTableKeyPath = cfg.get("bigTableKeyPath", "./event_database/devnet_key.json")
 webHost = cfg.get("webHost", "localhost")
 algorand = cfg.get("algorand", True)
 solana = cfg.get("solana", True)
+safecoin = cfg.get("safecoin", True)
 ci = cfg.get("ci", False)
 explorer = cfg.get("explorer", ci)
 bridge_ui = cfg.get("bridge_ui", ci)
@@ -127,6 +129,20 @@ if solana:
         trigger_mode = trigger_mode,
     )
 
+# wasm-ssfecoin
+
+if safecoin:
+    local_resource(
+        name = "wasm-gen-safecoin",
+        deps = ["safecoin"],
+        dir = "safecoin",
+        cmd = "tilt docker build -- -f Dockerfile.wasm -o type=local,dest=.. .",
+        env = {"DOCKER_BUILDKIT": "1"},
+        labels = ["safecoin"],
+        allow_parallel = True,
+        trigger_mode = trigger_mode,
+    )
+
 # node
 
 if explorer:
@@ -194,6 +210,8 @@ k8s_yaml_with_ns(build_node_yaml())
 guardian_resource_deps = ["proto-gen", "eth-devnet", "eth-devnet2", "terra-terrad"]
 if solana:
     guardian_resource_deps = guardian_resource_deps + ["solana-devnet"]
+if safecoin:
+    guardian_resource_deps = guardian_resource_deps + ["safecoin-devnet"]
 
 k8s_resource(
     "guardian",
@@ -254,6 +272,41 @@ if solana:
             port_forward(9000, name = "Solana PubSub [:9000]", host = webHost),
         ],
         labels = ["solana"],
+        trigger_mode = trigger_mode,
+    )
+
+if safecoin:
+    # safecoin client cli (used for devnet setup)
+
+    docker_build(
+        ref = "bridge-client-safecoin",
+        context = ".",
+        only = ["./proto", "./safecoin", "./clients"],
+        dockerfile = "Dockerfile.client.safecoin",
+        # Ignore target folders from local (non-container) development.
+        ignore = ["./safecoin/*/target"],
+    )
+
+    # safecoin smart contract
+
+    docker_build(
+        ref = "safecoin-contract",
+        context = "safecoin",
+        dockerfile = "safecoin/Dockerfile",
+    )
+
+    # safecoin local devnet
+
+    k8s_yaml_with_ns("devnet/safecoin-devnet.yaml")
+
+    k8s_resource(
+        "safecoin-devnet",
+        port_forwards = [
+            port_forward(8328, name = "Safecoin RPC [:8328]", host = webHost),
+            port_forward(8329, name = "Safecoin WS [:8329]", host = webHost),
+            port_forward(19000, name = "Safecoin PubSub [:19000]", host = webHost),
+        ],
+        labels = ["safecoin"],
         trigger_mode = trigger_mode,
     )
 

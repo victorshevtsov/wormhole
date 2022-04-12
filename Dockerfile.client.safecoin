@@ -1,0 +1,83 @@
+#syntax=docker/dockerfile:1.2@sha256:e2a8561e419ab1ba6b2fe6cbdf49fd92b95912df1cf7d313c3e2230a333fdbcc
+FROM docker.io/library/rust:1.49@sha256:a50165ea96983c21832578afb1c8c028674c965bc1ed43b607871b1f362e06a5
+
+RUN apt-get update && apt-get install -yq libssl-dev libudev-dev pkg-config zlib1g-dev llvm clang ncat
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && apt-get install -y nodejs
+
+RUN rustup default nightly-2022-01-02
+RUN rustup component add rustfmt
+
+RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
+
+RUN git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin-install && \
+    cd /usr/src/safecoin-install && \
+    cargo build --release --target-dir /tmp/safecoin-install && \
+    find /tmp/safecoin-install/release/ -maxdepth 1 -type f -executable -exec cp {} /root/.local/share/safecoin/install/active_release/bin \; && \
+    cp -r /usr/src/safecoin-install/sdk /root/.local/share/safecoin/install/active_release/bin && \
+    rm -rf /usr/src/safecoin-install
+
+RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library && \
+    cd /usr/src/safecoin-program-library && \
+    cargo build --release --target-dir /tmp/safecoin-program-library && \
+    find /tmp/safecoin-program-library/release/ -maxdepth 1 -type f -executable -exec cp {} /root/.local/share/safecoin/install/active_release/bin \; && \
+    rm -rf /usr/src/safecoin-program-library
+
+# RUN curl \
+#         -L https://github.com/Fair-Exchange/Safecoin/releases/download/v.18.12/Safecoin-Linux-1.8.12.tar.gz \
+#         --output /tmp/safecoin.tar.gz && \
+#     mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+#     tar \
+#         -C /root/.local/share/safecoin/install/active_release/bin \
+#         --strip-components=1 \
+#         -xzvf /tmp/safecoin.tar.gz Safecoinbin && \
+#     git clone https://github.com/Fair-Exchange/Safecoin.git /tmp/safecoin -b 1.8.12 && \
+#     cp -r /tmp/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin && \
+#     rm -rf /tmp/safecoin.tar.gz /tmp/safecoin
+
+# COPY safecoin/safecoin.tar.gz /tmp
+# RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+#     tar -xzvf /tmp/safecoin.tar.gz -C /root/.local/share/safecoin/install/active_release/bin && \
+#     rm /tmp/safecoin.tar.gz
+
+# RUN rustup default nightly-2022-01-02
+# RUN rustup component add rustfmt
+
+RUN --mount=type=cache,target=/root/.cache \
+    cargo install --version =2.0.12 spl-token-cli
+
+ENV SAFECOIN_BIN_PATH="/root/.local/share/safecoin/install/active_release/bin"
+ENV PATH="$SAFECOIN_BIN_PATH:$PATH"
+
+WORKDIR /usr/src/clients/token_bridge
+COPY clients/token_bridge/package.json clients/token_bridge/package-lock.json ./
+RUN --mount=type=cache,uid=1000,gid=1000,target=/home/node/.npm \
+    npm ci
+COPY clients/token_bridge ./
+RUN npm run build
+
+WORKDIR /usr/src/clients/nft_bridge
+COPY clients/nft_bridge/package.json clients/nft_bridge/package-lock.json ./
+RUN --mount=type=cache,uid=1000,gid=1000,target=/home/node/.npm \
+    npm ci
+COPY clients/nft_bridge ./
+RUN npm run build
+
+ADD safecoin /usr/src/safecoin
+ADD proto /usr/src/proto
+
+WORKDIR /usr/src/safecoin
+
+RUN safecoin config set --keypair "/usr/src/safecoin/keys/safecoin-devnet.json"
+RUN safecoin config set --url "http://safecoin-devnet:8328"
+
+ENV EMITTER_ADDRESS="11111111111111111111111111111115"
+ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
+
+RUN --mount=type=cache,id=safecoin_client_cache,target=/root/.cache \
+    --mount=type=cache,id=safecoin_client_bridge,target=bridge/target \
+    --mount=type=cache,id=safecoin_client_token_bridge,target=modules/token_bridge/target \
+	set -xe && \
+    cargo build --manifest-path ./bridge/Cargo.toml --package client --release --locked && \
+    cargo build --manifest-path ./modules/token_bridge/Cargo.toml --package client --release --locked && \
+    cp bridge/target/release/client /usr/local/bin && \
+    cp modules/token_bridge/target/release/client /usr/local/bin/token-bridge-client
