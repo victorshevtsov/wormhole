@@ -3,6 +3,7 @@ package guardiand
 import (
 	"crypto/ecdsa"
 	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -115,7 +116,8 @@ func writeGuardianKey(key *ecdsa.PrivateKey, description string, filename string
 	}
 
 	headers := map[string]string{
-		"PublicKey": ethcrypto.PubkeyToAddress(key.PublicKey).String(),
+		"PublicKey":     ethcrypto.PubkeyToAddress(key.PublicKey).String(),
+		"PrivateKeyHex": hex.EncodeToString(ethcrypto.FromECDSA(key)),
 	}
 	if description != "" {
 		headers["Description"] = description
