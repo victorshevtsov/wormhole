@@ -1,3 +1,5 @@
 contracts
 ethers-contracts
-pkg
+
+# tsc output
+*/main.js

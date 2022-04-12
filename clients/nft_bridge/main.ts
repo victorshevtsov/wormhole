@@ -2,15 +2,16 @@ import yargs from "yargs";
 
 const {hideBin} = require('yargs/helpers')
 
-import * as bridge from "bridge";
 import * as elliptic from "elliptic";
 import * as ethers from "ethers";
-import * as nft_bridge from "nft-bridge";
-import * as web3s from '@solana/web3.js';
+import * as safecoinWeb3s from '@safecoin/web3.js';
+import * as solanaWeb3s from '@solana/web3.js';
 
-import {BridgeImplementation__factory} from "./src/ethers-contracts";
-import {PublicKey, TransactionInstruction, AccountMeta, Keypair, Connection} from "@solana/web3.js";
+// import {PublicKey, TransactionInstruction, AccountMeta, Keypair, Connection} from "@solana/web3.js";
 import {solidityKeccak256} from "ethers/lib/utils";
+
+import {setDefaultWasm, importCoreWasm, importNftWasm, ixFromRust, BridgeImplementation__factory} from '@certusone/wormhole-sdk'
+setDefaultWasm("node")
 
 const signAndEncodeVM = function (
     timestamp,
@@ -99,7 +100,7 @@ yargs(hideBin(process.argv))
             1,
             1,
             "0x0000000000000000000000000000000000000000000000000000000000000004",
-            0,
+            Math.floor(Math.random() * 100000000),
             data,
             [
                 "cfb12303a19cde580bb4dd771639b0d26bc68353645571a8cff516ab2ee113a0"
@@ -109,6 +110,77 @@ yargs(hideBin(process.argv))
         );
 
         console.log(vm)
+    })
+    .command('safecoin execute_governance_vaa [vaa]', 'execute a governance VAA on Safecoin', (yargs) => {
+        return yargs
+            .positional('vaa', {
+                describe: 'vaa to post',
+                type: "string",
+                required: true
+            })
+            .option('rpc', {
+                alias: 'u',
+                type: 'string',
+                description: 'URL of the Safecoin RPC',
+                default: "http://localhost:8328"
+            })
+            .option('bridge', {
+                alias: 'b',
+                type: 'string',
+                description: 'Bridge address',
+                default: "Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o"
+            })
+            .option('nft_bridge', {
+                alias: 't',
+                type: 'string',
+                description: 'NFT Bridge address',
+                default: "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA"
+            })
+    }, async (argv: any) => {
+        const bridge = await importCoreWasm()
+        const nft_bridge = await importNftWasm()
+
+        let connection = setupSafecoinConnection(argv);
+        let bridge_id = new safecoinWeb3s.PublicKey(argv.bridge);
+        let nft_bridge_id = new safecoinWeb3s.PublicKey(argv.nft_bridge);
+
+        // Generate a new random public key
+        let from = safecoinWeb3s.Keypair.generate();
+        let airdropSignature = await connection.requestAirdrop(
+            from.publicKey,
+            safecoinWeb3s.LAMPORTS_PER_SAFE,
+        );
+        await connection.confirmTransaction(airdropSignature);
+
+        let vaa = Buffer.from(argv.vaa, "hex");
+        await post_safecoin_vaa(connection, bridge_id, from, vaa);
+
+        let parsed_vaa = await bridge.parse_vaa(vaa);
+        let ix: safecoinWeb3s.TransactionInstruction;
+        switch (parsed_vaa.payload[32]) {
+            case 1:
+                console.log("Registering chain")
+                ix = nft_bridge.register_chain_ix(nft_bridge_id.toString(), bridge_id.toString(), from.publicKey.toString(), vaa);
+                break
+            case 2:
+                console.log("Upgrading contract")
+                ix = nft_bridge.upgrade_contract_ix(nft_bridge_id.toString(), bridge_id.toString(), from.publicKey.toString(), from.publicKey.toString(), vaa);
+                break
+            default:
+                throw new Error("unknown governance action")
+        }
+        let transaction = new safecoinWeb3s.Transaction().add(ixFromRust(ix));
+
+        // Sign transaction, broadcast, and confirm
+        let signature = await safecoinWeb3s.sendAndConfirmTransaction(
+            connection,
+            transaction,
+            [from],
+            {
+                skipPreflight: true
+            }
+        );
+        console.log('SIGNATURE', signature);
     })
     .command('solana execute_governance_vaa [vaa]', 'execute a governance VAA on Solana', (yargs) => {
         return yargs
@@ -136,23 +208,26 @@ yargs(hideBin(process.argv))
                 default: "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA"
             })
     }, async (argv: any) => {
-        let connection = setupConnection(argv);
-        let bridge_id = new PublicKey(argv.bridge);
-        let nft_bridge_id = new PublicKey(argv.nft_bridge);
+        const bridge = await importCoreWasm()
+        const nft_bridge = await importNftWasm()
+
+        let connection = setupSolanaConnection(argv);
+        let bridge_id = new solanaWeb3s.PublicKey(argv.bridge);
+        let nft_bridge_id = new solanaWeb3s.PublicKey(argv.nft_bridge);
 
         // Generate a new random public key
-        let from = web3s.Keypair.generate();
+        let from = solanaWeb3s.Keypair.generate();
         let airdropSignature = await connection.requestAirdrop(
             from.publicKey,
-            web3s.LAMPORTS_PER_SOL,
+            solanaWeb3s.LAMPORTS_PER_SOL,
         );
         await connection.confirmTransaction(airdropSignature);
 
         let vaa = Buffer.from(argv.vaa, "hex");
-        await post_vaa(connection, bridge_id, from, vaa);
+        await post_solana_vaa(connection, bridge_id, from, vaa);
 
         let parsed_vaa = await bridge.parse_vaa(vaa);
-        let ix: TransactionInstruction;
+        let ix: solanaWeb3s.TransactionInstruction;
         switch (parsed_vaa.payload[32]) {
             case 1:
                 console.log("Registering chain")
@@ -165,10 +240,10 @@ yargs(hideBin(process.argv))
             default:
                 throw new Error("unknown governance action")
         }
-        let transaction = new web3s.Transaction().add(ixFromRust(ix));
+        let transaction = new solanaWeb3s.Transaction().add(ixFromRust(ix));
 
         // Sign transaction, broadcast, and confirm
-        let signature = await web3s.sendAndConfirmTransaction(
+        let signature = await solanaWeb3s.sendAndConfirmTransaction(
             connection,
             transaction,
             [from],
@@ -204,6 +279,8 @@ yargs(hideBin(process.argv))
                 default: "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
             })
     }, async (argv: any) => {
+        const bridge = await importCoreWasm()
+
         let provider = new ethers.providers.JsonRpcProvider(argv.rpc)
         let signer = new ethers.Wallet(argv.key, provider)
         let t = new BridgeImplementation__factory(signer);
@@ -227,26 +304,28 @@ yargs(hideBin(process.argv))
     })
     .argv;
 
-async function post_vaa(connection: Connection, bridge_id: PublicKey, payer: Keypair, vaa: Buffer) {
-    let bridge_state = await get_bridge_state(connection, bridge_id);
-    let guardian_addr = new PublicKey(bridge.guardian_set_address(bridge_id.toString(), bridge_state.guardian_set_index));
+async function post_safecoin_vaa(connection: safecoinWeb3s.Connection, bridge_id: safecoinWeb3s.PublicKey, payer: safecoinWeb3s.Keypair, vaa: Buffer) {
+    const bridge = await importCoreWasm()
+
+    let bridge_state = await get_safecoin_bridge_state(connection, bridge_id);
+    let guardian_addr = new safecoinWeb3s.PublicKey(bridge.guardian_set_address(bridge_id.toString(), bridge_state.guardian_set_index));
     let acc = await connection.getAccountInfo(guardian_addr);
     if (acc?.data === undefined) {
         return
     }
     let guardian_data = bridge.parse_guardian_set(new Uint8Array(acc?.data));
 
-    let signature_set = Keypair.generate();
+    let signature_set = safecoinWeb3s.Keypair.generate();
     let txs = bridge.verify_signatures_ix(bridge_id.toString(), payer.publicKey.toString(), bridge_state.guardian_set_index, guardian_data, signature_set.publicKey.toString(), vaa)
     // Add transfer instruction to transaction
     for (let tx of txs) {
-        let ixs: Array<TransactionInstruction> = tx.map((v: any) => {
+        let ixs: Array<safecoinWeb3s.TransactionInstruction> = tx.map((v: any) => {
             return ixFromRust(v)
         })
-        let transaction = new web3s.Transaction().add(ixs[0], ixs[1]);
+        let transaction = new safecoinWeb3s.Transaction().add(ixs[0], ixs[1]);
 
         // Sign transaction, broadcast, and confirm
-        await web3s.sendAndConfirmTransaction(
+        await safecoinWeb3s.sendAndConfirmTransaction(
             connection,
             transaction,
             [payer, signature_set],
@@ -257,10 +336,10 @@ async function post_vaa(connection: Connection, bridge_id: PublicKey, payer: Key
     }
 
     let ix = ixFromRust(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
-    let transaction = new web3s.Transaction().add(ix);
+    let transaction = new safecoinWeb3s.Transaction().add(ix);
 
     // Sign transaction, broadcast, and confirm
-    let signature = await web3s.sendAndConfirmTransaction(
+    let signature = await safecoinWeb3s.sendAndConfirmTransaction(
         connection,
         transaction,
         [payer],
@@ -271,8 +350,56 @@ async function post_vaa(connection: Connection, bridge_id: PublicKey, payer: Key
     console.log('SIGNATURE', signature);
 }
 
-async function get_bridge_state(connection: Connection, bridge_id: PublicKey): Promise<BridgeState> {
-    let bridge_state = new PublicKey(bridge.state_address(bridge_id.toString()));
+async function post_solana_vaa(connection: solanaWeb3s.Connection, bridge_id: solanaWeb3s.PublicKey, payer: solanaWeb3s.Keypair, vaa: Buffer) {
+    const bridge = await importCoreWasm()
+
+    let bridge_state = await get_solana_bridge_state(connection, bridge_id);
+    let guardian_addr = new solanaWeb3s.PublicKey(bridge.guardian_set_address(bridge_id.toString(), bridge_state.guardian_set_index));
+    let acc = await connection.getAccountInfo(guardian_addr);
+    if (acc?.data === undefined) {
+        return
+    }
+    let guardian_data = bridge.parse_guardian_set(new Uint8Array(acc?.data));
+
+    let signature_set = solanaWeb3s.Keypair.generate();
+    let txs = bridge.verify_signatures_ix(bridge_id.toString(), payer.publicKey.toString(), bridge_state.guardian_set_index, guardian_data, signature_set.publicKey.toString(), vaa)
+    // Add transfer instruction to transaction
+    for (let tx of txs) {
+        let ixs: Array<solanaWeb3s.TransactionInstruction> = tx.map((v: any) => {
+            return ixFromRust(v)
+        })
+        let transaction = new solanaWeb3s.Transaction().add(ixs[0], ixs[1]);
+
+        // Sign transaction, broadcast, and confirm
+        await solanaWeb3s.sendAndConfirmTransaction(
+            connection,
+            transaction,
+            [payer, signature_set],
+            {
+                skipPreflight: true
+            }
+        );
+    }
+
+    let ix = ixFromRust(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
+    let transaction = new solanaWeb3s.Transaction().add(ix);
+
+    // Sign transaction, broadcast, and confirm
+    let signature = await solanaWeb3s.sendAndConfirmTransaction(
+        connection,
+        transaction,
+        [payer],
+        {
+            skipPreflight: true
+        }
+    );
+    console.log('SIGNATURE', signature);
+}
+
+async function get_safecoin_bridge_state(connection: safecoinWeb3s.Connection, bridge_id: safecoinWeb3s.PublicKey): Promise<BridgeState> {
+    const bridge = await importCoreWasm()
+
+    let bridge_state = new safecoinWeb3s.PublicKey(bridge.state_address(bridge_id.toString()));
     let acc = await connection.getAccountInfo(bridge_state);
     if (acc?.data === undefined) {
         throw new Error("bridge state not found")
@@ -280,28 +407,29 @@ async function get_bridge_state(connection: Connection, bridge_id: PublicKey): P
     return bridge.parse_state(new Uint8Array(acc?.data));
 }
 
-function setupConnection(argv: yargs.Arguments): web3s.Connection {
-    return new web3s.Connection(
+async function get_solana_bridge_state(connection: solanaWeb3s.Connection, bridge_id: solanaWeb3s.PublicKey): Promise<BridgeState> {
+    const bridge = await importCoreWasm()
+
+    let bridge_state = new solanaWeb3s.PublicKey(bridge.state_address(bridge_id.toString()));
+    let acc = await connection.getAccountInfo(bridge_state);
+    if (acc?.data === undefined) {
+        throw new Error("bridge state not found")
+    }
+    return bridge.parse_state(new Uint8Array(acc?.data));
+}
+
+function setupSafecoinConnection(argv: yargs.Arguments): safecoinWeb3s.Connection {
+    return new safecoinWeb3s.Connection(
         argv.rpc as string,
         'confirmed',
     );
 }
 
-function ixFromRust(data: any): TransactionInstruction {
-    let keys: Array<AccountMeta> = data.accounts.map(accountMetaFromRust)
-    return new TransactionInstruction({
-        programId: new PublicKey(data.program_id),
-        data: Buffer.from(data.data),
-        keys: keys,
-    })
-}
-
-function accountMetaFromRust(meta: any): AccountMeta {
-    return {
-        pubkey: new PublicKey(meta.pubkey),
-        isSigner: meta.is_signer,
-        isWritable: meta.is_writable,
-    }
+function setupSolanaConnection(argv: yargs.Arguments): solanaWeb3s.Connection {
+    return new solanaWeb3s.Connection(
+        argv.rpc as string,
+        'confirmed',
+    );
 }
 
 interface BridgeState {
