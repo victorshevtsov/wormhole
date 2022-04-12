@@ -12,36 +12,36 @@ RUN apt-get update && \
     && \
     rm -rf /var/lib/apt/lists/* && \
     rustup component add rustfmt && \
-    rustup default nightly-2021-08-01
+    rustup default nightly-2022-01-02
 
-# RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin
-
-# RUN --mount=type=cache,target=/root/.cache \
-#     rustup component add rustfmt && \
-#     git clone https://github.com/Fair-Exchange/Safecoin.git /usr/src/safecoin && \
-#     cd /usr/src/safecoin && \
-#     cargo build --release
-
-# RUN cp -r /usr/src/safecoin/target/release/. /root/.local/share/safecoin/install/active_release/bin && \
-#     cp -r /usr/src/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin
-
-COPY safecoin.tar.gz /tmp
-RUN mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
-    tar -xzvf /tmp/safecoin.tar.gz -C /root/.local/share/safecoin/install/active_release/bin && \
-    rm /tmp/safecoin.tar.gz
+RUN curl \
+        -L https://github.com/Fair-Exchange/Safecoin/releases/download/v.18.12/Safecoin-Linux-1.8.12.tar.gz \
+        --output /tmp/safecoin.tar.gz && \
+    mkdir -p /root/.local/share/safecoin/install/active_release/bin && \
+    tar \
+        -C /root/.local/share/safecoin/install/active_release/bin \
+        --strip-components=1 \
+        -xzvf /tmp/safecoin.tar.gz Safecoinbin && \
+    git clone https://github.com/Fair-Exchange/Safecoin.git /tmp/safecoin -b 1.8.12 && \
+    cp -r /tmp/safecoin/sdk /root/.local/share/safecoin/install/active_release/bin && \
+    rm -rf /tmp/safecoin.tar.gz /tmp/safecoin
 
 ENV PATH="/root/.local/share/safecoin/install/active_release/bin:$PATH"
 
-RUN mkdir -p /opt/safecoin/deps
+# # Support additional root CAs
+# COPY devnet_setup.sh cert.pem* /certs/
+# # Debian
+# RUN if [ -e /certs/cert.pem ]; then cp /certs/cert.pem /etc/ssl/certs/ca-certificates.crt; fi
 
-# Safecoin does a questionable download at the beginning of a *first* build-bpf call. Trigger and layer-cache it explicitly.
+# Solana does a questionable download at the beginning of a *first* build-bpf call. Trigger and layer-cache it explicitly.
 RUN cargo init --lib /tmp/decoy-crate && \
     cd /tmp/decoy-crate && cargo build-bpf && \
     rm -rf /tmp/decoy-crate
 
+RUN mkdir -p /opt/safecoin/deps
+
 RUN git clone https://github.com/Fair-Exchange/safecoin-program-library.git /usr/src/safecoin-program-library && \
-    cd /usr/src/safecoin-program-library && \
-    git checkout 830e1f0e7b5b8cfafabb28b15c02dcada2ece77e
+    cd /usr/src/safecoin-program-library
 
 RUN --mount=type=cache,id=safecoin-program-library,target=/usr/src/safecoin-program-library/target \
     cargo build-bpf --manifest-path "/usr/src/safecoin-program-library/token/program/Cargo.toml" && \
@@ -53,53 +53,34 @@ RUN --mount=type=cache,id=safecoin-program-library,target=/usr/src/safecoin-prog
     cp /usr/src/safecoin-program-library/target/deploy/safe_associated_token_account.so /opt/safecoin/deps/safe_associated_token_account.so && \
     cp /usr/src/safecoin-program-library/target/deploy/safe_token_lending.so /opt/safecoin/deps/safe_token_lending.so
 
-# Cache Pyth sources
-# This comes soon after mainnet-v2.1
-ENV PYTH_SRC_REV=31e3188bbf52ec1a25f71e4ab969378b27415b0a
-ENV PYTH_DIR=/usr/src/pyth/pyth-client
-
-WORKDIR $PYTH_DIR
-ADD https://github.com/pyth-network/pyth-client/archive/$PYTH_SRC_REV.tar.gz .
-
-# GitHub appends revision to dir in archive
-RUN tar -xvf *.tar.gz && rm -rf *.tar.gz && mv pyth-client-$PYTH_SRC_REV pyth-client
-
 # Add bridge contract sources
 WORKDIR /usr/src/bridge
 
 ADD . .
+RUN mkdir -p /opt/safecoin/deps
 
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
 ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
 
-# Build Wormhole Safecoin programs
+# Build Wormhole Solana programs
 RUN --mount=type=cache,id=safecoin_bridge,target=bridge/target \
     --mount=type=cache,id=safecoin_token_bridge,target=modules/token_bridge/target \
     --mount=type=cache,id=safecoin_nft_bridge,target=modules/nft_bridge/target \
-    --mount=type=cache,id=safecoin_pyth2wormhole,target=pyth2wormhole/target \
     --mount=type=cache,id=safecoin_migration,target=migration/target \
-    cargo build-bpf --manifest-path "bridge/program/Cargo.toml" && \
-    cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" && \
-    cargo build-bpf --manifest-path "modules/token_bridge/token-vault/Cargo.toml" && \
-    cargo build-bpf --manifest-path "modules/token_bridge/token-metadata/Cargo.toml" && \
-    cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" && \
-    cargo build-bpf --manifest-path "pyth2wormhole/program/Cargo.toml" && \
-    cargo build-bpf --manifest-path "modules/nft_bridge/program/Cargo.toml" && \
-    cargo build-bpf --manifest-path "migration/Cargo.toml" && \
+    cargo build-bpf --manifest-path "bridge/program/Cargo.toml" -- --locked && \
+    cargo build-bpf --manifest-path "bridge/cpi_poster/Cargo.toml" -- --locked && \
+    cargo build-bpf --manifest-path "modules/token_bridge/token-vault/Cargo.toml" -- --locked&& \
+    cargo build-bpf --manifest-path "modules/token_bridge/token-metadata/Cargo.toml" -- --locked&& \
+    cargo build-bpf --manifest-path "modules/token_bridge/program/Cargo.toml" -- --locked && \
+    cargo build-bpf --manifest-path "modules/nft_bridge/program/Cargo.toml" -- --locked && \
+    cargo build-bpf --manifest-path "migration/Cargo.toml" -- --locked && \
     cp bridge/target/deploy/bridge.so /opt/safecoin/deps/bridge.so && \
     cp bridge/target/deploy/cpi_poster.so /opt/safecoin/deps/cpi_poster.so && \
     cp migration/target/deploy/wormhole_migration.so /opt/safecoin/deps/wormhole_migration.so && \
     cp modules/token_bridge/target/deploy/safe_token_vault.so /opt/safecoin/deps/safe_token_vault.so && \
     cp modules/token_bridge/target/deploy/safe_token_metadata.so /opt/safecoin/deps/safe_token_metadata.so && \
     cp modules/token_bridge/target/deploy/token_bridge.so /opt/safecoin/deps/token_bridge.so && \
-    cp modules/nft_bridge/target/deploy/nft_bridge.so /opt/safecoin/deps/nft_bridge.so && \
-    cp pyth2wormhole/target/deploy/pyth2wormhole.so /opt/safecoin/deps/pyth2wormhole.so
-
-# TODO(Victor): Temporary commented
-# Build the Pyth Safecoin program
-# WORKDIR $PYTH_DIR/pyth-client/program
-# RUN make SAFECOIN=~/.local/share/safecoin/install/active_release/bin OUT_DIR=../target && \
-#     cp ../target/oracle.so /opt/safecoin/deps/pyth_oracle.so
+    cp modules/nft_bridge/target/deploy/nft_bridge.so /opt/safecoin/deps/nft_bridge.so
 
 ENV RUST_LOG="solana_runtime::system_instruction_processor=trace,solana_runtime::message_processor=trace,solana_bpf_loader=debug,solana_rbpf=debug"
 ENV RUST_BACKTRACE=1

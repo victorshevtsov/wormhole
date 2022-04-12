@@ -1,10 +1,25 @@
 use crate::{
-    deprecated_instruction::{MintPrintingTokensViaTokenArgs, SetReservationListArgs},
-    state::{Creator, Data, EDITION, EDITION_MARKER_BIT_SIZE, PREFIX},
+    deprecated_instruction::{
+        MintPrintingTokensViaTokenArgs,
+        SetReservationListArgs,
+    },
+    state::{
+        Creator,
+        Data,
+        EDITION,
+        EDITION_MARKER_BIT_SIZE,
+        PREFIX,
+    },
 };
-use borsh::{BorshDeserialize, BorshSerialize};
+use borsh::{
+    BorshDeserialize,
+    BorshSerialize,
+};
 use safecoin_program::{
-    instruction::{AccountMeta, Instruction},
+    instruction::{
+        AccountMeta,
+        Instruction,
+    },
     pubkey::Pubkey,
     sysvar,
 };

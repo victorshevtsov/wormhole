@@ -1,7 +1,7 @@
 [package]
 name = "solitaire"
 version = "0.1.0"
-description = "Solana program framework"
+description = "Safecoin program framework"
 edition = "2018"
 
 [lib]
@@ -16,9 +16,9 @@ no-entrypoint = []
 trace = []
 
 [dependencies]
-borsh = "0.9.0"
+borsh = "=0.9.1"
 byteorder = "1.4.3"
 rocksalt = { path = "../../solitaire/rocksalt" }
 
 sha3 = "0.9.1"
-safecoin-program = "=1.7.17"
+safecoin-program = "=1.8.12"

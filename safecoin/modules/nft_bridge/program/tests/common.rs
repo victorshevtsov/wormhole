@@ -554,7 +554,7 @@ mod helpers {
         )
     }
 
-    pub fn create_safe_metadata(
+    pub fn create_spl_metadata(
         client: &RpcClient,
         payer: &Keypair,
         metadata_account: &Pubkey,

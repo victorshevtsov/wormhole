@@ -1,9 +1,18 @@
-use crate::{error::MetadataError, utils::try_from_slice_checked};
-use borsh::{BorshDeserialize, BorshSerialize};
+use crate::{
+    error::MetadataError,
+    utils::try_from_slice_checked,
+};
+use borsh::{
+    BorshDeserialize,
+    BorshSerialize,
+};
 use safecoin_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, program_error::ProgramError,
+    account_info::AccountInfo,
+    entrypoint::ProgramResult,
+    program_error::ProgramError,
     pubkey::Pubkey,
 };
+
 /// prefix used for PDAs to avoid certain collision attacks (https://en.wikipedia.org/wiki/Collision_attack#Chosen-prefix_collision_attack)
 pub const PREFIX: &str = "metadata";
 
@@ -18,7 +27,14 @@ pub const MAX_SYMBOL_LENGTH: usize = 10;
 
 pub const MAX_URI_LENGTH: usize = 200;
 
-pub const MAX_METADATA_LEN: usize = 1 + 32 + 32 + MAX_DATA_SIZE + 1 + 1 + 9 + 172;
+pub const MAX_METADATA_LEN: usize = 1
+    + 32
+    + 32
+    + MAX_DATA_SIZE
+    + 1
+    + 1
+    + 9
+    + 172;
 
 pub const MAX_DATA_SIZE: usize = 4
     + MAX_NAME_LENGTH
@@ -66,8 +82,15 @@ pub enum Key {
     MasterEditionV2,
     EditionMarker,
 }
+
+impl Default for Key {
+    fn default() -> Self {
+        Key::Uninitialized
+    }
+}
+
 #[repr(C)]
-#[derive(BorshSerialize, BorshDeserialize, PartialEq, Debug, Clone)]
+#[derive(BorshSerialize, BorshDeserialize, Default, PartialEq, Debug, Clone)]
 pub struct Data {
     /// The name of the asset
     pub name: String,
@@ -82,7 +105,7 @@ pub struct Data {
 }
 
 #[repr(C)]
-#[derive(Clone, BorshSerialize, BorshDeserialize, Debug)]
+#[derive(Clone, BorshSerialize, BorshDeserialize, Debug, Default)]
 pub struct Metadata {
     pub key: Key,
     pub update_authority: Pubkey,
@@ -501,13 +524,15 @@ impl ReservationList for ReservationListV1 {
         self.reservations.iter().map(|r| r.total_spots as u64).sum()
     }
 
-    fn set_total_reservation_spots(&mut self, _: u64) {}
+    fn set_total_reservation_spots(&mut self, _: u64) {
+    }
 
     fn current_reservation_spots(&self) -> u64 {
         self.reservations.iter().map(|r| r.total_spots as u64).sum()
     }
 
-    fn set_current_reservation_spots(&mut self, _: u64) {}
+    fn set_current_reservation_spots(&mut self, _: u64) {
+    }
 }
 
 impl ReservationListV1 {

@@ -407,15 +407,15 @@ pub fn wrapped_meta_address(program_id: String, mint_address: Vec<u8>) -> Vec<u8
 }
 
 #[wasm_bindgen]
-pub fn safe_meta_address(mint_address: Vec<u8>) -> Vec<u8> {
+pub fn spl_meta_address(mint_address: Vec<u8>) -> Vec<u8> {
     let mint_key = Pubkey::new(mint_address.as_slice());
 
-    let safe_metadata = SplTokenMeta::key(
+    let spl_metadata = SplTokenMeta::key(
         &SplTokenMetaDerivationData { mint: mint_key },
         &safe_token_metadata::id(),
     );
 
-    safe_metadata.to_bytes().to_vec()
+    spl_metadata.to_bytes().to_vec()
 }
 
 #[wasm_bindgen]

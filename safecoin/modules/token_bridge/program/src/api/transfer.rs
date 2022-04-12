@@ -130,10 +130,9 @@ pub fn transfer_native(
     data: TransferNativeData,
 ) -> Result<()> {
     // Prevent transferring to the same chain.
-    // TODO(Victor): Dirty hack to workaround unresolved issues
-    // if data.target_chain == CHAIN_ID_SAFECOIN {
-    //     return Err(InvalidChain.into());
-    // }
+    if data.target_chain == CHAIN_ID_SAFECOIN {
+        return Err(InvalidChain.into());
+    }
 
     // Verify that the custody account is derived correctly
     let derivation_data: CustodyAccountDerivationData = (&*accs).into();
@@ -299,9 +298,9 @@ pub fn transfer_wrapped(
     data: TransferWrappedData,
 ) -> Result<()> {
     // Prevent transferring to the same chain.
-    // if data.target_chain == CHAIN_ID_SAFECOIN {
-    //     return Err(InvalidChain.into());
-    // }
+    if data.target_chain == CHAIN_ID_SAFECOIN {
+        return Err(InvalidChain.into());
+    }
 
     // Verify that the from account is owned by the from_owner
     if &accs.from.owner != accs.from_owner.key {

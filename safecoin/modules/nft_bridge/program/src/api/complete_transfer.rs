@@ -117,6 +117,9 @@ pub fn complete_native(
     if accs.vaa.to_chain != CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    if accs.vaa.to != accs.to.info().key.to_bytes() {
+        return Err(InvalidRecipient.into());
+    }
 
     // Prevent vaa double signing
     accs.vaa.verify(ctx.program_id)?;
@@ -227,6 +230,9 @@ pub fn complete_wrapped(
     if accs.vaa.to_chain != CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    if accs.vaa.to != accs.to.info().key.to_bytes() {
+        return Err(InvalidRecipient.into());
+    }
 
     accs.vaa.verify(ctx.program_id)?;
     accs.vaa.claim(ctx, accs.payer.key)?;
@@ -304,7 +310,7 @@ pub struct CompleteWrappedMeta<'b> {
     pub meta: WrappedTokenMeta<'b, { AccountState::Initialized }>,
 
     /// SPL Metadata for the associated Mint
-    pub safe_metadata: Mut<SplTokenMeta<'b>>,
+    pub spl_metadata: Mut<SplTokenMeta<'b>>,
 
     pub mint_authority: MintSigner<'b>,
 }
@@ -365,12 +371,12 @@ pub fn complete_wrapped_meta(
     }
 
     // Make sure the metadata hasn't been initialized yet
-    if !accs.safe_metadata.data_is_empty() {
+    if !accs.spl_metadata.data_is_empty() {
         return Err(AlreadyExecuted.into());
     }
 
     // Initialize spl meta
-    accs.safe_metadata.verify_derivation(
+    accs.spl_metadata.verify_derivation(
         &safe_token_metadata::id(),
         &SplTokenMetaDerivationData {
             mint: *accs.mint.info().key,
@@ -386,7 +392,7 @@ pub fn complete_wrapped_meta(
 
     let safe_token_metadata_ix = safe_token_metadata::instruction::create_metadata_accounts(
         safe_token_metadata::id(),
-        *accs.safe_metadata.key,
+        *accs.spl_metadata.key,
         *accs.mint.info().key,
         *accs.mint_authority.info().key,
         *accs.payer.info().key,

@@ -62,7 +62,7 @@ pub struct TransferNative<'b> {
 
     pub mint: Mut<Data<'b, SplMint, { AccountState::Initialized }>>,
     /// SPL Metadata for the associated Mint
-    pub safe_metadata: SplTokenMeta<'b>,
+    pub spl_metadata: SplTokenMeta<'b>,
 
     pub custody: Mut<CustodyAccount<'b, { AccountState::MaybeInitialized }>>,
 
@@ -127,7 +127,7 @@ pub fn transfer_native(
         .verify_derivation(ctx.program_id, &derivation_data)?;
 
     let derivation_data: SplTokenMetaDerivationData = (&*accs).into();
-    accs.safe_metadata
+    accs.spl_metadata
         .verify_derivation(&safe_token_metadata::id(), &derivation_data)?;
 
     // Verify mints
@@ -136,11 +136,11 @@ pub fn transfer_native(
     }
 
     // Token must have metadata
-    if accs.safe_metadata.data_is_empty() {
+    if accs.spl_metadata.data_is_empty() {
         return Err(TokenNotNFT.into());
     }
 
-    if *accs.safe_metadata.owner != safe_token_metadata::id() {
+    if *accs.spl_metadata.owner != safe_token_metadata::id() {
         return Err(WrongAccountOwner.into());
     }
 
@@ -184,7 +184,7 @@ pub fn transfer_native(
     invoke(&transfer_ix, ctx.accounts)?;
 
     let metadata: Metadata =
-        Metadata::from_account_info(accs.safe_metadata.info())?;
+        Metadata::from_account_info(accs.spl_metadata.info())?;
 
     // Post message
     // Given there is no tokenID equivalent on Safecoin and each distinct token address is translated
@@ -239,7 +239,7 @@ pub struct TransferWrapped<'b> {
     pub mint: Mut<WrappedMint<'b, { AccountState::Initialized }>>,
     pub wrapped_meta: WrappedTokenMeta<'b, { AccountState::Initialized }>,
     /// SPL Metadata for the associated Mint
-    pub safe_metadata: SplTokenMeta<'b>,
+    pub spl_metadata: SplTokenMeta<'b>,
 
     pub authority_signer: AuthoritySigner<'b>,
 
@@ -333,20 +333,20 @@ pub fn transfer_wrapped(
         .verify_derivation(ctx.program_id, &derivation_data)?;
 
     // Token must have metadata
-    if accs.safe_metadata.data_is_empty() {
+    if accs.spl_metadata.data_is_empty() {
         return Err(TokenNotNFT.into());
     }
 
     let derivation_data: SplTokenMetaDerivationData = (&*accs).into();
-    accs.safe_metadata
+    accs.spl_metadata
         .verify_derivation(&safe_token_metadata::id(), &derivation_data)?;
 
-    if *accs.safe_metadata.owner != safe_token_metadata::id() {
+    if *accs.spl_metadata.owner != safe_token_metadata::id() {
         return Err(WrongAccountOwner.into());
     }
 
     let metadata: Metadata =
-        Metadata::from_account_info(accs.safe_metadata.info())?;
+        Metadata::from_account_info(accs.spl_metadata.info())?;
 
     // Post message
     let payload = PayloadTransfer {

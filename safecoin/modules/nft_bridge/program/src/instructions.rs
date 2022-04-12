@@ -238,7 +238,7 @@ pub fn complete_wrapped_meta(
         &program_id,
     );
     // SPL Metadata
-    let safe_metadata = SplTokenMeta::key(
+    let spl_metadata = SplTokenMeta::key(
         &SplTokenMetaDerivationData { mint: mint_key },
         &safe_token_metadata::id(),
     );
@@ -252,7 +252,7 @@ pub fn complete_wrapped_meta(
             AccountMeta::new_readonly(endpoint, false),
             AccountMeta::new_readonly(mint_key, false),
             AccountMeta::new_readonly(mint_meta_key, false),
-            AccountMeta::new(safe_metadata, false),
+            AccountMeta::new(spl_metadata, false),
             AccountMeta::new_readonly(mint_authority_key, false),
             // Dependencies
             AccountMeta::new_readonly(safecoin_program::sysvar::rent::id(), false),
@@ -344,7 +344,7 @@ pub fn transfer_native(
     let emitter_key = EmitterAccount::key(None, &program_id);
 
     // SPL Metadata
-    let safe_metadata = SplTokenMeta::key(
+    let spl_metadata = SplTokenMeta::key(
         &SplTokenMetaDerivationData { mint: mint },
         &safe_token_metadata::id(),
     );
@@ -366,7 +366,7 @@ pub fn transfer_native(
             AccountMeta::new_readonly(config_key, false),
             AccountMeta::new(from, false),
             AccountMeta::new(mint, false),
-            AccountMeta::new_readonly(safe_metadata, false),
+            AccountMeta::new_readonly(spl_metadata, false),
             AccountMeta::new(custody_key, false),
             AccountMeta::new_readonly(authority_signer_key, false),
             AccountMeta::new_readonly(custody_signer_key, false),
@@ -420,7 +420,7 @@ pub fn transfer_wrapped(
     let emitter_key = EmitterAccount::key(None, &program_id);
 
     // SPL Metadata
-    let safe_metadata = SplTokenMeta::key(
+    let spl_metadata = SplTokenMeta::key(
         &SplTokenMetaDerivationData {
             mint: wrapped_mint_key,
         },
@@ -446,7 +446,7 @@ pub fn transfer_wrapped(
             AccountMeta::new_readonly(from_owner, true),
             AccountMeta::new(wrapped_mint_key, false),
             AccountMeta::new_readonly(wrapped_meta_key, false),
-            AccountMeta::new_readonly(safe_metadata, false),
+            AccountMeta::new_readonly(spl_metadata, false),
             AccountMeta::new_readonly(authority_signer, false),
             AccountMeta::new(bridge_config, false),
             AccountMeta::new(message_key, true),

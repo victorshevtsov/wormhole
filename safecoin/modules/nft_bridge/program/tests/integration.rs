@@ -247,7 +247,7 @@ fn run_integration_tests() {
     test_transfer_native_in(&mut context);
 
     // Create an SPL Metadata account to test attestations for wrapped tokens.
-    common::create_safe_metadata(
+    common::create_spl_metadata(
         &context.client,
         &context.payer,
         &context.metadata_account,
