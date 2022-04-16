@@ -2,7 +2,7 @@
 
 const jsonfile = require("jsonfile");
 const TokenBridge = artifacts.require("TokenBridge");
-const NFTBridge = artifacts.require("NFTBridgeEntrypoint");
+// const NFTBridge = artifacts.require("NFTBridgeEntrypoint");
 const TokenImplementation = artifacts.require("TokenImplementation");
 const BridgeImplementationFullABI = jsonfile.readFileSync("../build/contracts/BridgeImplementation.json").abi
 
@@ -10,10 +10,11 @@ module.exports = async function (callback) {
     try {
         const accounts = await web3.eth.getAccounts();
         const tokenBridge = new web3.eth.Contract(BridgeImplementationFullABI, TokenBridge.address);
-        const nftBridge = new web3.eth.Contract(BridgeImplementationFullABI, NFTBridge.address);
+        // const nftBridge = new web3.eth.Contract(BridgeImplementationFullABI, NFTBridge.address);
 
         // Register the Safecoin token bridge endpoint
-        await tokenBridge.methods.registerChain("0x010000000001006c3722f99176b8739c6114daf5c506b5128681621ad97c07d8766815d20f23f14d2041d71df30223a88d0dcc71ce542ff0764ad2a2581ca84776859ac798188d00000000010000000100010000000000000000000000000000000000000000000000000000000000000004000000000351172600000000000000000000000000000000000000000000546f6b656e427269646765010000000165615c9ab89a167582ec9ae2da9f54be9b5f28ab44e0b1533c06066e93940b7b").send({
+        // await tokenBridge.methods.registerChain("0x01000000000100ac3ab8a8ea0112636c1c69fb684405cf7e47b0265cb3d136f06ee119eb73dfc03c2c45f11b7825b0f54f1863ab534c8121a463d951595bd224e243e9c3e7b5b9000000000100000001000100000000000000000000000000000000000000000000000000000000000000040000000001ff18ef00000000000000000000000000000000000000000000546f6b656e4272696467650100004add65615c9ab89a167582ec9ae2da9f54be9b5f28ab44e0b1533c06066e93940b7b").send({
+        await tokenBridge.methods.registerChain("0xVAA_PLACEHOLDER").send({
             value: 0,
             from: accounts[0],
             gasLimit: 2000000
