@@ -40,7 +40,7 @@ import (
 	"github.com/certusone/wormhole/node/pkg/reporter"
 	"github.com/certusone/wormhole/node/pkg/safecoin"
 
-	// solana "github.com/certusone/wormhole/node/pkg/solana"
+	solana "github.com/certusone/wormhole/node/pkg/solana"
 	"github.com/certusone/wormhole/node/pkg/supervisor"
 	"github.com/certusone/wormhole/node/pkg/vaa"
 
@@ -63,7 +63,7 @@ var (
 	statusAddr *string
 
 	guardianKeyPath *string
-	// solanaContract  *string
+	solanaContract  *string
 
 	ethRPC      *string
 	ethContract *string
@@ -82,8 +82,8 @@ var (
 	safecoinRPC      *string
 	safecoinContract *string
 
-	// solanaWsRPC *string
-	// solanaRPC   *string
+	solanaWsRPC *string
+	solanaRPC   *string
 
 	logLevel *string
 
@@ -123,7 +123,7 @@ func init() {
 	dataDir = NodeCmd.Flags().String("dataDir", "", "Data directory")
 
 	guardianKeyPath = NodeCmd.Flags().String("guardianKey", "", "Path to guardian key (required)")
-	// solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
+	solanaContract = NodeCmd.Flags().String("solanaContract", "", "Address of the Solana program (required)")
 
 	ethRPC = NodeCmd.Flags().String("ethRPC", "", "Ethereum RPC URL")
 	ethContract = NodeCmd.Flags().String("ethContract", "", "Ethereum contract address")
@@ -138,8 +138,8 @@ func init() {
 	// terraLCD = NodeCmd.Flags().String("terraLCD", "", "Path to LCD service root for http calls")
 	// terraContract = NodeCmd.Flags().String("terraContract", "", "Wormhole contract address on Terra blockchain")
 
-	// solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
-	// solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
+	solanaWsRPC = NodeCmd.Flags().String("solanaWS", "", "Solana Websocket URL (required")
+	solanaRPC = NodeCmd.Flags().String("solanaRPC", "", "Solana RPC URL (required")
 
 	safecoinContract = NodeCmd.Flags().String("safecoinContract", "", "Address of the Safecoin program (required)")
 	safecoinWsRPC = NodeCmd.Flags().String("safecoinWS", "", "Safecoin Websocket URL (required")
@@ -258,7 +258,7 @@ func runNode(cmd *cobra.Command, args []string) {
 
 	// Register components for readiness checks.
 	readiness.RegisterComponent(common.ReadinessEthSyncing)
-	// readiness.RegisterComponent(common.ReadinessSolanaSyncing)
+	readiness.RegisterComponent(common.ReadinessSolanaSyncing)
 	// readiness.RegisterComponent(common.ReadinessTerraSyncing)
 	// readiness.RegisterComponent(common.ReadinessBSCSyncing)
 	// readiness.RegisterComponent(common.ReadinessPolygonSyncing)
@@ -359,15 +359,15 @@ func runNode(cmd *cobra.Command, args []string) {
 		logger.Fatal("Please specify --safecoinUrl")
 	}
 
-	// if *solanaContract == "" {
-	// 	logger.Fatal("Please specify --solanaContract")
-	// }
-	// if *solanaWsRPC == "" {
-	// 	logger.Fatal("Please specify --solanaWsUrl")
-	// }
-	// if *solanaRPC == "" {
-	// 	logger.Fatal("Please specify --solanaUrl")
-	// }
+	if *solanaContract == "" {
+		logger.Fatal("Please specify --solanaContract")
+	}
+	if *solanaWsRPC == "" {
+		logger.Fatal("Please specify --solanaWsUrl")
+	}
+	if *solanaRPC == "" {
+		logger.Fatal("Please specify --solanaUrl")
+	}
 
 	// if *terraWS == "" {
 	// 	logger.Fatal("Please specify --terraWS")
@@ -426,10 +426,10 @@ func runNode(cmd *cobra.Command, args []string) {
 		logger.Fatal("invalid Safecoin contract address", zap.Error(err))
 	}
 
-	// solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
-	// if err != nil {
-	// 	logger.Fatal("invalid Solana contract address", zap.Error(err))
-	// }
+	solAddress, err := solana_types.PublicKeyFromBase58(*solanaContract)
+	if err != nil {
+		logger.Fatal("invalid Solana contract address", zap.Error(err))
+	}
 
 	// In devnet mode, we generate a deterministic guardian key and write it to disk.
 	if *unsafeDevMode {
@@ -565,16 +565,6 @@ func runNode(cmd *cobra.Command, args []string) {
 		// 	return err
 		// }
 
-		// if err := supervisor.Run(ctx, "solwatch-confirmed",
-		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
-		// 	return err
-		// }
-
-		// if err := supervisor.Run(ctx, "solwatch-finalized",
-		// 	solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
-		// 	return err
-		// }
-
 		// Start Safecoin watcher
 		if err := supervisor.Run(ctx, "safecoin-confirmed",
 			safecoin.NewSafecoinWatcher(*safecoinWsRPC, *safecoinRPC, safecoinAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
@@ -586,6 +576,17 @@ func runNode(cmd *cobra.Command, args []string) {
 			return err
 		}
 
+		// Start Solana watcher
+		if err := supervisor.Run(ctx, "solwatch-confirmed",
+			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentConfirmed).Run); err != nil {
+			return err
+		}
+
+		if err := supervisor.Run(ctx, "solwatch-finalized",
+			solana.NewSolanaWatcher(*solanaWsRPC, *solanaRPC, solAddress, lockC, rpc.CommitmentFinalized).Run); err != nil {
+			return err
+		}
+	
 		p := processor.NewProcessor(ctx,
 			db,
 			lockC,
