@@ -2,7 +2,7 @@
   "name": "wormhole-client-solana",
   "version": "1.0.0",
   "dependencies": {
-    "@certusone/wormhole-sdk": "^0.2.0",
+    "@certusone/wormhole-sdk": "file:../../sdk/js",
     "@safecoin/web3.js": "^1.29.4",
     "@solana/web3.js": "^1.22.0",
     "bn.js": "^5.2.0",

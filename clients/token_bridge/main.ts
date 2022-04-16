@@ -13,8 +13,15 @@ import { MsgExecuteContract } from "@terra-money/terra.js";
 import { solidityKeccak256 } from "ethers/lib/utils";
 import fs from "fs";
 
-import { setDefaultWasm, importCoreWasm, importTokenWasm, ixFromRust, BridgeImplementation__factory } from '@certusone/wormhole-sdk'
-setDefaultWasm("node")
+import {
+    setDefaultWasmSafecoin, setDefaultWasmSolana,
+    importCoreWasmSafecoin, importCoreWasmSolana,
+    importTokenWasmSafecoin, importTokenWasmSolana,
+    ixFromRustSafecoin, ixFromRustSolana,
+    BridgeImplementation__factory
+} from "@certusone/wormhole-sdk"
+setDefaultWasmSafecoin("node")
+setDefaultWasmSolana("node")
 
 const signAndEncodeVM = function (
     timestamp,
@@ -76,8 +83,13 @@ function zeroPadBytes(value, length) {
 }
 
 yargs(hideBin(process.argv))
-    .command('generate_register_chain_vaa [chain_id] [contract_address]', 'create a VAA to register a chain (debug-only)', (yargs) => {
+    .command('generate_register_chain_vaa [emitter_chain_id] [chain_id] [contract_address]', 'create a VAA to register a chain (debug-only)', (yargs) => {
         return yargs
+            .positional('emitter_chain_id', {
+                describe: 'emitter chain id',
+                type: "number",
+                required: true
+            })
             .positional('chain_id', {
                 describe: 'chain id to register',
                 type: "number",
@@ -106,7 +118,7 @@ yargs(hideBin(process.argv))
         const vm = signAndEncodeVM(
             1,
             1,
-            1,
+            argv.emitter_chain_id,
             "0x0000000000000000000000000000000000000000000000000000000000000004",
             Math.floor(Math.random() * 100000000),
             data,
@@ -263,15 +275,14 @@ yargs(hideBin(process.argv))
                 required: false
             })
     }, async (argv: any) => {
-        const bridge = await importCoreWasm()
-        const token_bridge = await importTokenWasm()
+        const bridge = await importCoreWasmSafecoin()
+        const token_bridge = await importTokenWasmSafecoin()
 
         let connection = setupSafecoinConnection(argv);
         let bridge_id = new safecoinWeb3s.PublicKey(argv.bridge);
         let token_bridge_id = new safecoinWeb3s.PublicKey(argv.token_bridge);
 
-        // Generate a new random public key
-        let from = safecoinWeb3s.Keypair.generate();
+        let from: safecoinWeb3s.Keypair;
         if (argv.key) {
             let keypair = JSON.parse(fs.readFileSync(argv.key, { encoding: "utf8" }));
             from = safecoinWeb3s.Keypair.fromSecretKey(Uint8Array.from(keypair));
@@ -302,7 +313,7 @@ yargs(hideBin(process.argv))
             default:
                 throw new Error("unknown governance action")
         }
-        let transaction = new safecoinWeb3s.Transaction().add(ixFromRust(ix));
+        let transaction = new safecoinWeb3s.Transaction().add(ixFromRustSafecoin(ix));
 
         // Sign transaction, broadcast, and confirm
         let signature = await safecoinWeb3s.sendAndConfirmTransaction(
@@ -340,16 +351,21 @@ yargs(hideBin(process.argv))
                 description: 'Token Bridge address',
                 default: "B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE"
             })
+            .option('key', {
+                alias: 'k',
+                type: 'string',
+                description: 'Private key of the wallet',
+                required: false
+            })
     }, async (argv: any) => {
-        const bridge = await importCoreWasm()
-        const token_bridge = await importTokenWasm()
+        const bridge = await importCoreWasmSolana()
+        const token_bridge = await importTokenWasmSolana()
 
         let connection = setupSolanaConnection(argv);
         let bridge_id = new solanaWeb3s.PublicKey(argv.bridge);
         let token_bridge_id = new solanaWeb3s.PublicKey(argv.token_bridge);
 
-        // Generate a new random public key
-        let from = solanaWeb3s.Keypair.generate();
+        let from: solanaWeb3s.Keypair;
         if (argv.key) {
             let keypair = JSON.parse(fs.readFileSync(argv.key, { encoding: "utf8" }));
             from = solanaWeb3s.Keypair.fromSecretKey(Uint8Array.from(keypair));
@@ -380,7 +396,7 @@ yargs(hideBin(process.argv))
             default:
                 throw new Error("unknown governance action")
         }
-        let transaction = new solanaWeb3s.Transaction().add(ixFromRust(ix));
+        let transaction = new solanaWeb3s.Transaction().add(ixFromRustSolana(ix));
 
         // Sign transaction, broadcast, and confirm
         let signature = await solanaWeb3s.sendAndConfirmTransaction(
@@ -419,7 +435,7 @@ yargs(hideBin(process.argv))
                 default: "0x4f3edf983ac636a65a842ce7c78d9aa706d3b113bce9c46f30d7d21715b23b1d"
             })
     }, async (argv: any) => {
-        const bridge = await importCoreWasm()
+        const bridge = await importCoreWasmSolana()
 
         let provider = new ethers.providers.JsonRpcProvider(argv.rpc)
         let signer = new ethers.Wallet(argv.key, provider)
@@ -446,7 +462,7 @@ yargs(hideBin(process.argv))
     .argv;
 
 async function post_safecoin_vaa(connection: safecoinWeb3s.Connection, bridge_id: safecoinWeb3s.PublicKey, payer: safecoinWeb3s.Keypair, vaa: Buffer) {
-    const bridge = await importCoreWasm()
+    const bridge = await importCoreWasmSafecoin()
 
     let bridge_state = await get_safecoin_bridge_state(connection, bridge_id);
     let guardian_addr = new safecoinWeb3s.PublicKey(bridge.guardian_set_address(bridge_id.toString(), bridge_state.guardian_set_index));
@@ -461,7 +477,7 @@ async function post_safecoin_vaa(connection: safecoinWeb3s.Connection, bridge_id
     // Add transfer instruction to transaction
     for (let tx of txs) {
         let ixs: Array<safecoinWeb3s.TransactionInstruction> = tx.map((v: any) => {
-            return ixFromRust(v)
+            return ixFromRustSafecoin(v)
         })
         let transaction = new safecoinWeb3s.Transaction().add(ixs[0], ixs[1]);
 
@@ -476,7 +492,7 @@ async function post_safecoin_vaa(connection: safecoinWeb3s.Connection, bridge_id
         );
     }
 
-    let ix = ixFromRust(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
+    let ix = ixFromRustSafecoin(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
     let transaction = new safecoinWeb3s.Transaction().add(ix);
 
     // Sign transaction, broadcast, and confirm
@@ -492,7 +508,7 @@ async function post_safecoin_vaa(connection: safecoinWeb3s.Connection, bridge_id
 }
 
 async function post_solana_vaa(connection: solanaWeb3s.Connection, bridge_id: solanaWeb3s.PublicKey, payer: solanaWeb3s.Keypair, vaa: Buffer) {
-    const bridge = await importCoreWasm()
+    const bridge = await importCoreWasmSolana()
 
     let bridge_state = await get_solana_bridge_state(connection, bridge_id);
     let guardian_addr = new solanaWeb3s.PublicKey(bridge.guardian_set_address(bridge_id.toString(), bridge_state.guardian_set_index));
@@ -507,7 +523,7 @@ async function post_solana_vaa(connection: solanaWeb3s.Connection, bridge_id: so
     // Add transfer instruction to transaction
     for (let tx of txs) {
         let ixs: Array<solanaWeb3s.TransactionInstruction> = tx.map((v: any) => {
-            return ixFromRust(v)
+            return ixFromRustSolana(v)
         })
         let transaction = new solanaWeb3s.Transaction().add(ixs[0], ixs[1]);
 
@@ -522,7 +538,7 @@ async function post_solana_vaa(connection: solanaWeb3s.Connection, bridge_id: so
         );
     }
 
-    let ix = ixFromRust(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
+    let ix = ixFromRustSolana(bridge.post_vaa_ix(bridge_id.toString(), payer.publicKey.toString(), signature_set.publicKey.toString(), vaa));
     let transaction = new solanaWeb3s.Transaction().add(ix);
 
     // Sign transaction, broadcast, and confirm
@@ -539,7 +555,7 @@ async function post_solana_vaa(connection: solanaWeb3s.Connection, bridge_id: so
 
 
 async function get_safecoin_bridge_state(connection: safecoinWeb3s.Connection, bridge_id: safecoinWeb3s.PublicKey): Promise<BridgeState> {
-    const bridge = await importCoreWasm()
+    const bridge = await importCoreWasmSafecoin()
 
     let bridge_state = new safecoinWeb3s.PublicKey(bridge.state_address(bridge_id.toString()));
     let acc = await connection.getAccountInfo(bridge_state);
@@ -550,7 +566,7 @@ async function get_safecoin_bridge_state(connection: safecoinWeb3s.Connection, b
 }
 
 async function get_solana_bridge_state(connection: solanaWeb3s.Connection, bridge_id: solanaWeb3s.PublicKey): Promise<BridgeState> {
-    const bridge = await importCoreWasm()
+    const bridge = await importCoreWasmSafecoin()
 
     let bridge_state = new solanaWeb3s.PublicKey(bridge.state_address(bridge_id.toString()));
     let acc = await connection.getAccountInfo(bridge_state);

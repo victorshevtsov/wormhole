@@ -1,10 +1,14 @@
 import yargs from "yargs";
 
-const {hideBin} = require('yargs/helpers')
+const { hideBin } = require('yargs/helpers')
 import * as web3 from '@solana/web3.js';
-import {PublicKey, Transaction, TransactionInstruction, AccountMeta, Keypair, Connection} from "@solana/web3.js";
+import { PublicKey, Transaction, TransactionInstruction, AccountMeta, Keypair, Connection } from "@solana/web3.js";
 
-import {setDefaultWasm, importCoreWasm, ixFromRust} from '@certusone/wormhole-sdk'
+import {
+    setDefaultWasmSolana as setDefaultWasm,
+    importCoreWasmSolana as importCoreWasm,
+    ixFromRustSolana as ixFromRust
+} from '@certusone/wormhole-sdk'
 setDefaultWasm("node")
 
 yargs(hideBin(process.argv))

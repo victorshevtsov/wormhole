@@ -1,10 +1,14 @@
 import yargs from "yargs";
 
-const {hideBin} = require('yargs/helpers')
+const { hideBin } = require('yargs/helpers')
 import * as web3 from '@safecoin/web3.js';
-import {PublicKey, Transaction, TransactionInstruction, AccountMeta, Keypair, Connection} from "@safecoin/web3.js";
+import { PublicKey, Transaction, TransactionInstruction, AccountMeta, Keypair, Connection } from "@safecoin/web3.js";
 
-import {setDefaultWasm, importCoreWasm, ixFromRust} from '@certusone/wormhole-sdk'
+import {
+    setDefaultWasmSafecoin as setDefaultWasm,
+    importCoreWasmSafecoin as importCoreWasm,
+    ixFromRustSafecoin as ixFromRust
+} from '@certusone/wormhole-sdk'
 setDefaultWasm("node")
 
 yargs(hideBin(process.argv))
