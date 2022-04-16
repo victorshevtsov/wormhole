@@ -25,7 +25,7 @@ import {
   Transaction as SolanaTransaction,
 } from "@solana/web3.js";
 import { MsgExecuteContract } from "@terra-money/terra.js";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, ethers, Overrides, PayableOverrides } from "ethers";
 import { isNativeDenom } from "..";
 import {
   Bridge__factory,
@@ -60,10 +60,13 @@ export async function approveEth(
   tokenBridgeAddress: string,
   tokenAddress: string,
   signer: ethers.Signer,
-  amount: ethers.BigNumberish
+  amount: ethers.BigNumberish,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
   const token = TokenImplementation__factory.connect(tokenAddress, signer);
-  return await (await token.approve(tokenBridgeAddress, amount)).wait();
+  return await (
+    await token.approve(tokenBridgeAddress, amount, overrides)
+  ).wait();
 }
 
 export async function transferFromEth(
@@ -72,17 +75,19 @@ export async function transferFromEth(
   tokenAddress: string,
   amount: ethers.BigNumberish,
   recipientChain: ChainId,
-  recipientAddress: Uint8Array
+  recipientAddress: Uint8Array,
+  relayerFee: ethers.BigNumberish = 0,
+  overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ) {
-  const fee = 0; // for now, this won't do anything, we may add later
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
   const v = await bridge.transferTokens(
     tokenAddress,
     amount,
     recipientChain,
     recipientAddress,
-    fee,
-    createNonce()
+    relayerFee,
+    createNonce(),
+    overrides
   );
   const receipt = await v.wait();
   return receipt;
@@ -93,16 +98,18 @@ export async function transferFromEthNative(
   signer: ethers.Signer,
   amount: ethers.BigNumberish,
   recipientChain: ChainId,
-  recipientAddress: Uint8Array
+  recipientAddress: Uint8Array,
+  relayerFee: ethers.BigNumberish = 0,
+  overrides: PayableOverrides & { from?: string | Promise<string> } = {}
 ) {
-  const fee = 0; // for now, this won't do anything, we may add later
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
   const v = await bridge.wrapAndTransferETH(
     recipientChain,
     recipientAddress,
-    fee,
+    relayerFee,
     createNonce(),
     {
+      ...overrides,
       value: amount,
     }
   );
@@ -198,7 +205,8 @@ export async function transferNativeSafe(
   payerAddress: string,
   amount: BigInt,
   targetAddress: Uint8Array,
-  targetChain: ChainId
+  targetChain: ChainId,
+  relayerFee: BigInt = BigInt(0)
 ) {
   //https://github.com/solana-labs/solana-program-library/blob/master/token/js/client/token.js
   const rentBalance = await SafeToken.getMinBalanceRentForExemptAccount(connection);
@@ -233,7 +241,6 @@ export async function transferNativeSafe(
   const { transfer_native_ix, approval_authority_address } =
     await importTokenSafecoinWasm();
   const nonce = createNonce().readUInt32LE(0);
-  const fee = BigInt(0); // for now, this won't do anything, we may add later
   const transferIx = await getBridgeFeeIxSafecoin(
     connection,
     bridgeAddress,
@@ -259,7 +266,7 @@ export async function transferNativeSafe(
       WSAFE_ADDRESS,
       nonce,
       amount,
-      fee,
+      relayerFee,
       targetAddress,
       targetChain
     )
@@ -300,10 +307,10 @@ export async function transferFromSafecoin(
   targetChain: ChainId,
   originAddress?: Uint8Array,
   originChain?: ChainId,
-  fromOwnerAddress?: string
+  fromOwnerAddress?: string,
+  relayerFee: BigInt = BigInt(0)
 ) {
   const nonce = createNonce().readUInt32LE(0);
-  const fee = BigInt(0); // for now, this won't do anything, we may add later
   const transferIx = await getBridgeFeeIxSafecoin(
     connection,
     bridgeAddress,
@@ -339,7 +346,7 @@ export async function transferFromSafecoin(
           mintAddress,
           nonce,
           amount,
-          fee,
+          relayerFee,
           targetAddress,
           targetChain
         )
@@ -354,7 +361,7 @@ export async function transferFromSafecoin(
           originAddress as Uint8Array, // checked by throw
           nonce,
           amount,
-          fee,
+          relayerFee,
           targetAddress,
           targetChain
         )
@@ -374,7 +381,8 @@ export async function transferNativeSol(
   payerAddress: string,
   amount: BigInt,
   targetAddress: Uint8Array,
-  targetChain: ChainId
+  targetChain: ChainId,
+  relayerFee: BigInt = BigInt(0)
 ) {
   //https://github.com/solana-labs/solana-program-library/blob/master/token/js/client/token.js
   const rentBalance = await SplToken.getMinBalanceRentForExemptAccount(connection);
@@ -409,7 +417,6 @@ export async function transferNativeSol(
   const { transfer_native_ix, approval_authority_address } =
     await importTokenSolanaWasm();
   const nonce = createNonce().readUInt32LE(0);
-  const fee = BigInt(0); // for now, this won't do anything, we may add later
   const transferIx = await getBridgeFeeIxSolana(
     connection,
     bridgeAddress,
@@ -435,7 +442,7 @@ export async function transferNativeSol(
       WSOL_ADDRESS,
       nonce,
       amount,
-      fee,
+      relayerFee,
       targetAddress,
       targetChain
     )
@@ -476,10 +483,10 @@ export async function transferFromSolana(
   targetChain: ChainId,
   originAddress?: Uint8Array,
   originChain?: ChainId,
-  fromOwnerAddress?: string
+  fromOwnerAddress?: string,
+  relayerFee: BigInt = BigInt(0)
 ) {
   const nonce = createNonce().readUInt32LE(0);
-  const fee = BigInt(0); // for now, this won't do anything, we may add later
   const transferIx = await getBridgeFeeIxSolana(
     connection,
     bridgeAddress,
@@ -515,7 +522,7 @@ export async function transferFromSolana(
           mintAddress,
           nonce,
           amount,
-          fee,
+          relayerFee,
           targetAddress,
           targetChain
         )
@@ -530,7 +537,7 @@ export async function transferFromSolana(
           originAddress as Uint8Array, // checked by throw
           nonce,
           amount,
-          fee,
+          relayerFee,
           targetAddress,
           targetChain
         )

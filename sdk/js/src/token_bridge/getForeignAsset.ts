@@ -18,7 +18,7 @@ import { ChainId } from "../utils";
  */
 export async function getForeignAssetEth(
   tokenBridgeAddress: string,
-  provider: ethers.providers.Web3Provider,
+  provider: ethers.Signer | ethers.providers.Provider,
   originChain: ChainId,
   originAsset: Uint8Array
 ) {

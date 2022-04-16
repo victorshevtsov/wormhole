@@ -1,4 +1,4 @@
-import { Connection as SafecoinConnection, PublicKey as  SafecoinPublicKey } from "@safecoin/web3.js";
+import { Connection as SafecoinConnection, PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
 import { Connection as SolanaConnection, PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { ethers } from "ethers";
@@ -24,7 +24,7 @@ export interface WormholeWrappedInfo {
  */
 export async function getOriginalAssetEth(
   tokenBridgeAddress: string,
-  provider: ethers.providers.Web3Provider,
+  provider: ethers.Signer | ethers.providers.Provider,
   wrappedAddress: string,
   lookupChainId: ChainId
 ): Promise<WormholeWrappedInfo> {
@@ -81,7 +81,7 @@ export async function getOriginalAssetTerra(
         ),
       };
     }
-  } catch (e) {}
+  } catch (e) { }
   return {
     isWrapped: false,
     chainId: CHAIN_ID_TERRA,
@@ -128,7 +128,7 @@ export async function getOriginalAssetSafe(
       chainId: CHAIN_ID_SAFECOIN,
       assetAddress: new SafecoinPublicKey(mintAddress).toBytes(),
     };
-  } catch (e) {}
+  } catch (e) { }
   return {
     isWrapped: false,
     chainId: CHAIN_ID_SAFECOIN,
@@ -143,7 +143,7 @@ export async function getOriginalAssetSafe(
  * @param mintAddress
  * @returns
  */
- export async function getOriginalAssetSol(
+export async function getOriginalAssetSol(
   connection: SolanaConnection,
   tokenBridgeAddress: string,
   mintAddress: string
@@ -175,7 +175,7 @@ export async function getOriginalAssetSafe(
       chainId: CHAIN_ID_SOLANA,
       assetAddress: new SolanaPublicKey(mintAddress).toBytes(),
     };
-  } catch (e) {}
+  } catch (e) { }
   return {
     isWrapped: false,
     chainId: CHAIN_ID_SOLANA,

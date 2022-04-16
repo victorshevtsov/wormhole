@@ -7,7 +7,7 @@ import {
   CHAIN_ID_TERRA,
   CHAIN_ID_POLYGON,
 } from "./consts";
-import { humanAddress, canonicalAddress, isNativeDenom } from "../terra";
+import { canonicalAddress, humanAddress, isNativeDenom } from "../terra";
 import { PublicKey as SafecoinPublicKey } from "@safecoin/web3.js";
 import { PublicKey as SolanaPublicKey } from "@solana/web3.js";
 import { hexValue, hexZeroPad, stripZeros } from "ethers/lib/utils";
@@ -33,14 +33,14 @@ export const hexToNativeString = (h: string | undefined, c: ChainId) => {
       ? new SafecoinPublicKey(hexToUint8Array(h)).toString()
       : c === CHAIN_ID_SOLANA
       ? new SolanaPublicKey(hexToUint8Array(h)).toString()
-      : c === CHAIN_ID_ETH || c === CHAIN_ID_BSC || c === CHAIN_ID_POLYGON
+      : isEVMChain(c)
       ? hexZeroPad(hexValue(hexToUint8Array(h)), 20)
       : c === CHAIN_ID_TERRA
       ? isHexNativeTerra(h)
         ? nativeTerraHexToDenom(h)
         : humanAddress(hexToUint8Array(h.substr(24))) // terra expects 20 bytes, not 32
       : h;
-  } catch (e) {}
+  } catch (e) { }
   return undefined;
 };
 
@@ -76,3 +76,10 @@ export const nativeToHexString = (
 
 export const uint8ArrayToNative = (a: Uint8Array, chainId: ChainId) =>
   hexToNativeString(uint8ArrayToHex(a), chainId);
+
+export function chunks<T>(array: T[], size: number): T[][] {
+  return Array.apply<number, T[], T[][]>(
+    0,
+    new Array(Math.ceil(array.length / size))
+  ).map((_, index) => array.slice(index * size, (index + 1) * size));
+}

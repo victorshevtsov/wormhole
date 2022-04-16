@@ -1,5 +1,5 @@
 import { TransactionResponse as TransactionResponseSafecoin } from "@safecoin/web3.js";
-import { TransactionResponse as TransactionResponseSolana} from "@solana/web3.js";
+import { TransactionResponse as TransactionResponseSolana } from "@solana/web3.js";
 import { TxInfo } from "@terra-money/terra.js";
 import { ContractReceipt } from "ethers";
 import { Implementation__factory } from "../ethers-contracts";
@@ -16,6 +16,22 @@ export function parseSequenceFromLogEth(
     args: { sequence },
   } = Implementation__factory.createInterface().parseLog(bridgeLog);
   return sequence.toString();
+}
+
+export function parseSequencesFromLogEth(
+  receipt: ContractReceipt,
+  bridgeAddress: string
+): string[] {
+  // TODO: dangerous!(?)
+  const bridgeLogs = receipt.logs.filter((l) => {
+    return l.address === bridgeAddress;
+  });
+  return bridgeLogs.map((bridgeLog) => {
+    const {
+      args: { sequence },
+    } = Implementation__factory.createInterface().parseLog(bridgeLog);
+    return sequence.toString();
+  });
 }
 
 export function parseSequenceFromLogTerra(info: TxInfo): string {
@@ -36,6 +52,23 @@ export function parseSequenceFromLogTerra(info: TxInfo): string {
   return sequence.toString();
 }
 
+export function parseSequencesFromLogTerra(info: TxInfo): string[] {
+  // Scan for the Sequence attribute in all the outputs of the transaction.
+  // TODO: Make this not horrible.
+  const sequences: string[] = [];
+  const jsonLog = JSON.parse(info.raw_log);
+  jsonLog.map((row: any) => {
+    row.events.map((event: any) => {
+      event.attributes.map((attribute: any) => {
+        if (attribute.key === "message.sequence") {
+          sequences.push(attribute.value.toString());
+        }
+      });
+    });
+  });
+  return sequences;
+}
+
 const SAFECOIN_SEQ_LOG = "Program log: Sequence: ";
 export function parseSequenceFromLogSafecoin(info: TransactionResponseSafecoin) {
   // TODO: better parsing, safer
@@ -48,6 +81,13 @@ export function parseSequenceFromLogSafecoin(info: TransactionResponseSafecoin) 
   return sequence.toString();
 }
 
+export function parseSequencesFromLogSafecoin(info: TransactionResponseSafecoin) {
+  // TODO: better parsing, safer
+  return info.meta?.logMessages
+    ?.filter((msg) => msg.startsWith(SAFECOIN_SEQ_LOG))
+    .map((msg) => msg.replace(SAFECOIN_SEQ_LOG, ""));
+}
+
 const SOLANA_SEQ_LOG = "Program log: Sequence: ";
 export function parseSequenceFromLogSolana(info: TransactionResponseSolana) {
   // TODO: better parsing, safer
@@ -58,4 +98,11 @@ export function parseSequenceFromLogSolana(info: TransactionResponseSolana) {
     throw new Error("sequence not found");
   }
   return sequence.toString();
+}
+
+export function parseSequencesFromLogSolana(info: TransactionResponseSolana) {
+  // TODO: better parsing, safer
+  return info.meta?.logMessages
+    ?.filter((msg) => msg.startsWith(SOLANA_SEQ_LOG))
+    .map((msg) => msg.replace(SOLANA_SEQ_LOG, ""));
 }

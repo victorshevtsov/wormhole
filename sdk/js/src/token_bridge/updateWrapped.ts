@@ -1,27 +1,21 @@
-import { MsgExecuteContract } from "@terra-money/terra.js";
-import { ethers } from "ethers";
-import { fromUint8Array } from "js-base64";
+import { ethers, Overrides } from "ethers";
+import { createWrappedOnSafecoin, createWrappedOnSolana, createWrappedOnTerra } from ".";
 import { Bridge__factory } from "../ethers-contracts";
 
 export async function updateWrappedOnEth(
   tokenBridgeAddress: string,
   signer: ethers.Signer,
-  signedVAA: Uint8Array
+  signedVAA: Uint8Array,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.updateWrapped(signedVAA);
+  const v = await bridge.updateWrapped(signedVAA, overrides);
   const receipt = await v.wait();
   return receipt;
 }
 
-export async function updateWrappedOnTerra(
-  tokenBridgeAddress: string,
-  walletAddress: string,
-  signedVAA: Uint8Array
-) {
-  return new MsgExecuteContract(walletAddress, tokenBridgeAddress, {
-    submit_vaa: {
-      data: fromUint8Array(signedVAA),
-    },
-  });
-}
+export const updateWrappedOnTerra = createWrappedOnTerra;
+
+export const updateWrappedOnSafecoin = createWrappedOnSafecoin;
+
+export const updateWrappedOnSolana = createWrappedOnSolana;

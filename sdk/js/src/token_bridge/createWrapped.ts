@@ -5,7 +5,7 @@ import {
   Connection as SolanaConnection, PublicKey as SolanaPublicKey, Transaction as SolanaTransaction
 } from "@solana/web3.js";
 import { MsgExecuteContract } from "@terra-money/terra.js";
-import { ethers } from "ethers";
+import { ethers, Overrides } from "ethers";
 import { fromUint8Array } from "js-base64";
 import { Bridge__factory } from "../ethers-contracts";
 import { ixFromRustSafecoin } from "../safecoin";
@@ -16,10 +16,11 @@ import { importTokenWasm as importTokenSolanaWasm } from "../solana/wasm";
 export async function createWrappedOnEth(
   tokenBridgeAddress: string,
   signer: ethers.Signer,
-  signedVAA: Uint8Array
+  signedVAA: Uint8Array,
+  overrides: Overrides & { from?: string | Promise<string> } = {}
 ) {
   const bridge = Bridge__factory.connect(tokenBridgeAddress, signer);
-  const v = await bridge.createWrapped(signedVAA);
+  const v = await bridge.createWrapped(signedVAA, overrides);
   const receipt = await v.wait();
   return receipt;
 }
