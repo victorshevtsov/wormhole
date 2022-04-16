@@ -1,8 +1,8 @@
 import { CHAIN_ID_SAFECOIN } from "@certusone/wormhole-sdk";
 // TODO(Victor): migrateTokens
 // import migrateTokensTx from "@certusone/wormhole-sdk/lib/migration/migrateTokens";
-import getPoolAddress from "@certusone/wormhole-sdk/lib/migration/poolAddress";
-import getToCustodyAddress from "@certusone/wormhole-sdk/lib/migration/toCustodyAddress";
+import getPoolAddress from "@certusone/wormhole-sdk/lib/esm/migration/poolAddress";
+import getToCustodyAddress from "@certusone/wormhole-sdk/lib/esm/migration/toCustodyAddress";
 import { makeStyles, Typography } from "@material-ui/core";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -14,7 +14,7 @@ import { parseUnits } from "ethers/lib/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSafecoinWallet } from "../../contexts/SafecoinWalletContext";
 import useIsWalletReady from "../../hooks/useIsWalletReady";
-import useMetaplexData from "../../hooks/useMetaplexData";
+import useMetaplexData from "../../hooks/useSolanaMetaplexData";
 import useSafecoinTokenMap from "../../hooks/useSafecoinTokenMap";
 import { COLORS } from "../../muiThemeLight";
 import { MIGRATION_PROGRAM_ADDRESS, SAFECOIN_HOST } from "../../utils/consts";

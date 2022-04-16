@@ -110,7 +110,7 @@ const getBalanceTerra = async (walletAddress: string) => {
     .balance(walletAddress)
     .then((coins) => {
       // coins doesn't support reduce
-      const balancePairs = coins.map(({ amount, denom }) => [denom, amount]);
+      const balancePairs = coins[0].map(({ amount, denom }) => [denom, amount]);
       const targetCoin = balancePairs.find((coin) => coin[0] === TARGET_DENOM);
       if (targetCoin) {
         return BigInt(targetCoin[1].toString());

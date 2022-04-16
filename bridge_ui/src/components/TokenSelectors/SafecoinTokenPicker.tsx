@@ -1,7 +1,7 @@
 import { CHAIN_ID_SAFECOIN } from "@certusone/wormhole-sdk";
 import { TokenInfo } from "@solana/spl-token-registry";
 import React, { useCallback, useMemo } from "react";
-import useMetaplexData from "../../hooks/useMetaplexData";
+import useMetaplexData from "../../hooks/useSolanaMetaplexData";
 import useSafecoinTokenMap from "../../hooks/useSafecoinTokenMap";
 import { DataWrapper } from "../../store/helpers";
 import { NFTParsedTokenAccount } from "../../store/nftSlice";

@@ -13,7 +13,7 @@ import {
   isNFTVAASolanaNative,
   redeemOnEth,
   redeemOnSolana,
-} from "@certusone/wormhole-sdk/lib/nft_bridge";
+} from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
 import { arrayify } from "@ethersproject/bytes";
 import { Alert } from "@material-ui/lab";
 import { WalletContextState } from "@solana/wallet-adapter-react";
@@ -33,7 +33,7 @@ import {
   SOL_NFT_BRIDGE_ADDRESS,
 } from "../utils/consts";
 import { isEVMChain } from "../utils/ethereum";
-import { getMetadataAddress } from "../utils/metaplex";
+import { getSolanaMetadataAddress } from "../utils/metaplex";
 import parseError from "../utils/parseError";
 import { signSendAndConfirm } from "../utils/solana";
 import useNFTSignedVAA from "./useNFTSignedVAA";
@@ -107,7 +107,7 @@ async function solana(
     const isNative = await isNFTVAASolanaNative(signedVAA);
     if (!isNative) {
       const { parse_vaa } = await import(
-        "@certusone/wormhole-sdk/lib/solana/core/bridge"
+        "@certusone/wormhole-sdk/lib/esm/solana/core/bridge"
       );
       const parsedVAA = parse_vaa(signedVAA);
       const { originChain, originAddress, tokenId } = parseNFTPayload(
@@ -119,7 +119,7 @@ async function solana(
         hexToUint8Array(originAddress),
         arrayify(tokenId)
       );
-      const [metadataAddress] = await getMetadataAddress(mintAddress);
+      const [metadataAddress] = await getSolanaMetadataAddress(mintAddress);
       const metadata = await connection.getAccountInfo(metadataAddress);
       if (!metadata) {
         const transaction = await createMetaOnSolana(

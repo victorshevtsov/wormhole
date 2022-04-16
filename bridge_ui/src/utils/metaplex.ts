@@ -49,18 +49,26 @@ export interface PublicKeyStringAndAccount<T> {
 }
 
 export const WRAPPED_SAFE_MINT = new PublicKey(
-  "Safe111111111111111111111111111111111111112"
+  "Safe111111111111111111111111111111111111111"
 );
 
 export const WRAPPED_SOL_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
 );
 
-export const TOKEN_PROGRAM_ID = new PublicKey(
+export const SAFE_TOKEN_PROGRAM_ID = new PublicKey(
+  "ToKLx75MGim1d1jRusuVX8xvdvvbSDESVaNXpRA9PHN"
+);
+
+export const SOL_TOKEN_PROGRAM_ID = new PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 );
 
-export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
+export const SAFE_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
+  "AToD9iqHSc2fhEP9Jp7UYA6mRjHQ4CTWyzCsw8X3tH7K"
+);
+
+export const SOL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
 );
 
@@ -68,14 +76,24 @@ export const BPF_UPGRADE_LOADER_ID = new PublicKey(
   "BPFLoaderUpgradeab1e11111111111111111111111"
 );
 
-export const MEMO_ID = new PublicKey(
+export const SAFE_MEMO_ID = new PublicKey(
+  "MEMWKbqsjEB8o972BvDHExZFSauzGZKvB4xHDVPFowh"
+);
+
+export const SOL_MEMO_ID = new PublicKey(
   "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr"
 );
 
-export const METADATA_PROGRAM_ID =
+export const SAFE_METADATA_PROGRAM_ID =
+  "mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j" as StringPublicKey;
+
+export const SOL_METADATA_PROGRAM_ID =
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s" as StringPublicKey;
 
-export const VAULT_ID =
+export const SAFE_VAULT_ID =
+  "vau3q7e1FkBCACg8o1fFMYz8WmMbcocjBX2LgXGZypU" as StringPublicKey;
+
+export const SOL_VAULT_ID =
   "vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn" as StringPublicKey;
 
 export const AUCTION_ID =
@@ -110,15 +128,30 @@ export const setProgramIds = async (store?: string) => {
 
 let STORE: PublicKey | undefined;
 
-export const programIds = () => {
+export const safecoinProgramIds = () => {
   return {
-    token: TOKEN_PROGRAM_ID,
-    associatedToken: SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+    token: SAFE_TOKEN_PROGRAM_ID,
+    associatedToken: SAFE_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
     bpf_upgrade_loader: BPF_UPGRADE_LOADER_ID,
     system: SYSTEM,
-    metadata: METADATA_PROGRAM_ID,
-    memo: MEMO_ID,
-    vault: VAULT_ID,
+    metadata: SAFE_METADATA_PROGRAM_ID,
+    memo: SAFE_MEMO_ID,
+    vault: SAFE_VAULT_ID,
+    auction: AUCTION_ID,
+    metaplex: METAPLEX_ID,
+    store: STORE,
+  };
+};
+
+export const solanaProgramIds = () => {
+  return {
+    token: SOL_TOKEN_PROGRAM_ID,
+    associatedToken: SOL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
+    bpf_upgrade_loader: BPF_UPGRADE_LOADER_ID,
+    system: SYSTEM,
+    metadata: SOL_METADATA_PROGRAM_ID,
+    memo: SOL_MEMO_ID,
+    vault: SOL_VAULT_ID,
     auction: AUCTION_ID,
     metaplex: METAPLEX_ID,
     store: STORE,
@@ -168,10 +201,28 @@ export enum MetadataKey {
   EditionMarker = 7,
 }
 
-export async function getEdition(
+export async function getSafecoinEdition(
   tokenMint: StringPublicKey
 ): Promise<StringPublicKey> {
-  const PROGRAM_IDS = programIds();
+  const PROGRAM_IDS = safecoinProgramIds();
+
+  return (
+    await findProgramAddress(
+      [
+        Buffer.from(METADATA_PREFIX),
+        toPublicKey(PROGRAM_IDS.metadata).toBuffer(),
+        toPublicKey(tokenMint).toBuffer(),
+        Buffer.from(EDITION),
+      ],
+      toPublicKey(PROGRAM_IDS.metadata)
+    )
+  )[0];
+}
+
+export async function getSolanaEdition(
+  tokenMint: StringPublicKey
+): Promise<StringPublicKey> {
+  const PROGRAM_IDS = solanaProgramIds();
 
   return (
     await findProgramAddress(
@@ -281,7 +332,7 @@ export class Metadata {
   }
 
   public async init() {
-    const edition = await getEdition(this.mint);
+    const edition = await getSolanaEdition(this.mint);
     this.edition = edition;
     this.masterEdition = edition;
   }
@@ -566,16 +617,30 @@ export const decodeMetadata = (buffer: Buffer): Metadata => {
   return metadata;
 };
 
-export const getMetadataAddress = async (
+export const getSafecoinMetadataAddress = async (
   mintKey: string
 ): Promise<[PublicKey, number]> => {
   const seeds = [
     Buffer.from("metadata"),
-    new PublicKey(METADATA_PROGRAM_ID).toBuffer(),
+    new PublicKey(SAFE_METADATA_PROGRAM_ID).toBuffer(),
     new PublicKey(mintKey).toBuffer(),
   ];
   return PublicKey.findProgramAddress(
     seeds,
-    new PublicKey(METADATA_PROGRAM_ID)
+    new PublicKey(SAFE_METADATA_PROGRAM_ID)
+  );
+};
+
+export const getSolanaMetadataAddress = async (
+  mintKey: string
+): Promise<[PublicKey, number]> => {
+  const seeds = [
+    Buffer.from("metadata"),
+    new PublicKey(SOL_METADATA_PROGRAM_ID).toBuffer(),
+    new PublicKey(mintKey).toBuffer(),
+  ];
+  return PublicKey.findProgramAddress(
+    seeds,
+    new PublicKey(SOL_METADATA_PROGRAM_ID)
   );
 };

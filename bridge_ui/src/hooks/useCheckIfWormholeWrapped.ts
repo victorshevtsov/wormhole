@@ -14,7 +14,7 @@ import {
   getOriginalAssetEth as getOriginalAssetEthNFT,
   getOriginalAssetSafe as getOriginalAssetSafeNFT,
   getOriginalAssetSol as getOriginalAssetSolNFT,
-} from "@certusone/wormhole-sdk/lib/nft_bridge";
+} from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
 import { Connection as SafecoinConnection } from "@safecoin/web3.js";
 import { Connection as SolanaConnection} from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";

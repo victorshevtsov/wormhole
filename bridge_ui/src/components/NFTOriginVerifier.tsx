@@ -10,7 +10,7 @@ import {
   getOriginalAssetEth,
   getOriginalAssetSol,
   WormholeWrappedNFTInfo,
-} from "@certusone/wormhole-sdk/lib/nft_bridge";
+} from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
 import {
   Button,
   Card,
@@ -28,7 +28,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useBetaContext } from "../contexts/BetaContext";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import useIsWalletReady from "../hooks/useIsWalletReady";
-import { getMetaplexData } from "../hooks/useMetaplexData";
+import { getSolanaMetaplexData } from "../hooks/useSolanaMetaplexData";
 import { COLORS } from "../muiThemeLight";
 import { NFTParsedTokenAccount } from "../store/nftSlice";
 import {
@@ -155,7 +155,7 @@ export default function NFTOriginVerifier() {
       (async () => {
         try {
           setIsLoading(true);
-          const [metadata] = await getMetaplexData([lookupAsset]);
+          const [metadata] = await getSolanaMetaplexData([lookupAsset]);
           if (metadata) {
             const connection = new Connection(SOLANA_HOST, "confirmed");
             const info = await getOriginalAssetSol(

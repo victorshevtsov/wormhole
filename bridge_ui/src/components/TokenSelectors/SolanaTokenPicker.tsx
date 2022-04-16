@@ -1,7 +1,7 @@
 import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
 import { TokenInfo } from "@solana/spl-token-registry";
 import React, { useCallback, useMemo } from "react";
-import useMetaplexData from "../../hooks/useMetaplexData";
+import useMetaplexData from "../../hooks/useSolanaMetaplexData";
 import useSolanaTokenMap from "../../hooks/useSolanaTokenMap";
 import { DataWrapper } from "../../store/helpers";
 import { NFTParsedTokenAccount } from "../../store/nftSlice";

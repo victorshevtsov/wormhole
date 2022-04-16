@@ -3,16 +3,14 @@ import { useLayoutEffect, useMemo, useState } from "react";
 import { DataWrapper } from "../store/helpers";
 import { SOLANA_HOST } from "../utils/consts";
 import {
-  decodeMetadata,
-  getMetadataAddress,
-  Metadata,
+  decodeMetadata, getSolanaMetadataAddress, Metadata
 } from "../utils/metaplex";
 import { getMultipleAccountsRPC } from "../utils/solana";
 
-export const getMetaplexData = async (mintAddresses: string[]) => {
+export const getSolanaMetaplexData = async (mintAddresses: string[]) => {
   const promises = [];
   for (const address of mintAddresses) {
-    promises.push(getMetadataAddress(address));
+    promises.push(getSolanaMetadataAddress(address));
   }
   const metaAddresses = await Promise.all(promises);
   const connection = new Connection(SOLANA_HOST, "confirmed");
@@ -60,7 +58,7 @@ const createResultMap = (
   return output;
 };
 
-const useMetaplexData = (
+const useSolanaMetaplexData = (
   addresses: string[]
 ): DataWrapper<Map<string, Metadata | undefined> | undefined> => {
   const [results, setResults] = useState<
@@ -73,7 +71,7 @@ const useMetaplexData = (
   useLayoutEffect(() => {
     let cancelled = false;
     setIsLoading(true);
-    getMetaplexData(addresses).then(
+    getSolanaMetaplexData(addresses).then(
       (results) => {
         if (!cancelled) {
           setResults(createResultMap(addresses, results));
@@ -109,4 +107,4 @@ const useMetaplexData = (
   return output;
 };
 
-export default useMetaplexData;
+export default useSolanaMetaplexData;

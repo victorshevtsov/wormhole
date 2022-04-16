@@ -58,9 +58,11 @@ export const getMultipleAccounts = async (
 ) => {
   return (
     await Promise.all(
-      chunks(pubkeys, 99).map((chunk) =>
-        connection.getMultipleAccountsInfo(chunk, commitment)
-      )
+      chunks(pubkeys, 99).map((chunk) => {
+        console.log(chunk);
+
+        return connection.getMultipleAccountsInfo(chunk, commitment)
+      })
     )
   ).flat();
 };

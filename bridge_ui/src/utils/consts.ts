@@ -14,7 +14,7 @@ import { getAddress } from "ethers/lib/utils";
 import ethIcon from "../icons/eth.svg";
 // import polygonIcon from "../icons/polygon.svg";
 import safecoinIcon from "../icons/safecoin.svg";
-// import solanaIcon from "../icons/solana.svg";
+import solanaIcon from "../icons/solana.svg";
 // import terraIcon from "../icons/terra.svg";
 
 export type Cluster = "devnet" | "testnet" | "mainnet";
@@ -52,11 +52,11 @@ export const CHAINS =
           name: "SafeCoin",
           logo: safecoinIcon,
         },
-        // {
-        //   id: CHAIN_ID_SOLANA,
-        //   name: "Solana",
-        //   logo: solanaIcon,
-        // },
+        {
+          id: CHAIN_ID_SOLANA,
+          name: "Solana",
+          logo: solanaIcon,
+        },
         // {
         //   id: CHAIN_ID_TERRA,
         //   name: "Terra",
@@ -75,11 +75,11 @@ export const CHAINS =
           name: "SafeCoin (Testnet)",
           logo: safecoinIcon,
         },
-        // {
-        //   id: CHAIN_ID_SOLANA,
-        //   name: "Solana",
-        //   logo: solanaIcon,
-        // },
+        {
+          id: CHAIN_ID_SOLANA,
+          name: "Solana (Testnet)",
+          logo: solanaIcon,
+        },
       ]
     : [
         // {
@@ -97,11 +97,11 @@ export const CHAINS =
           name: "SafeCoin (devent)",
           logo: safecoinIcon,
         },
-        // {
-        //   id: CHAIN_ID_SOLANA,
-        //   name: "Solana",
-        //   logo: solanaIcon,
-        // },
+        {
+          id: CHAIN_ID_SOLANA,
+          name: "Solana (devnet)",
+          logo: solanaIcon,
+        },
         // {
         //   id: CHAIN_ID_TERRA,
         //   name: "Terra",
@@ -149,12 +149,7 @@ export const getExplorerName = (chainId: ChainId) =>
 export const WORMHOLE_RPC_HOSTS =
   CLUSTER === "mainnet"
     ? [
-        "https://wormhole-v2-mainnet-api.certus.one",
-        "https://wormhole.inotel.ro",
-        "https://wormhole-v2-mainnet-api.mcf.rocks",
-        "https://wormhole-v2-mainnet-api.chainlayer.network",
-        "https://wormhole-v2-mainnet-api.staking.fund",
-        "https://wormhole-v2-mainnet-api.chainlayer.network",
+        "https://guardian-01.safebridge.org"
       ]
     : CLUSTER === "testnet"
     ? ["https://guardian.testnet.safebridge.org"]
@@ -186,7 +181,7 @@ export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   ? clusterApiUrlSolana("mainnet-beta")
   : CLUSTER === "testnet"
   ? clusterApiUrlSolana("testnet")
-  : "http://localhost:18899";
+  : "http://localhost:8899";
 
 export const TERRA_HOST =
   CLUSTER === "mainnet"
@@ -724,3 +719,10 @@ export const AVAILABLE_MARKETS_URL =
   "https://docs.wormholenetwork.com/wormhole/overview-liquid-markets";
 
 export const SOLANA_SYSTEM_PROGRAM_ADDRESS = "11111111111111111111111111111111";
+
+export const logoOverrides = new Map<string, string>([
+  [
+    "0x727f064a78dc734d33eec18d5370aef32ffd46e4",
+    "https://orion.money/assets/ORION-LOGO-2.1-GREEN@256x256.png",
+  ],
+]);

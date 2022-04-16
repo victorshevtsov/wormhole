@@ -30,7 +30,7 @@ export default function useTerraNativeBalances(
         .balance(walletAddress)
         .then((coins) => {
           // coins doesn't support reduce
-          const balancePairs = coins.map(({ amount, denom }) => [
+          const balancePairs = coins[0].map(({ amount, denom }) => [
             denom,
             amount,
           ]);
