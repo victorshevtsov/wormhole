@@ -131,7 +131,7 @@ yargs(hideBin(process.argv))
 
         console.log(vm)
     })
-    .command('generate_upgrade_chain_vaa [chain_id] [contract_address]', 'create a VAA to upgrade a chain (debug-only)', (yargs) => {
+    .command('generate_upgrade_chain_vaa [emitter_chain_id] [chain_id] [contract_address]', 'create a VAA to upgrade a chain (debug-only)', (yargs) => {
         return yargs
             .positional('emitter_chain_id', {
                 describe: 'emitter chain id',
