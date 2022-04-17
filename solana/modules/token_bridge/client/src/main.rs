@@ -1,4 +1,3 @@
-
 #![feature(adt_const_params)]
 #![allow(warnings)]
 
@@ -361,10 +360,10 @@ fn main() {
                     &transaction,
                     config.commitment_config,
                     RpcSendTransactionConfig {
-                        skip_preflight: true,
+                        skip_preflight: false,
                         preflight_commitment: None,
                         encoding: None,
-                        max_retries: None,
+                        max_retries: 30,
                     },
                 )?;
             println!("Signature: {}", signature);
