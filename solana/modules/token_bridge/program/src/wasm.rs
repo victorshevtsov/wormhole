@@ -44,12 +44,21 @@ use bridge::{
     PostVAAData,
 };
 use solana_program::pubkey::Pubkey;
+use solana_program::msg;
 use solitaire::{
     processors::seeded::Seeded,
     AccountState,
 };
 use std::str::FromStr;
 use wasm_bindgen::prelude::*;
+
+extern crate web_sys;
+
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 
 #[wasm_bindgen]
 pub fn attest_ix(
@@ -319,17 +328,33 @@ pub fn upgrade_contract_ix(
     spill: String,
     vaa: Vec<u8>,
 ) -> JsValue {
+    log!("*** DEBUG WASM *** upgrade_contract_ix 01");
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
+    log!("*** DEBUG WASM *** upgrade_contract_ix 02");
+
     let bridge_id = Pubkey::from_str(bridge_id.as_str()).unwrap();
+    log!("*** DEBUG WASM *** upgrade_contract_ix 03");
+
     let spill = Pubkey::from_str(spill.as_str()).unwrap();
+    log!("*** DEBUG WASM *** upgrade_contract_ix 04");
+
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
+    log!("*** DEBUG WASM *** upgrade_contract_ix 05");
+
+    // log!("*** DEBUG WASM *** upgrade_contract_ix 05 {:?}", vaa.payload.as_slice());
+
     let payload = GovernancePayloadUpgrade::deserialize(&mut vaa.payload.as_slice()).unwrap();
+    log!("*** DEBUG WASM *** upgrade_contract_ix 06");
+
     let message_key = bridge::accounts::PostedVAA::<'_, { AccountState::Uninitialized }>::key(
         &PostedVAADerivationData {
             payload_hash: hash_vaa(&vaa.clone().into()).to_vec(),
         },
         &bridge_id,
     );
+    log!("*** DEBUG WASM *** upgrade_contract_ix 07");
+
     let ix = upgrade_contract(
         program_id,
         Pubkey::from_str(payer.as_str()).unwrap(),
@@ -339,6 +364,8 @@ pub fn upgrade_contract_ix(
         spill,
         vaa.sequence,
     );
+    log!("*** DEBUG WASM *** upgrade_contract_ix 08");
+
     return JsValue::from_serde(&ix).unwrap();
 }
 
@@ -349,17 +376,31 @@ pub fn register_chain_ix(
     payer: String,
     vaa: Vec<u8>,
 ) -> JsValue {
+    log!("*** DEBUG WASM *** register_chain_ix 01");
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 02");
+
     let bridge_id = Pubkey::from_str(bridge_id.as_str()).unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 03");
+
     let payer = Pubkey::from_str(payer.as_str()).unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 04");
+
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 05");
+
     let payload = PayloadGovernanceRegisterChain::deserialize(&mut vaa.payload.as_slice()).unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 06");
+
     let message_key = bridge::accounts::PostedVAA::<'_, { AccountState::Uninitialized }>::key(
         &PostedVAADerivationData {
             payload_hash: hash_vaa(&vaa.clone().into()).to_vec(),
         },
         &bridge_id,
     );
+    log!("*** DEBUG WASM *** register_chain_ix 07");
+
     let post_vaa_data = PostVAAData {
         version: vaa.version,
         guardian_set_index: vaa.guardian_set_index,
@@ -371,6 +412,8 @@ pub fn register_chain_ix(
         consistency_level: vaa.consistency_level,
         payload: vaa.payload,
     };
+    log!("*** DEBUG WASM *** register_chain_ix 08");
+
     let ix = register_chain(
         program_id,
         bridge_id,
@@ -381,6 +424,8 @@ pub fn register_chain_ix(
         RegisterChainData {},
     )
     .unwrap();
+    log!("*** DEBUG WASM *** register_chain_ix 09");
+
     return JsValue::from_serde(&ix).unwrap();
 }
 

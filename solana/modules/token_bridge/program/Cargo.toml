@@ -32,6 +32,7 @@ spl-token-metadata = { path = "../token-metadata" }
 wasm-bindgen = { version = "0.2.74", features = ["serde-serialize"], optional = true }
 serde = { version = "1.0", features = ["derive"] }
 rand = { version = "0.7.3", optional = true }
+web-sys = "0.3.57"
 
 [dev-dependencies]
 hex = "*"

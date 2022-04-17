@@ -24,6 +24,7 @@ use byteorder::{
 };
 use primitive_types::U256;
 use solana_program::{
+    msg,
     native_token::Sol,
     program_error::{
         ProgramError,
@@ -227,16 +228,27 @@ where
     Self: DeserializeGovernancePayload,
 {
     fn deserialize(buf: &mut &[u8]) -> Result<Self, SolitaireError> {
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 01");
+
         let mut v = Cursor::new(buf);
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 02");
+
         Self::check_governance_header(&mut v)?;
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 03");
 
         let chain = v.read_u16::<BigEndian>()?;
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 04");
+
         let mut endpoint_address = [0u8; 32];
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 05");
+
         v.read_exact(&mut endpoint_address)?;
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 06");
 
         if v.position() != v.into_inner().len() as u64 {
             return Err(InvalidAccountData.into());
         }
+        msg!("*** DEBUG RUST *** PayloadGovernanceRegisterChain.deserialize 07");
 
         Ok(PayloadGovernanceRegisterChain {
             chain,
@@ -265,12 +277,12 @@ pub struct GovernancePayloadUpgrade {
     pub new_contract: Pubkey,
 }
 
-impl SerializePayload for GovernancePayloadUpgrade {
-    fn serialize<W: Write>(&self, v: &mut W) -> std::result::Result<(), SolitaireError> {
-        self.write_governance_header(v)?;
-        v.write(&self.new_contract.to_bytes())?;
-        Ok(())
-    }
+impl SerializeGovernancePayload for GovernancePayloadUpgrade {
+    const MODULE: &'static str = "TokenBridge";
+    const ACTION: u8 = 2;
+}
+
+impl DeserializeGovernancePayload for GovernancePayloadUpgrade {
 }
 
 impl DeserializePayload for GovernancePayloadUpgrade
@@ -278,15 +290,24 @@ where
     Self: DeserializeGovernancePayload,
 {
     fn deserialize(buf: &mut &[u8]) -> Result<Self, SolitaireError> {
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 01");
+
         let mut c = Cursor::new(buf);
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 02");
+
         Self::check_governance_header(&mut c)?;
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 03");
 
         let mut addr = [0u8; 32];
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 04");
+
         c.read_exact(&mut addr)?;
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 05");
 
         if c.position() != c.into_inner().len() as u64 {
             return Err(InvalidAccountData.into());
         }
+        msg!("*** DEBUG RUST *** GovernancePayloadUpgrade.deserialize 06");
 
         Ok(GovernancePayloadUpgrade {
             new_contract: Pubkey::new(&addr[..]),
@@ -294,12 +315,12 @@ where
     }
 }
 
-impl SerializeGovernancePayload for GovernancePayloadUpgrade {
-    const MODULE: &'static str = "TokenBridge";
-    const ACTION: u8 = 2;
-}
-
-impl DeserializeGovernancePayload for GovernancePayloadUpgrade {
+impl SerializePayload for GovernancePayloadUpgrade {
+    fn serialize<W: Write>(&self, v: &mut W) -> std::result::Result<(), SolitaireError> {
+        self.write_governance_header(v)?;
+        v.write(&self.new_contract.to_bytes())?;
+        Ok(())
+    }
 }
 
 #[cfg(feature = "no-entrypoint")]

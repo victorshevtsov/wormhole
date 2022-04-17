@@ -61,6 +61,7 @@ use bridge::{
 };
 use primitive_types::U256;
 use solana_program::{
+    msg,
     instruction::{
         AccountMeta,
         Instruction,
@@ -277,6 +278,7 @@ pub fn register_chain(
     payload: PayloadGovernanceRegisterChain,
     data: RegisterChainData,
 ) -> solitaire::Result<Instruction> {
+    msg!("*** DEBUG RUST *** register_chain");
     let config_key = ConfigAccount::<'_, { AccountState::Uninitialized }>::key(None, &program_id);
     let (message_acc, claim_acc) = claimable_vaa(program_id, message_key, vaa);
     let endpoint = Endpoint::<'_, { AccountState::Initialized }>::key(
@@ -535,6 +537,8 @@ pub fn upgrade_contract(
     spill: Pubkey,
     sequence: u64,
 ) -> Instruction {
+    msg!("*** DEBUG RUST *** upgrade_contract");
+
     let claim = Claim::<'_, { AccountState::Uninitialized }>::key(
         &ClaimDerivationData {
             emitter_address: emitter.to_bytes(),

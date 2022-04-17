@@ -23,6 +23,7 @@ use bridge::{
     CHAIN_ID_SOLANA,
 };
 use solana_program::{
+    msg,
     account_info::AccountInfo,
     program::invoke_signed,
     program_error::ProgramError,
@@ -99,8 +100,9 @@ pub struct UpgradeContractData {}
 pub fn upgrade_contract(
     ctx: &ExecutionContext,
     accs: &mut UpgradeContract,
-    _data: UpgradeContractData,
+    data: UpgradeContractData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** upgrade_contract 01");
     verify_governance(&accs.vaa)?;
     accs.vaa.verify(ctx.program_id)?;
 
@@ -153,6 +155,7 @@ pub fn register_chain(
     accs: &mut RegisterChain,
     data: RegisterChainData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** register_chain 01");
     let derivation_data: EndpointDerivationData = (&*accs).into();
     accs.endpoint
         .verify_derivation(ctx.program_id, &derivation_data)?;
