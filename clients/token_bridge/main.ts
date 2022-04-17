@@ -133,6 +133,11 @@ yargs(hideBin(process.argv))
     })
     .command('generate_upgrade_chain_vaa [chain_id] [contract_address]', 'create a VAA to upgrade a chain (debug-only)', (yargs) => {
         return yargs
+            .positional('emitter_chain_id', {
+                describe: 'emitter chain id',
+                type: "number",
+                required: true
+            })
             .positional('chain_id', {
                 describe: 'chain id to upgrade',
                 type: "number",
@@ -160,7 +165,7 @@ yargs(hideBin(process.argv))
         const vm = signAndEncodeVM(
             1,
             1,
-            1,
+            argv.emitter_chain_id,
             "0x0000000000000000000000000000000000000000000000000000000000000004",
             Math.floor(Math.random() * 100000000),
             data,
