@@ -418,7 +418,7 @@ fn main() {
                         skip_preflight: false,
                         preflight_commitment: None,
                         encoding: None,
-                        max_retries: 30,
+                        max_retries: Some(30),
                     },
                 )?;
             println!("Signature: {}", signature);
