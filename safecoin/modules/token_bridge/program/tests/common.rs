@@ -138,11 +138,11 @@ mod helpers {
 
         let (program, token_program) = (
             env::var("BRIDGE_PROGRAM")
-                .unwrap_or("brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj".to_string())
+                .unwrap_or("CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj".to_string())
                 .parse::<Pubkey>()
                 .unwrap(),
             env::var("TOKEN_BRIDGE_PROGRAM")
-                .unwrap_or("tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj".to_string())
+                .unwrap_or("CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB".to_string())
                 .parse::<Pubkey>()
                 .unwrap(),
         );

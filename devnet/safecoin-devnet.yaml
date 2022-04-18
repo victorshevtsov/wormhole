@@ -56,19 +56,19 @@ spec:
             - /opt/safecoin/deps/safe_token_lending.so
             # Token Vault
             - --bpf-program
-            - vau3q7e1FkBCACg8o1fFMYz8WmMbcocjBX2LgXGZypU
+            - CV3EKjZ79UxnYD1FJkx3pTCkwsRTb5MTc254vbpxM9ds
             - /opt/safecoin/deps/safe_token_vault.so
             # Token Metadata
             - --bpf-program
-            - mtaPsdZX7fCyCyTXjGpgiiqXQAvBNSZMBWdvMxpBB4j
+            - CM3F4CJFCFvANRwvZC5maHW9eEcHW4VRxnDBzAkBeCBW
             - /opt/safecoin/deps/safe_token_metadata.so
             # Bridge
             - --bpf-program
-            - brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj
+            - CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj
             - /opt/safecoin/deps/bridge.so
             # Token Bridge
             - --bpf-program
-            - tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj
+            - CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB
             - /opt/safecoin/deps/token_bridge.so
             # NFT Bridge
             - --bpf-program

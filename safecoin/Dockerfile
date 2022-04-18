@@ -60,7 +60,7 @@ ADD . .
 RUN mkdir -p /opt/safecoin/deps
 
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
+ENV BRIDGE_ADDRESS="CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
 
 # Build Wormhole Solana programs
 RUN --mount=type=cache,id=safecoin_bridge,target=bridge/target \

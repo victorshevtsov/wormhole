@@ -65,7 +65,7 @@ RUN safecoin config set --keypair "/usr/src/safecoin/keys/safecoin-devnet.json"
 RUN safecoin config set --url "http://safecoin-devnet:8328"
 
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
+ENV BRIDGE_ADDRESS="CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
 
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=cache,target=/usr/src/safecoin/bridge/target \

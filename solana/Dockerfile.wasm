@@ -16,7 +16,7 @@ RUN cargo install wasm-pack --vers 0.9.1
 
 ENV RUST_LOG="solana_runtime::system_instruction_processor=trace,solana_runtime::message_processor=trace,solana_bpf_loader=debug,solana_rbpf=debug"
 ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
+ENV BRIDGE_ADDRESS="LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9"
 
 COPY bridge bridge
 COPY modules modules

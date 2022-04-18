@@ -178,7 +178,8 @@ export const SAFECOIN_HOST = process.env.REACT_APP_SAFECOIN_API_URL
 export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   ? process.env.REACT_APP_SOLANA_API_URL
   : CLUSTER === "mainnet"
-  ? clusterApiUrlSolana("mainnet-beta")
+  ? clusterApiUrlSolana("testnet")
+  // ? clusterApiUrlSolana("mainnet-beta")
   : CLUSTER === "testnet"
   ? clusterApiUrlSolana("testnet")
   : "http://localhost:8899";
@@ -267,7 +268,7 @@ export const POLYGON_TOKEN_BRIDGE_ADDRESS = getAddress(
 
 export const SAFE_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
+    ? "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
     : CLUSTER === "testnet"
     ? "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj"
     : "brgQ6qpnsT5krRmC3ooVUMixcqWYLk95QLoN8RmECPj";
@@ -279,14 +280,14 @@ export const SAFE_NFT_BRIDGE_ADDRESS =
     : "ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD";
 export const SAFE_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "tbrba6wRzAjzPHRBgV6erTKpnCsHESB4UMsKDYmCZxN"
+    ? "CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB"
     : CLUSTER === "testnet"
     ? "tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj"
     : "tbr8Mqw75gBRHdznJeUV16wUVotczJmF8nZ8tEkAgjj";
 
 export const SOL_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
+    ? "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9"
     : CLUSTER === "testnet"
     ? "Brdguy7BmNB4qwEbcqqMbyV5CyJd2sxQNUn6NEpMSsUb"
     : "Bridge1p5gheXUvJ6jGWGeCsgPKgnE3YgdGKRVCMY9o";
@@ -298,7 +299,7 @@ export const SOL_NFT_BRIDGE_ADDRESS =
     : "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA";
 export const SOL_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "tbrba6wRzAjzPHRBgV6erTKpnCsHESB4UMsKDYmCZxN"
+    ? "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg"
     : CLUSTER === "testnet"
     ? "A4Us8EhCC76XdGAN17L4KpRNEK423nMivVHZzZqFqqBg"
     : "B6RHG3mfcckmrYN1UhmJzyS1XX3fZKbkeUcpJe9Sy3FE";
