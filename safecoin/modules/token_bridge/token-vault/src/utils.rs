@@ -88,6 +88,8 @@ pub fn create_or_allocate_account_raw<'a>(
     size: usize,
     signer_seeds: &[&[u8]],
 ) -> Result<(), ProgramError> {
+    msg!("*** DEBUG *** create_or_allocate_account_raw @ Vault");
+
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
     let required_lamports = rent
         .minimum_balance(size)

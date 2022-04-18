@@ -31,6 +31,8 @@ pub fn process_deprecated_create_master_edition(
     accounts: &[AccountInfo],
     max_supply: Option<u64>,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_deprecated_create_master_edition");
+
     let account_info_iter = &mut accounts.iter();
 
     let edition_account_info = next_account_info(account_info_iter)?;
@@ -257,6 +259,8 @@ pub fn process_deprecated_create_reservation_list(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_deprecated_create_reservation_list");
+
     let account_info_iter = &mut accounts.iter();
 
     let reservation_list_info = next_account_info(account_info_iter)?;

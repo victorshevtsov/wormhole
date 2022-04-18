@@ -191,6 +191,8 @@ pub fn create_or_allocate_account_raw<'a>(
     size: usize,
     signer_seeds: &[&[u8]],
 ) -> ProgramResult {
+    msg!("*** DEBUG *** create_or_allocate_account_raw @ Metadata");
+
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
     let required_lamports = rent
         .minimum_balance(size)
@@ -224,7 +226,7 @@ pub fn create_or_allocate_account_raw<'a>(
         accounts,
         &[&signer_seeds],
     )?;
-
+    msg!("*** DEBUG *** create_or_allocate_account_raw OK");
     Ok(())
 }
 
@@ -575,6 +577,8 @@ pub fn mint_limited_edition<'a>(
     // directing to a specific version, otherwise just pull off the top
     edition_override: Option<u64>,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** mint_limited_edition");
+
     let me_supply = get_supply_off_master_edition(master_edition_account_info)?;
     let mint_authority = get_mint_authority(mint_info)?;
     let mint_supply = get_mint_supply(mint_info)?;
@@ -613,6 +617,7 @@ pub fn mint_limited_edition<'a>(
     }
 
     // create the metadata the normal way...
+    msg!("*** DEBUG *** mint_limited_edition 01");
     process_create_metadata_accounts_logic(
         &program_id,
         CreateMetadataAccountsLogicArgs {
@@ -628,6 +633,8 @@ pub fn mint_limited_edition<'a>(
         true,
         false,
     )?;
+    msg!("*** DEBUG *** mint_limited_edition 02");
+
     let edition_authority_seeds = &[
         PREFIX.as_bytes(),
         program_id.as_ref(),
@@ -636,6 +643,7 @@ pub fn mint_limited_edition<'a>(
         &[bump_seed],
     ];
 
+    msg!("*** DEBUG *** mint_limited_edition 03");
     create_or_allocate_account_raw(
         *program_id,
         new_edition_account_info,
@@ -645,6 +653,7 @@ pub fn mint_limited_edition<'a>(
         MAX_EDITION_LEN,
         edition_authority_seeds,
     )?;
+    msg!("*** DEBUG *** mint_limited_edition 04");
 
     // Doing old school serialization to protect CPU credits.
     let edition_data = &mut new_edition_account_info.data.borrow_mut();
@@ -655,6 +664,7 @@ pub fn mint_limited_edition<'a>(
     *key = [Key::EditionV1 as u8];
     parent.copy_from_slice(master_edition_account_info.key.as_ref());
 
+    msg!("*** DEBUG *** mint_limited_edition 05");
     *edition = calculate_edition_number(
         mint_authority_info,
         reservation_list_info,
@@ -664,6 +674,7 @@ pub fn mint_limited_edition<'a>(
     .to_le_bytes();
 
     // Now make sure this mint can never be used by anybody else.
+    msg!("*** DEBUG *** mint_limited_edition 06");
     transfer_mint_authority(
         &edition_key,
         new_edition_account_info,
@@ -671,6 +682,7 @@ pub fn mint_limited_edition<'a>(
         mint_authority_info,
         token_program_account_info,
     )?;
+    msg!("*** DEBUG *** mint_limited_edition OK");
 
     Ok(())
 }
@@ -843,6 +855,8 @@ pub fn process_create_metadata_accounts_logic(
     allow_direct_creator_writes: bool,
     mut is_mutable: bool,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 01");
+
     let CreateMetadataAccountsLogicArgs {
         metadata_account_info,
         mint_info,
@@ -853,6 +867,7 @@ pub fn process_create_metadata_accounts_logic(
         rent_info,
     } = accounts;
 
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 02");
     let mut update_authority_key = *update_authority_info.key;
     let existing_mint_authority = get_mint_authority(mint_info)?;
     // IMPORTANT NOTE
@@ -873,6 +888,7 @@ pub fn process_create_metadata_accounts_logic(
         },
     )?;
     assert_owned_by(mint_info, &safe_token::id())?;
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 03");
 
     let metadata_seeds = &[
         PREFIX.as_bytes(),
@@ -888,9 +904,11 @@ pub fn process_create_metadata_accounts_logic(
         &[metadata_bump_seed],
     ];
 
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 04");
     if metadata_account_info.key != &metadata_key {
         return Err(MetadataError::InvalidMetadataKey.into());
     }
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 05");
 
     create_or_allocate_account_raw(
         *program_id,
@@ -901,8 +919,11 @@ pub fn process_create_metadata_accounts_logic(
         MAX_METADATA_LEN,
         metadata_authority_signer_seeds,
     )?;
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 06");
 
     let mut metadata = Metadata::from_account_info(metadata_account_info)?;
+
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 07");
     assert_data_valid(
         &data,
         &update_authority_key,
@@ -911,6 +932,7 @@ pub fn process_create_metadata_accounts_logic(
         update_authority_info.is_signer,
         false,
     )?;
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 08");
 
     metadata.mint = *mint_info.key;
     metadata.key = Key::MetadataV1;
@@ -919,6 +941,7 @@ pub fn process_create_metadata_accounts_logic(
     metadata.update_authority = update_authority_key;
 
     puff_out_data_fields(&mut metadata);
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 09");
 
     let edition_seeds = &[
         PREFIX.as_bytes(),
@@ -928,8 +951,10 @@ pub fn process_create_metadata_accounts_logic(
     ];
     let (_, edition_bump_seed) = Pubkey::find_program_address(edition_seeds, program_id);
     metadata.edition_nonce = Some(edition_bump_seed);
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 10");
 
     metadata.serialize(&mut *metadata_account_info.data.borrow_mut())?;
+    msg!("*** DEBUG *** process_create_metadata_accounts_logic 11");
 
     Ok(())
 }
@@ -977,6 +1002,7 @@ pub fn process_mint_new_edition_from_master_edition_via_token_logic<'a>(
     edition: u64,
     ignore_owner_signer: bool,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_mint_new_edition_from_master_edition_via_token_logic");
     let MintNewEditionFromMasterEditionViaTokenLogicArgs {
         new_metadata_account_info,
         new_edition_account_info,

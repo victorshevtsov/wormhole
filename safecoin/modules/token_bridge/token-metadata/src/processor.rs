@@ -141,6 +141,8 @@ pub fn process_create_metadata_accounts<'a>(
     allow_direct_creator_writes: bool,
     is_mutable: bool,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_create_metadata_accounts 01");
+
     let account_info_iter = &mut accounts.iter();
     let metadata_account_info = next_account_info(account_info_iter)?;
     let mint_info = next_account_info(account_info_iter)?;
@@ -150,7 +152,8 @@ pub fn process_create_metadata_accounts<'a>(
     let system_account_info = next_account_info(account_info_iter)?;
     let rent_info = next_account_info(account_info_iter)?;
 
-    process_create_metadata_accounts_logic(
+    msg!("*** DEBUG *** process_create_metadata_accounts 02");
+    let result = process_create_metadata_accounts_logic(
         &program_id,
         CreateMetadataAccountsLogicArgs {
             metadata_account_info,
@@ -164,7 +167,10 @@ pub fn process_create_metadata_accounts<'a>(
         data,
         allow_direct_creator_writes,
         is_mutable,
-    )
+    );
+    msg!("*** DEBUG *** process_create_metadata_accounts 03");
+
+    result
 }
 
 /// Update existing account instruction
@@ -293,6 +299,8 @@ pub fn process_create_master_edition(
     accounts: &[AccountInfo],
     max_supply: Option<u64>,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_create_master_edition 01");
+
     let account_info_iter = &mut accounts.iter();
 
     let edition_account_info = next_account_info(account_info_iter)?;
@@ -346,6 +354,7 @@ pub fn process_create_master_edition(
         &[bump_seed],
     ];
 
+    msg!("*** DEBUG *** process_create_master_edition 02");
     create_or_allocate_account_raw(
         *program_id,
         edition_account_info,
@@ -355,13 +364,16 @@ pub fn process_create_master_edition(
         MAX_MASTER_EDITION_LEN,
         edition_authority_seeds,
     )?;
+    msg!("*** DEBUG *** process_create_master_edition 03");
 
     let mut edition = MasterEditionV2::from_account_info(edition_account_info)?;
+    msg!("*** DEBUG *** process_create_master_edition 04");
 
     edition.key = Key::MasterEditionV2;
     edition.supply = 0;
     edition.max_supply = max_supply;
     edition.serialize(&mut *edition_account_info.data.borrow_mut())?;
+    msg!("*** DEBUG *** process_create_master_edition 05");
 
     // While you can't mint any more of your master record, you can
     // mint as many limited editions as you like within your max supply.
@@ -372,6 +384,7 @@ pub fn process_create_master_edition(
         mint_authority_info,
         token_program_info,
     )?;
+    msg!("*** DEBUG *** process_create_master_edition 06");
 
     Ok(())
 }

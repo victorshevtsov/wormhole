@@ -802,6 +802,8 @@ pub fn process_add_token_to_inactivated_vault(
     accounts: &[AccountInfo],
     amount: u64,
 ) -> ProgramResult {
+    msg!("*** DEBUG *** process_add_token_to_inactivated_vault");
+
     let account_info_iter = &mut accounts.iter();
     let safety_deposit_account_info = next_account_info(account_info_iter)?;
     let token_account_info = next_account_info(account_info_iter)?;
