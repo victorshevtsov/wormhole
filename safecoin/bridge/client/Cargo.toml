@@ -6,17 +6,17 @@ edition = "2018"
 
 [dependencies]
 anyhow = "1.0.40"
-borsh = "=0.9.1"
-clap = "2.33.0"
+borsh = "0.9.1"
+wormhole-bridge-safecoin = { path = "../program", features = ["client"] }
 cpi-poster = { path = "../cpi_poster", features = ["no-entrypoint"] }
-hex = "0.4.3"
+clap = "2.33.0"
 rand = "0.7.3"
 shellexpand = "2.1.0"
-safecoin-client = "=1.8.12"
-safecoin-program = "=1.8.12"
-safecoin-sdk = "=1.8.12"
-safecoin-cli-config = "=1.8.12"
-safecoin-clap-utils = "=1.8.12"
+safecoin-client = { path = "../../../../Safecoin/client/" }
+safecoin-program = { path = "../../../../Safecoin/sdk/program/" }
+safecoin-sdk = { path = "../../../../Safecoin/sdk/" }
+safecoin-cli-config = { path = "../../../../Safecoin/cli-config/" }
 solitaire = { path = "../../solitaire/program" }
 solitaire-client = { path = "../../solitaire/client" }
-wormhole-bridge-safecoin = { path = "../program", features = ["client"] }
+safecoin-clap-utils = { path = "../../../../Safecoin/clap-utils/" }
+hex = "0.4.3"

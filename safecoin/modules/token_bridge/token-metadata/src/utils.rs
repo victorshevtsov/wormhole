@@ -1,66 +1,30 @@
 use crate::{
     error::MetadataError,
     state::{
-        get_reservation_list,
-        Data,
-        EditionMarker,
-        Key,
-        MasterEditionV1,
-        Metadata,
-        EDITION,
-        EDITION_MARKER_BIT_SIZE,
-        MAX_CREATOR_LIMIT,
-        MAX_EDITION_LEN,
-        MAX_EDITION_MARKER_SIZE,
-        MAX_MASTER_EDITION_LEN,
-        MAX_METADATA_LEN,
-        MAX_NAME_LENGTH,
-        MAX_SYMBOL_LENGTH,
-        MAX_URI_LENGTH,
-        PREFIX,
+        get_reservation_list, Data, EditionMarker, Key, MasterEditionV1, Metadata, EDITION,
+        EDITION_MARKER_BIT_SIZE, MAX_CREATOR_LIMIT, MAX_EDITION_LEN, MAX_EDITION_MARKER_SIZE,
+        MAX_MASTER_EDITION_LEN, MAX_METADATA_LEN, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH,
+        MAX_URI_LENGTH, PREFIX,
     },
 };
-use arrayref::{
-    array_mut_ref,
-    array_ref,
-    array_refs,
-    mut_array_refs,
-};
-use borsh::{
-    BorshDeserialize,
-    BorshSerialize,
-};
-use safe_token::{
-    instruction::{
-        set_authority,
-        AuthorityType,
-    },
-    state::{
-        Account,
-        Mint,
-    },
-};
+use arrayref::{array_mut_ref, array_ref, array_refs, mut_array_refs};
+use borsh::{BorshDeserialize, BorshSerialize};
 use safecoin_program::{
     account_info::AccountInfo,
     borsh::try_from_slice_unchecked,
     entrypoint::ProgramResult,
     msg,
-    program::{
-        invoke,
-        invoke_signed,
-    },
+    program::{invoke, invoke_signed},
     program_error::ProgramError,
     program_option::COption,
-    program_pack::{
-        IsInitialized,
-        Pack,
-    },
+    program_pack::{IsInitialized, Pack},
     pubkey::Pubkey,
     system_instruction,
-    sysvar::{
-        rent::Rent,
-        Sysvar,
-    },
+    sysvar::{rent::Rent, Sysvar},
+};
+use safe_token::{
+    instruction::{set_authority, AuthorityType},
+    state::{Account, Mint},
 };
 use std::convert::TryInto;
 

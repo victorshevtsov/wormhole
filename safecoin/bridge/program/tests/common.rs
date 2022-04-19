@@ -9,7 +9,7 @@ use byteorder::{
     WriteBytesExt,
 };
 use hex_literal::hex;
-use libsecp256k1::{
+use secp256k1::{
     Message as Secp256k1Message,
     PublicKey,
     SecretKey,
@@ -109,7 +109,7 @@ pub fn execute(
             skip_preflight: true,
             preflight_commitment: None,
             encoding: None,
-            max_retries: None,
+            max_retries: None
         },
     )
 }

@@ -12,14 +12,13 @@ crate-type = ["cdylib", "lib"]
 
 [features]
 no-entrypoint = []
-test-bpf = []
 
 [dependencies]
-arrayref = "0.3.6"
-borsh = "=0.9.1"
+borsh = "0.9.1"
 num-derive = "0.3"
+arrayref = "0.3.6"
 num-traits = "0.2"
-safecoin-program = "=1.8.12"
-safe-token = { version = "=3.2.2", features = ["no-entrypoint"] }
-safe-token-vault = { path = "../token-vault", features = [ "no-entrypoint" ], version="0.0.1" }
+safecoin-program = { path = "../../../../../Safecoin/sdk/program" }
+safe-token = { path = "../../../../../safecoin-program-library/token/program/", features = [ "no-entrypoint" ] }
+safe-token-vault = { path = "../token-vault", features = [ "no-entrypoint" ] }
 thiserror = "1.0"

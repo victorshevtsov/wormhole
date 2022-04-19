@@ -14,9 +14,9 @@ crate-type = ["cdylib", "lib"]
 no-entrypoint = []
 
 [dependencies]
+borsh = "0.9.1"
 num-derive = "0.3"
 num-traits = "0.2"
-safecoin-program = "=1.8.12"
-safe-token = { version = "=3.2.2", features = ["no-entrypoint"] }
+safecoin-program = { path = "../../../../../Safecoin/sdk/program" }
+safe-token = { path = "../../../../../safecoin-program-library/token/program/", features = [ "no-entrypoint" ] }
 thiserror = "1.0"
-borsh = "=0.9.1"

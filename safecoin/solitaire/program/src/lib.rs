@@ -1,5 +1,4 @@
-
-#![feature(adt_const_params)]
+#![feature(const_generics)]
 #![allow(warnings)]
 
 pub use rocksalt::*;

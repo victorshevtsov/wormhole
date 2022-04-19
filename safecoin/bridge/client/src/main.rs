@@ -1,5 +1,5 @@
 
-#![feature(adt_const_params)]
+#![feature(const_generics)]
 #![allow(warnings)]
 
 use std::{
@@ -415,10 +415,10 @@ fn main() {
                     &transaction,
                     config.commitment_config,
                     RpcSendTransactionConfig {
-                        skip_preflight: false,
+                        skip_preflight: true,
                         preflight_commitment: None,
                         encoding: None,
-                        max_retries: Some(30),
+                        ..RpcSendTransactionConfig::default()
                     },
                 )?;
             println!("Signature: {}", signature);

@@ -1,15 +1,15 @@
 use solitaire::*;
 
 use crate::{
+    GuardianSet,
+    GuardianSetDerivationData,
+    SignatureSet,
     error::Error::{
         GuardianSetMismatch,
         InstructionAtWrongIndex,
         InvalidHash,
         InvalidSecpInstruction,
     },
-    GuardianSet,
-    GuardianSetDerivationData,
-    SignatureSet,
     MAX_LEN_GUARDIAN_KEYS,
 };
 use byteorder::ByteOrder;
@@ -89,9 +89,9 @@ pub fn verify_signatures(
         })
         .collect();
 
-    let current_instruction = safecoin_program::sysvar::instructions::load_current_index_checked(
-        &accs.instruction_acc,
-    )?;
+    let current_instruction = safecoin_program::sysvar::instructions::load_current_index(
+        &accs.instruction_acc.try_borrow_mut_data()?,
+    );
     if current_instruction == 0 {
         return Err(InstructionAtWrongIndex.into());
     }

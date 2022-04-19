@@ -1,5 +1,4 @@
-
-#![feature(adt_const_params)]
+#![feature(const_generics)]
 #![deny(unused_must_use)]
 
 // #![cfg(all(target_arch = "bpf", not(feature = "no-entrypoint")))]
@@ -65,7 +64,6 @@ pub enum TokenBridgeError {
     UninitializedMint,
     WrongAccountOwner,
     InvalidFee,
-    InvalidRecipient,
 }
 
 impl From<TokenBridgeError> for SolitaireError {

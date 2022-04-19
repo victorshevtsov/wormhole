@@ -16,9 +16,9 @@ no-entrypoint = []
 trace = []
 
 [dependencies]
-borsh = "=0.9.1"
+borsh = "0.9.1"
 byteorder = "1.4.3"
 rocksalt = { path = "../../solitaire/rocksalt" }
 
 sha3 = "0.9.1"
-safecoin-program = "=1.8.12"
+safecoin-program = { path = "../../../../Safecoin/sdk/program/" }

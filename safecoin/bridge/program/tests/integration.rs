@@ -7,7 +7,7 @@ use byteorder::{
 };
 use hex_literal::hex;
 use rand::Rng;
-use libsecp256k1::{
+use secp256k1::{
     Message as Secp256k1Message,
     PublicKey,
     SecretKey,
