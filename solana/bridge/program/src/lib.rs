@@ -7,7 +7,7 @@ use solitaire::*;
 pub const MAX_LEN_GUARDIAN_KEYS: usize = 19;
 // TODO(Victor): Dirty hack to workaround unresolved issues
 // pub const CHAIN_ID_SOLANA: u16 = 1;
-pub const CHAIN_ID_SOLANA: u16 = 6;
+pub const CHAIN_ID_SOLANA: u16 = 1;
 
 #[cfg(feature = "no-entrypoint")]
 pub mod instructions;
