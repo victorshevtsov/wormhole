@@ -1238,12 +1238,12 @@
     eip1193-provider "^1.0.1"
     js-sha3 "^0.8.0"
 
-"@certusone/wormhole-sdk@file:../sdk/js":
+"@certusone/wormhole-sdk@../sdk/js/":
   version "0.0.10"
   dependencies:
     "@improbable-eng/grpc-web" "^0.14.0"
-    "@safecoin/safe-token" "^0.1.7-b"
-    "@safecoin/web3.js" "^1.29.4"
+    "@safecoin/safe-token" "file:../../../.cache/yarn/v6/npm-@certusone-wormhole-sdk-0.0.10-3ab0952f-a759-49b9-ac75-2eb5860761ea-1650373676080/safecoin-program-library/token/js"
+    "@safecoin/web3.js" "file:../../../.cache/yarn/v6/npm-@certusone-wormhole-sdk-0.0.10-3ab0952f-a759-49b9-ac75-2eb5860761ea-1650373676080/safecoin-web3.js"
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.24.0"
     "@terra-money/terra.js" "^3.0.11"
@@ -2274,13 +2274,11 @@
   dependencies:
     cross-fetch "3.0.6"
 
-"@safecoin/safe-token@^0.1.7-b":
+"@safecoin/safe-token@../../safecoin-program-library/token/js/", "@safecoin/safe-token@file:../../safecoin-program-library/token/js":
   version "0.1.7-b"
-  resolved "https://registry.yarnpkg.com/@safecoin/safe-token/-/safe-token-0.1.7-b.tgz#6cbac5036eb31581c1a1b551f16663fdd898c050"
-  integrity sha512-xIfz5U4rtzjxAdWTjvEcz3YVTCJfVnoBZGHQXw1lUgUMZrhmLJtI17Qu//sGM/Vf3iLkmr46CKGSzcrrKGjT8w==
   dependencies:
     "@babel/runtime" "^7.10.5"
-    "@safecoin/web3.js" "^1.21.0"
+    "@safecoin/web3.js" "file:../../../.cache/yarn/v6/npm-@safecoin-safe-token-0.1.7-b-9780d0b5-bf53-4f8d-9b3d-5e6940502d72-1650373675839/safecoin-web3.js"
     bn.js "^5.1.0"
     buffer "6.0.3"
     buffer-layout "^1.2.0"
@@ -2305,10 +2303,8 @@
 "@safecoin/wallet-adapter-wallets@file:../../wallet-adapter/packages/core/wallets":
   version "0.11.3"
 
-"@safecoin/web3.js@^1.21.0", "@safecoin/web3.js@^1.29.4":
+"@safecoin/web3.js@../../safecoin-web3.js/", "@safecoin/web3.js@file:../../safecoin-web3.js":
   version "1.29.4"
-  resolved "https://registry.npmjs.org/@safecoin/web3.js/-/web3.js-1.29.4.tgz"
-  integrity sha512-IPU1EL30feLyDw6qDMjKXP9r70KPQI52n1Sh9R9QXD4EjBRQs0DJm7dVqSGjJiMrqvM4p8I6rGMwljtSPdr5vA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@solana/buffer-layout" "^3.0.0"
@@ -2539,9 +2535,9 @@
     tweetnacl "^1.0.0"
 
 "@solana/web3.js@^1.24.0":
-  version "1.39.0"
-  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.39.0.tgz#67183c36709e33441f8c3d44b0b744e4953f0851"
-  integrity sha512-6Z7I7oGpnCDqcj9em3/QajBFBORuUtIFaE29KjU4z39+nLshs+9oysDgp2aPMdiEPCNF1ioNQLdBsjD4x1Pv3w==
+  version "1.39.1"
+  resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.39.1.tgz#858ecd42ff2a5bcba3a4bb642a50194d77e2a578"
+  integrity sha512-Q7XnWTAiU7n7GcoINDAAMLO7CJHpm5kPK46HKwJi2x0cusHQ3WFa7QEp6aPzH7tuf7yl/Kw1lYitcwTVOvqARA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@ethersproject/sha2" "^5.5.0"

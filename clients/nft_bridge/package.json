@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@certusone/wormhole-sdk": "file:../../sdk/js",
-    "@safecoin/web3.js": "^1.29.4",
+    "@safecoin/web3.js": "file:../../../safecoin-web3.js",
     "@solana/web3.js": "^1.22.0",
     "bn.js": "^5.2.0",
     "bs58": "^4.0.1",
