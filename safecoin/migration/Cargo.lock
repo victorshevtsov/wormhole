@@ -257,12 +257,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "476e9cd489f9e121e02ffa6014a8ef220ecb15c05ed23fc34cca13925dc283fb"
 
 [[package]]
-name = "bs58"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "771fe0050b883fcc3ea2359b1a96bcfbc090b7116eae7c3c512c7a083fdf23d3"
-
-[[package]]
 name = "bumpalo"
 version = "3.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -352,17 +346,6 @@ dependencies = [
  "cc",
  "libc",
  "pkg-config",
-]
-
-[[package]]
-name = "caps"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61bf7211aad104ce2769ec05efcdfabf85ee84ac92461d142f22cf8badd0e54c"
-dependencies = [
- "errno",
- "libc",
- "thiserror",
 ]
 
 [[package]]
@@ -584,12 +567,22 @@ checksum = "7a81dae078cea95a014a339291cec439d2f232ebe854a9d672b796c6afafa9b7"
 
 [[package]]
 name = "crypto-mac"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4434400df11d95d556bac068ddfedd482915eb18fe8bea89bc80b6e4b1c179e5"
+dependencies = [
+ "generic-array 0.12.4",
+ "subtle 1.0.0",
+]
+
+[[package]]
+name = "crypto-mac"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b584a330336237c1eecd3e94266efb216c56ed91225d634cb2991c5f3fd1aeab"
 dependencies = [
  "generic-array 0.14.5",
- "subtle",
+ "subtle 2.4.1",
 ]
 
 [[package]]
@@ -599,7 +592,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "58bcd97a54c7ca5ce2f6eb16f6bede5b0ab5f0055fedc17d2f0b4466e21671ca"
 dependencies = [
  "generic-array 0.14.5",
- "subtle",
+ "subtle 2.4.1",
 ]
 
 [[package]]
@@ -609,7 +602,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bff07008ec701e8028e2ceb8f83f0e4274ee62bd2dbdc4fefff2e9a91824081a"
 dependencies = [
  "generic-array 0.14.5",
- "subtle",
+ "subtle 2.4.1",
 ]
 
 [[package]]
@@ -621,7 +614,7 @@ dependencies = [
  "byteorder",
  "digest 0.8.1",
  "rand_core 0.5.1",
- "subtle",
+ "subtle 2.4.1",
  "zeroize",
 ]
 
@@ -634,7 +627,7 @@ dependencies = [
  "byteorder",
  "digest 0.9.0",
  "rand_core 0.5.1",
- "subtle",
+ "subtle 2.4.1",
  "zeroize",
 ]
 
@@ -718,29 +711,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dlopen"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71e80ad39f814a9abe68583cd50a2d45c8a67561c3361ab8da240587dda80937"
-dependencies = [
- "dlopen_derive",
- "lazy_static",
- "libc",
- "winapi",
-]
-
-[[package]]
-name = "dlopen_derive"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f236d9e1b1fbd81cea0f9cbdc8dcc7e8ebcd80e6659cd7cb2ad5f6c05946c581"
-dependencies = [
- "libc",
- "quote 0.6.13",
- "syn 0.15.44",
-]
-
-[[package]]
 name = "ed25519"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -761,7 +731,7 @@ dependencies = [
  "rand",
  "serde",
  "serde_bytes",
- "sha2",
+ "sha2 0.9.9",
  "zeroize",
 ]
 
@@ -775,7 +745,7 @@ dependencies = [
  "ed25519-dalek",
  "failure",
  "hmac 0.9.0",
- "sha2",
+ "sha2 0.9.9",
 ]
 
 [[package]]
@@ -810,27 +780,6 @@ dependencies = [
  "log",
  "regex",
  "termcolor",
-]
-
-[[package]]
-name = "errno"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f639046355ee4f37944e44f60642c6f3a7efa3cf6b78c78a0d989a8ce6c396a1"
-dependencies = [
- "errno-dragonfly",
- "libc",
- "winapi",
-]
-
-[[package]]
-name = "errno-dragonfly"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa68f1b12764fab894d2755d2518754e71b4fd80ecfb822714a1206c2aab39bf"
-dependencies = [
- "cc",
- "libc",
 ]
 
 [[package]]
@@ -1154,6 +1103,16 @@ dependencies = [
 
 [[package]]
 name = "hmac"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5dcb5e64cda4c23119ab41ba960d1e170a774c8e4b9d9e6a9bc18aabf5e59695"
+dependencies = [
+ "crypto-mac 0.7.0",
+ "digest 0.8.1",
+]
+
+[[package]]
+name = "hmac"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "126888268dcc288495a26bf004b38c5fdbb31682f992c84ceb046a1f0fe38840"
@@ -1180,6 +1139,17 @@ checksum = "c1441c6b1e930e2817404b5046f1f989899143a12bf92de603b69f4e0aee1e15"
 dependencies = [
  "crypto-mac 0.10.1",
  "digest 0.9.0",
+]
+
+[[package]]
+name = "hmac-drbg"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c6e570451493f10f6581b48cdd530413b63ea9e780f544bfd3bdcaa0d89d1a7b"
+dependencies = [
+ "digest 0.8.1",
+ "generic-array 0.12.4",
+ "hmac 0.7.1",
 ]
 
 [[package]]
@@ -1423,6 +1393,22 @@ dependencies = [
 
 [[package]]
 name = "libsecp256k1"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fc1e2c808481a63dc6da2074752fdd4336a3c8fcc68b83db6f1fd5224ae7962"
+dependencies = [
+ "arrayref",
+ "crunchy",
+ "digest 0.8.1",
+ "hmac-drbg 0.2.0",
+ "rand",
+ "sha2 0.8.2",
+ "subtle 2.4.1",
+ "typenum",
+]
+
+[[package]]
+name = "libsecp256k1"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bd1137239ab33b41aa9637a88a28249e5e70c40a42ccc92db7f12cc356c1fcd7"
@@ -1430,13 +1416,13 @@ dependencies = [
  "arrayref",
  "base64 0.12.3",
  "digest 0.9.0",
- "hmac-drbg",
+ "hmac-drbg 0.3.0",
  "libsecp256k1-core",
  "libsecp256k1-gen-ecmult",
  "libsecp256k1-gen-genmult",
  "rand",
  "serde",
- "sha2",
+ "sha2 0.9.9",
  "typenum",
 ]
 
@@ -1448,7 +1434,7 @@ checksum = "d0f6ab710cec28cef759c5f18671a27dae2a5f952cdaaee1d8e2908cb2478a80"
 dependencies = [
  "crunchy",
  "digest 0.9.0",
- "subtle",
+ "subtle 2.4.1",
 ]
 
 [[package]]
@@ -2224,9 +2210,7 @@ checksum = "73b4b750c782965c211b42f022f59af1fbceabdd026623714f104152f1ec149f"
 
 [[package]]
 name = "safe-associated-token-account"
-version = "1.0.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f56853cdbae0fab9c8f43c387f4947f5722af4d6fe8aa160a570acb6a64e2ba"
+version = "1.0.3"
 dependencies = [
  "safe-token",
  "safecoin-program",
@@ -2234,9 +2218,7 @@ dependencies = [
 
 [[package]]
 name = "safe-memo"
-version = "3.0.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0b910c613bf1e71901e99826f452174c98f8374280d95194e49745ae5dd3c5e"
+version = "3.0.1"
 dependencies = [
  "safecoin-program",
 ]
@@ -2244,8 +2226,6 @@ dependencies = [
 [[package]]
 name = "safe-token"
 version = "3.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a007b093f6b8f2855ecbe5f8bb952cf33f5b10f6137df0a74fbdf8e97553823"
 dependencies = [
  "arrayref",
  "num-derive",
@@ -2257,14 +2237,12 @@ dependencies = [
 
 [[package]]
 name = "safecoin-account-decoder"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b79213dd2827308fbe6270d38ebda36045bc802b91729c4b846d533d32eca341"
+version = "1.7.17"
 dependencies = [
  "Inflector",
  "base64 0.12.3",
  "bincode",
- "bs58 0.3.1",
+ "bs58",
  "bv",
  "lazy_static",
  "safe-token",
@@ -2280,14 +2258,11 @@ dependencies = [
 
 [[package]]
 name = "safecoin-clap-utils"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "846b63b7d10ef85201f5cd5611e74b05eb888fffdcfec2aad8f0ecb045a56028"
+version = "1.7.17"
 dependencies = [
  "chrono",
  "clap",
  "rpassword",
- "safecoin-perf",
  "safecoin-remote-wallet",
  "safecoin-sdk",
  "thiserror",
@@ -2298,9 +2273,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-cli-config"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad2cee71aa727ad57379c5cd0f180aa1e0965a73e0ef04ea92240254b9e64b32"
+version = "1.7.17"
 dependencies = [
  "dirs-next",
  "lazy_static",
@@ -2312,13 +2285,11 @@ dependencies = [
 
 [[package]]
 name = "safecoin-client"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "879657eb02b404089f96be219736c1f8e3a75f5c3b32b259ea10c6a110f82161"
+version = "1.7.17"
 dependencies = [
  "base64 0.13.0",
  "bincode",
- "bs58 0.3.1",
+ "bs58",
  "clap",
  "indicatif",
  "jsonrpc-core",
@@ -2345,19 +2316,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "safecoin-compute-budget-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c3346a7a9d50be2b1a2d1c1d1c8570e49c7bd1637f1879d6ab329a1a338b3f7"
-dependencies = [
- "safecoin-sdk",
-]
-
-[[package]]
 name = "safecoin-config-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34c38c5ee56185ddd68e6f401fa9c68d1bff8db5f67cbf06c49731906f94b8bc"
+version = "1.7.17"
 dependencies = [
  "bincode",
  "chrono",
@@ -2370,9 +2330,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-crate-features"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac9c09cadaf92951614f1f5ef5f2d484fdf6f80de545bdec44aa4084af6b8981"
+version = "1.7.17"
 dependencies = [
  "backtrace",
  "bytes 0.4.12",
@@ -2393,19 +2351,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "safecoin-ed25519-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3a3418294207d58fb525b34d25af7958247ff15df010460d5108073d58851b6"
-dependencies = [
- "safecoin-sdk",
-]
-
-[[package]]
 name = "safecoin-faucet"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b6c255c4d1f8995f6cca3f9cfcfc9e393af8d1224f88c0216120c7c865a8f8ef"
+version = "1.7.17"
 dependencies = [
  "bincode",
  "byteorder",
@@ -2426,11 +2373,9 @@ dependencies = [
 
 [[package]]
 name = "safecoin-frozen-abi"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a68086512d9ef7942cca018366a71757d858b5dffbf1eca58018990e1bf146ce"
+version = "1.7.17"
 dependencies = [
- "bs58 0.3.1",
+ "bs58",
  "bv",
  "generic-array 0.14.5",
  "log",
@@ -2440,15 +2385,13 @@ dependencies = [
  "safecoin-logger",
  "serde",
  "serde_derive",
- "sha2",
+ "sha2 0.9.9",
  "thiserror",
 ]
 
 [[package]]
 name = "safecoin-frozen-abi-macro"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9b55d439c00de3b74f671d0a03cb22c6b192f36ff4886667d056aeda1a11760"
+version = "1.7.17"
 dependencies = [
  "proc-macro2 1.0.36",
  "quote 1.0.14",
@@ -2458,9 +2401,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-logger"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "008af7684ccec2ab71e8fb388b3d3c520c2d2fa94bb48d96e235b309899bccda"
+version = "1.7.17"
 dependencies = [
  "env_logger",
  "lazy_static",
@@ -2469,9 +2410,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-measure"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbd7bccb8ac10a412d27edab7e71b34a6dc96d6eaf050aaaa7ffabeff5fb37ee"
+version = "1.7.17"
 dependencies = [
  "log",
  "safecoin-metrics",
@@ -2480,9 +2419,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-metrics"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac6d47da27a2ae5b1619a38fdb93fcb3872e785175e5b22d97a534534f29cac1"
+version = "1.7.17"
 dependencies = [
  "env_logger",
  "gethostname",
@@ -2494,9 +2431,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-net-utils"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e6ff36b04371d86d13e4860f4d2b98cbe4013c75bdc9222aeab62ea69f3f3d6"
+version = "1.7.17"
 dependencies = [
  "bincode",
  "clap",
@@ -2515,49 +2450,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "safecoin-perf"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd9932bee49c90f34a35c28e3fbbdd8ee0b18dae9250a7cb50419cb1d2418485"
-dependencies = [
- "bincode",
- "caps",
- "curve25519-dalek 2.1.3",
- "dlopen",
- "dlopen_derive",
- "lazy_static",
- "libc",
- "log",
- "nix",
- "rand",
- "rayon",
- "safecoin-logger",
- "safecoin-metrics",
- "safecoin-rayon-threadlimit",
- "safecoin-sdk",
- "safecoin-vote-program",
- "serde",
-]
-
-[[package]]
 name = "safecoin-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f95a29b89e99ec8b066fc0ced3148bfb9da258425164209bd99819b17825eadb"
+version = "1.7.17"
 dependencies = [
- "base64 0.13.0",
  "bincode",
  "blake3",
  "borsh",
  "borsh-derive",
- "bs58 0.3.1",
+ "bs58",
  "bv",
  "bytemuck",
  "curve25519-dalek 2.1.3",
  "hex",
  "itertools",
  "lazy_static",
- "libsecp256k1",
+ "libsecp256k1 0.5.0",
  "log",
  "num-derive",
  "num-traits",
@@ -2571,16 +2478,14 @@ dependencies = [
  "serde",
  "serde_bytes",
  "serde_derive",
- "sha2",
+ "sha2 0.9.9",
  "sha3",
  "thiserror",
 ]
 
 [[package]]
 name = "safecoin-rayon-threadlimit"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "361871b90c15cf0112d784c5e35657be1713ba6f25083c4b10a13c89c83ed5e0"
+version = "1.7.17"
 dependencies = [
  "lazy_static",
  "num_cpus",
@@ -2588,9 +2493,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-remote-wallet"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5ee628966352447337bb7e01a2e9a2f60c8d578420c57f385caf74635b8bdc3"
+version = "1.7.17"
 dependencies = [
  "base32",
  "console 0.14.1",
@@ -2609,9 +2512,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-runtime"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de828cf89bbe77f8d6d11943338b7488fe4776ae29637a46a63c16d28e5cc489"
+version = "1.7.17"
 dependencies = [
  "arrayref",
  "bincode",
@@ -2638,9 +2539,7 @@ dependencies = [
  "rayon",
  "regex",
  "rustc_version",
- "safecoin-compute-budget-program",
  "safecoin-config-program",
- "safecoin-ed25519-program",
  "safecoin-frozen-abi",
  "safecoin-frozen-abi-macro",
  "safecoin-logger",
@@ -2662,18 +2561,12 @@ dependencies = [
 
 [[package]]
 name = "safecoin-sdk"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e85c3228730383c1aa546282eccbf9c7ed69c0cecfe82c37ec9363e17450927f"
+version = "1.7.17"
 dependencies = [
  "assert_matches",
- "base64 0.13.0",
  "bincode",
- "borsh",
- "borsh-derive",
- "bs58 0.4.0",
+ "bs58",
  "bv",
- "bytemuck",
  "byteorder",
  "chrono",
  "derivation-path",
@@ -2685,7 +2578,7 @@ dependencies = [
  "hmac 0.10.1",
  "itertools",
  "lazy_static",
- "libsecp256k1",
+ "libsecp256k1 0.5.0",
  "log",
  "memmap2",
  "num-derive",
@@ -2707,7 +2600,7 @@ dependencies = [
  "serde_bytes",
  "serde_derive",
  "serde_json",
- "sha2",
+ "sha2 0.9.9",
  "sha3",
  "thiserror",
  "uriparse",
@@ -2715,11 +2608,9 @@ dependencies = [
 
 [[package]]
 name = "safecoin-sdk-macro"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c18bfdce479a4f423092c2196f6b9e6a6e72b4443f1a587a7083d956cdaa02a6"
+version = "1.7.17"
 dependencies = [
- "bs58 0.3.1",
+ "bs58",
  "proc-macro2 1.0.36",
  "quote 1.0.14",
  "rustversion",
@@ -2728,18 +2619,14 @@ dependencies = [
 
 [[package]]
 name = "safecoin-secp256k1-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9a134a8bf8d2eff0bc6c941a530c122ac517f7ff3e92bca327260121da303b39"
+version = "1.7.17"
 dependencies = [
  "safecoin-sdk",
 ]
 
 [[package]]
 name = "safecoin-stake-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6540d46a9e60d903bf69f90fceb945d204e8bf941d164ae335bafd39f56ba047"
+version = "1.7.17"
 dependencies = [
  "bincode",
  "log",
@@ -2759,14 +2646,12 @@ dependencies = [
 
 [[package]]
 name = "safecoin-transaction-status"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72cf4c982f5873d4d799ffcb05aeac94303121f1d2e69480959fe162588c65df"
+version = "1.7.17"
 dependencies = [
  "Inflector",
  "base64 0.12.3",
  "bincode",
- "bs58 0.3.1",
+ "bs58",
  "lazy_static",
  "log",
  "safe-associated-token-account",
@@ -2786,9 +2671,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-version"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ef5e20a6bcd2f8763586b52a902d0f5594457e012d5fda7f8fda41ca259c4a5"
+version = "1.7.17"
 dependencies = [
  "log",
  "rustc_version",
@@ -2802,9 +2685,7 @@ dependencies = [
 
 [[package]]
 name = "safecoin-vote-program"
-version = "1.8.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e231f2d9cbf1558f5c8a3cc5add1193f91733e4d779a0af2db07024f240be222"
+version = "1.7.17"
 dependencies = [
  "bincode",
  "log",
@@ -2990,6 +2871,18 @@ dependencies = [
 
 [[package]]
 name = "sha2"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a256f46ea78a0c0d9ff00077504903ac881a1dafdc20da66545699e7776b3e69"
+dependencies = [
+ "block-buffer 0.7.3",
+ "digest 0.8.1",
+ "fake-simd",
+ "opaque-debug 0.2.3",
+]
+
+[[package]]
+name = "sha2"
 version = "0.9.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4d58a1e1bf39749807d89cf2d98ac2dfa0ff1cb3faa38fbb64dd88ac8013d800"
@@ -3099,6 +2992,12 @@ name = "strsim"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ea5119cdb4c55b55d432abb513a0429384878c15dde60cc77b1c99de1a95a6a"
+
+[[package]]
+name = "subtle"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d67a5a62ba6e01cb2192ff309324cb4875d0c451d55fe2319433abe7a05a8ee"
 
 [[package]]
 name = "subtle"
@@ -3250,7 +3149,7 @@ dependencies = [
  "pbkdf2 0.4.0",
  "rand",
  "rustc-hash",
- "sha2",
+ "sha2 0.9.9",
  "thiserror",
  "unicode-normalization",
  "wasm-bindgen",
@@ -3661,9 +3560,10 @@ version = "0.1.0"
 dependencies = [
  "borsh",
  "byteorder",
+ "ed25519",
  "hex",
  "hex-literal",
- "libsecp256k1",
+ "libsecp256k1 0.3.5",
  "rand",
  "rocksalt",
  "safe-token",
