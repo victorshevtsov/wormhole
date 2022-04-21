@@ -1,8 +1,10 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   getOriginalAssetEth,
+  getOriginalAssetSafe,
   getOriginalAssetSol,
   getOriginalAssetTerra,
   hexToNativeString,
@@ -11,12 +13,14 @@ import {
 } from "@certusone/wormhole-sdk";
 import {
   getOriginalAssetEth as getOriginalAssetEthNFT,
+  getOriginalAssetSafe as getOriginalAssetSafeNFT,
   getOriginalAssetSol as getOriginalAssetSolNFT,
   WormholeWrappedNFTInfo,
 } from "@certusone/wormhole-sdk/lib/esm/nft_bridge";
 import { Web3Provider } from "@certusone/wormhole-sdk/node_modules/@ethersproject/providers";
 import { ethers } from "@certusone/wormhole-sdk/node_modules/ethers";
-import { Connection } from "@solana/web3.js";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection} from "@solana/web3.js";
 import { LCDClient } from "@terra-money/terra.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -27,9 +31,13 @@ import { DataWrapper } from "../store/helpers";
 import {
   getNFTBridgeAddressForChain,
   getTokenBridgeAddressForChain,
+  SAFECOIN_HOST,
   SOLANA_HOST,
+  SAFECOIN_SYSTEM_PROGRAM_ADDRESS,
   SOLANA_SYSTEM_PROGRAM_ADDRESS,
+  SAFE_NFT_BRIDGE_ADDRESS,
   SOL_NFT_BRIDGE_ADDRESS,
+  SAFE_TOKEN_BRIDGE_ADDRESS,
   SOL_TOKEN_BRIDGE_ADDRESS,
   TERRA_HOST,
 } from "../utils/consts";
@@ -56,8 +64,15 @@ export async function getOriginalAssetToken(
         foreignNativeStringAddress,
         foreignChain
       );
+    } else if (foreignChain === CHAIN_ID_SAFECOIN) {
+      const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+      promise = await getOriginalAssetSafe(
+        connection,
+        SAFE_TOKEN_BRIDGE_ADDRESS,
+        foreignNativeStringAddress
+      )
     } else if (foreignChain === CHAIN_ID_SOLANA) {
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
       promise = await getOriginalAssetSol(
         connection,
         SOL_TOKEN_BRIDGE_ADDRESS,
@@ -94,8 +109,15 @@ export async function getOriginalAssetNFT(
         tokenId,
         foreignChain
       );
+    } else if (foreignChain === CHAIN_ID_SAFECOIN) {
+      const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+      promise = getOriginalAssetSafeNFT(
+        connection,
+        SAFE_NFT_BRIDGE_ADDRESS,
+        foreignNativeStringAddress
+      );
     } else if (foreignChain === CHAIN_ID_SOLANA) {
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
       promise = getOriginalAssetSolNFT(
         connection,
         SOL_NFT_BRIDGE_ADDRESS,
@@ -136,6 +158,13 @@ export async function getOriginalAsset(
     isEVMChain(result.chainId) &&
     uint8ArrayToNative(result.assetAddress, result.chainId) ===
       ethers.constants.AddressZero
+  ) {
+    throw new Error("Unable to find address.");
+  }
+  if (
+    result.chainId === CHAIN_ID_SAFECOIN &&
+    uint8ArrayToNative(result.assetAddress, result.chainId) ===
+      SAFECOIN_SYSTEM_PROGRAM_ADDRESS
   ) {
     throw new Error("Unable to find address.");
   }
