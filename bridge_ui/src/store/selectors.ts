@@ -1,4 +1,4 @@
-import { CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
+import { CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
 import { ethers } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { RootState } from ".";
@@ -78,6 +78,12 @@ export const selectNFTSourceError = (state: RootState): string | undefined => {
     return "Select an NFT";
   }
   if (
+    state.nft.sourceChain === CHAIN_ID_SAFECOIN &&
+    !state.nft.sourceParsedTokenAccount.publicKey
+  ) {
+    return "Token account unavailable";
+  }
+  if (
     state.nft.sourceChain === CHAIN_ID_SOLANA &&
     !state.nft.sourceParsedTokenAccount.publicKey
   ) {
@@ -120,6 +126,15 @@ export const selectNFTTargetError = (state: RootState) => {
   }
   if (state.nft.sourceChain === state.nft.targetChain) {
     return "Select a different target and source";
+  }
+  if (
+    state.nft.targetChain === CHAIN_ID_SAFECOIN &&
+    !selectNFTTargetAsset(state)
+  ) {
+    // target asset is only required for solana
+    // in the cases of new transfers, target asset will not exist and be created on redeem
+    // Solana requires the derived address to derive the associated token account which is the target on the vaa
+    return UNREGISTERED_ERROR_MESSAGE;
   }
   if (
     state.nft.targetChain === CHAIN_ID_SOLANA &&
@@ -204,6 +219,12 @@ export const selectTransferSourceError = (
   }
   if (!state.transfer.amount) {
     return "Enter an amount";
+  }
+  if (
+    state.transfer.sourceChain === CHAIN_ID_SAFECOIN &&
+    !state.transfer.sourceParsedTokenAccount.publicKey
+  ) {
+    return "Token account unavailable";
   }
   if (
     state.transfer.sourceChain === CHAIN_ID_SOLANA &&
