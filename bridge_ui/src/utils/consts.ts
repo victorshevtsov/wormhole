@@ -719,6 +719,8 @@ export const MULTI_CHAIN_TOKENS: MultiChainInfo =
 export const AVAILABLE_MARKETS_URL =
   "https://docs.wormholenetwork.com/wormhole/overview-liquid-markets";
 
+export const SAFECOIN_SYSTEM_PROGRAM_ADDRESS = "11111111111111111111111111111111";
+
 export const SOLANA_SYSTEM_PROGRAM_ADDRESS = "11111111111111111111111111111111";
 
 export const logoOverrides = new Map<string, string>([
