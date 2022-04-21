@@ -1,5 +1,6 @@
 import {
   ChainId,
+  CHAIN_ID_SAFECOIN,
   CHAIN_ID_SOLANA,
   CHAIN_ID_TERRA,
   nativeToHexString,
@@ -117,8 +118,8 @@ function SecondaryAssetInformation({
     return originAddress && chainId === originAssetInfo?.originChain
       ? [originAddress]
       : foreignAssetInfo?.address
-      ? [foreignAssetInfo?.address]
-      : [];
+        ? [foreignAssetInfo?.address]
+        : [];
   }, [foreignAssetInfo, originAssetInfo, chainId]);
   const metadata = useMetadata(chainId, tokenArray);
   //TODO when this is the origin chain
@@ -142,13 +143,13 @@ function SecondaryAssetInformation({
     </div>
   ) : !foreignAssetInfo ? null : foreignAssetInfo.doesExist === false ? (
     <div>
-      <Typography>{`This token has not yet been registered on ${CHAINS_BY_ID[chainId].name}`}</Typography>
+      <Typography>{`This token has not yet been registered on ${CHAINS_BY_ID[chainId]?.name}`}</Typography>
       <RegisterNowButtonCore
         originChain={originAssetInfo?.originChain || undefined}
         originAsset={
           nativeToHexString(
             originAssetInfo?.originAddress || undefined,
-            originAssetInfo?.originChain || CHAIN_ID_SOLANA // this should exist
+            originAssetInfo?.originChain || CHAIN_ID_SAFECOIN || CHAIN_ID_SOLANA // this should exist
           ) || undefined
         }
         targetChain={chainId}
@@ -193,8 +194,8 @@ export default function TokenOriginVerifier() {
     () =>
       isBeta
         ? CHAINS.filter(
-            (x) => !BETA_CHAINS.includes(x.id) && x.id !== primaryLookupChain
-          )
+          (x) => !BETA_CHAINS.includes(x.id) && x.id !== primaryLookupChain
+        )
         : CHAINS.filter((x) => x.id !== primaryLookupChain),
     [isBeta, primaryLookupChain]
   );
