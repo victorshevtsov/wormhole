@@ -115,7 +115,7 @@ pub fn complete_native(
     if accs.vaa.token_address != accs.mint.info().key.to_bytes() {
         return Err(InvalidMint.into());
     }
-    if accs.vaa.token_chain != 1 {
+    if accs.vaa.token_chain != CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
     if accs.vaa.to_chain != CHAIN_ID_SAFECOIN {
