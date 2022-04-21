@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { TokenInfo } from "@solana/spl-token-registry";
+import { TokenInfo as SafecoinTokenInfo } from "@safecoin/safe-token-registry";
+import { TokenInfo as SolanaTokenInfo } from "@solana/spl-token-registry";
 import { TerraTokenMap } from "../hooks/useTerraTokenMap";
 import {
   DataWrapper,
@@ -10,8 +11,8 @@ import {
 } from "./helpers";
 
 export interface TokenMetadataState {
-  safecoinTokenMap: DataWrapper<TokenInfo[]>;
-  solanaTokenMap: DataWrapper<TokenInfo[]>;
+  safecoinTokenMap: DataWrapper<SafecoinTokenInfo[]>;
+  solanaTokenMap: DataWrapper<SolanaTokenInfo[]>;
   terraTokenMap: DataWrapper<TerraTokenMap>; //TODO make a decent type for this.
 }
 
@@ -25,7 +26,7 @@ export const tokenSlice = createSlice({
   name: "tokenInfos",
   initialState,
   reducers: {
-    receiveSafecoinTokenMap: (state, action: PayloadAction<TokenInfo[]>) => {
+    receiveSafecoinTokenMap: (state, action: PayloadAction<SafecoinTokenInfo[]>) => {
       state.safecoinTokenMap = receiveDataWrapper(action.payload);
     },
     fetchSafecoinTokenMap: (state) => {
@@ -35,7 +36,7 @@ export const tokenSlice = createSlice({
       state.safecoinTokenMap = errorDataWrapper(action.payload);
     },
 
-    receiveSolanaTokenMap: (state, action: PayloadAction<TokenInfo[]>) => {
+    receiveSolanaTokenMap: (state, action: PayloadAction<SolanaTokenInfo[]>) => {
       state.solanaTokenMap = receiveDataWrapper(action.payload);
     },
     fetchSolanaTokenMap: (state) => {
