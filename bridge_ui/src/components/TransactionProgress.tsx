@@ -1,10 +1,11 @@
-import { ChainId, CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
+import { ChainId, CHAIN_ID_SAFECOIN, CHAIN_ID_SOLANA } from "@certusone/wormhole-sdk";
 import { LinearProgress, makeStyles, Typography } from "@material-ui/core";
-import { Connection } from "@solana/web3.js";
+import { Connection as SafecoinConnection } from "@safecoin/web3.js";
+import { Connection as SolanaConnection } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { useEthereumProvider } from "../contexts/EthereumProviderContext";
 import { Transaction } from "../store/transferSlice";
-import { CHAINS_BY_ID, SOLANA_HOST } from "../utils/consts";
+import { CHAINS_BY_ID, SAFECOIN_HOST, SOLANA_HOST } from "../utils/consts";
 import { isEVMChain } from "../utils/ethereum";
 
 const useStyles = makeStyles((theme) => ({
@@ -50,9 +51,22 @@ export default function TransactionProgress({
         cancelled = true;
       };
     }
+    if (chainId === CHAIN_ID_SAFECOIN) {
+      let cancelled = false;
+      const connection = new SafecoinConnection(SAFECOIN_HOST, "confirmed");
+      const sub = connection.onSlotChange((slotInfo) => {
+        if (!cancelled) {
+          setCurrentBlock(slotInfo.slot);
+        }
+      });
+      return () => {
+        cancelled = true;
+        connection.removeSlotChangeListener(sub);
+      };
+    }
     if (chainId === CHAIN_ID_SOLANA) {
       let cancelled = false;
-      const connection = new Connection(SOLANA_HOST, "confirmed");
+      const connection = new SolanaConnection(SOLANA_HOST, "confirmed");
       const sub = connection.onSlotChange((slotInfo) => {
         if (!cancelled) {
           setCurrentBlock(slotInfo.slot);
@@ -67,10 +81,14 @@ export default function TransactionProgress({
   const blockDiff =
     tx && tx.block && currentBlock ? currentBlock - tx.block : undefined;
   const expectedBlocks =
-    chainId === CHAIN_ID_SOLANA ? 32 : isEVMChain(chainId) ? 15 : 1;
+    chainId === CHAIN_ID_SAFECOIN || chainId === CHAIN_ID_SOLANA
+      ? 32
+      : isEVMChain(chainId)
+        ? 15
+        : 1;
   if (
     !isSendComplete &&
-    (chainId === CHAIN_ID_SOLANA || isEVMChain(chainId)) &&
+    (chainId === CHAIN_ID_SAFECOIN || chainId === CHAIN_ID_SOLANA || isEVMChain(chainId)) &&
     blockDiff !== undefined
   ) {
     return (
