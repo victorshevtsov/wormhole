@@ -178,8 +178,7 @@ export const SAFECOIN_HOST = process.env.REACT_APP_SAFECOIN_API_URL
 export const SOLANA_HOST = process.env.REACT_APP_SOLANA_API_URL
   ? process.env.REACT_APP_SOLANA_API_URL
   : CLUSTER === "mainnet"
-  ? clusterApiUrlSolana("testnet")
-  // ? clusterApiUrlSolana("mainnet-beta")
+  ? clusterApiUrlSolana("mainnet-beta")
   : CLUSTER === "testnet"
   ? clusterApiUrlSolana("testnet")
   : "http://localhost:8899";
