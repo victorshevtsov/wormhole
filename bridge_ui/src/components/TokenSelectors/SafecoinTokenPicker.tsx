@@ -1,7 +1,7 @@
 import { CHAIN_ID_SAFECOIN } from "@certusone/wormhole-sdk";
-import { TokenInfo } from "@solana/spl-token-registry";
+import { TokenInfo } from "@safecoin/safe-token-registry";
 import React, { useCallback, useMemo } from "react";
-import useMetaplexData from "../../hooks/useSolanaMetaplexData";
+import useMetaplexData from "../../hooks/useSafecoinMetaplexData";
 import useSafecoinTokenMap from "../../hooks/useSafecoinTokenMap";
 import { DataWrapper } from "../../store/helpers";
 import { NFTParsedTokenAccount } from "../../store/nftSlice";
@@ -10,7 +10,7 @@ import {
   MIGRATION_ASSET_MAP,
   WORMHOLE_V1_MINT_AUTHORITY,
 } from "../../utils/consts";
-import { ExtractedMintInfo } from "../../utils/solana";
+import { ExtractedMintInfo } from "../../utils/safecoin";
 import { sortParsedTokenAccounts } from "../../utils/sort";
 import TokenPicker, { BasicAccountRender } from "./TokenPicker";
 
