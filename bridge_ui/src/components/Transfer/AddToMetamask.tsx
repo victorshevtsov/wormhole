@@ -13,6 +13,7 @@ import {
   getEthereumToken,
   isEVMChain,
 } from "../../utils/ethereum";
+import { shortenAddress } from "../../utils/safecoin";
 
 const useStyles = makeStyles((theme) => ({
   addButton: {
@@ -47,7 +48,9 @@ export default function AddToMetamask() {
               type: "ERC20", // In the future, other standards will be supported
               options: {
                 address: targetAsset, // The address of the token contract
-                symbol, // A ticker symbol or shorthand, up to 5 characters
+                // TODO(Victor): temporary use shortenAddress
+                symbol: symbol === "" ? shortenAddress(targetAsset) : symbol, // A ticker symbol or shorthand, up to 5 characters
+                // symbol, // A ticker symbol or shorthand, up to 5 characters
                 decimals, // The number of token decimals
                 // image: string; // A string url of the token logo
               },
