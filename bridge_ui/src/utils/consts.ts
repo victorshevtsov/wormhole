@@ -267,7 +267,7 @@ export const POLYGON_TOKEN_BRIDGE_ADDRESS = getAddress(
 
 export const SAFE_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
+    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
     : CLUSTER === "testnet"
     ? "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
     : "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj";
@@ -279,14 +279,14 @@ export const SAFE_NFT_BRIDGE_ADDRESS =
     : "ntb1BtqepucWoKegbL2DkRuehLqtcnsA8jJrqmjq5ZD";
 export const SAFE_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB"
+    ? "tbrba6wRzAjzPHRBgV6erTKpnCsHESB4UMsKDYmCZxN"
     : CLUSTER === "testnet"
     ? "CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB"
     : "CT3wLqhg6BXkzBSDxNeQeBPjHcL3iiRzqUEWtxErkMsB";
 
 export const SOL_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9"
+    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
     : CLUSTER === "testnet"
     ? "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9"
     : "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9";
@@ -298,7 +298,7 @@ export const SOL_NFT_BRIDGE_ADDRESS =
     : "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA";
 export const SOL_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg"
+    ? "tbrba6wRzAjzPHRBgV6erTKpnCsHESB4UMsKDYmCZxN"
     : CLUSTER === "testnet"
     ? "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg"
     : "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg";

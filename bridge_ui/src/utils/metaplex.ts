@@ -85,13 +85,13 @@ export const SOL_MEMO_ID = new PublicKey(
 );
 
 export const SAFE_METADATA_PROGRAM_ID =
-  "CM3F4CJFCFvANRwvZC5maHW9eEcHW4VRxnDBzAkBeCBW" as StringPublicKey;
+  "mtaWETTnE7Y9uyinjVHgYEA6yt59BojMqHi1Xnxu7wV" as StringPublicKey;
 
 export const SOL_METADATA_PROGRAM_ID =
   "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s" as StringPublicKey;
 
 export const SAFE_VAULT_ID =
-  "CV3EKjZ79UxnYD1FJkx3pTCkwsRTb5MTc254vbpxM9ds" as StringPublicKey;
+  "vaukb2YboBprKZmvfnJDwNEYegkXxtZ9CXBPPv8JvpA" as StringPublicKey;
 
 export const SOL_VAULT_ID =
   "vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn" as StringPublicKey;
