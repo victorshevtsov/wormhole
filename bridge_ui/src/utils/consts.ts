@@ -286,7 +286,7 @@ export const SAFE_TOKEN_BRIDGE_ADDRESS =
 
 export const SOL_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
+    ? "brgJsWwvhptdwD2cW9m8Gf257qXYb7DLWdXy8aWQ4vJ"
     : CLUSTER === "testnet"
     ? "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9"
     : "LB3VZ9xgrjE7VsJUoQrERx8xFzpHugu6oBh8ctV2kn9";
@@ -298,7 +298,7 @@ export const SOL_NFT_BRIDGE_ADDRESS =
     : "NFTWqJR8YnRVqPDvTJrYuLrQDitTG5AScqbeghi4zSA";
 export const SOL_TOKEN_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "tbrba6wRzAjzPHRBgV6erTKpnCsHESB4UMsKDYmCZxN"
+    ? "tbrfmfks43R4DFeABQp72fsFNsxa3Vd7shdGQchA69Q"
     : CLUSTER === "testnet"
     ? "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg"
     : "LT3BfZEhpmfyfMztfZgoXrxbLycjDKo7v2qK66ojFZg";
