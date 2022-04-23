@@ -59,11 +59,11 @@ var (
 		}, []string{"operation", "commitment"})
 )
 
-const rpcTimeout = time.Second * 5
+const rpcTimeout = time.Second * 5 * 3
 
 // Maximum retries for Solana fetching
 const maxRetries = 5
-const retryDelay = 5 * time.Second
+const retryDelay = 5 * time.Second * 3
 
 type ConsistencyLevel uint8
 
@@ -123,7 +123,7 @@ func (s *SolanaWatcher) Run(ctx context.Context) error {
 	var lastSlot uint64
 
 	go func() {
-		timer := time.NewTicker(time.Second * 1)
+		timer := time.NewTicker(time.Second * 1 * 3)
 		defer timer.Stop()
 
 		var recovery <-chan time.Time
