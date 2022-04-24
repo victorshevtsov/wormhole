@@ -142,28 +142,28 @@ export default function SafecoinSourceTokenSelector(
   const isLoading =
     accounts?.isFetching || metaplex.isFetching || tokenMap.isFetching;
 
-  const isWormholev1 = useCallback(
-    (address: string) => {
-      //This is a v1 wormhole token on testnet
-      //const testAddress = "4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn";
+  // const isWormholev1 = useCallback(
+  //   (address: string) => {
+  //     //This is a v1 wormhole token on testnet
+  //     //const testAddress = "4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn";
 
-      if (!props.mintAccounts?.data) {
-        return true; //These should never be null by this point
-      }
-      const mintAuthority = props.mintAccounts.data.get(address)?.mintAuthority;
+  //     if (!props.mintAccounts?.data) {
+  //       return true; //These should never be null by this point
+  //     }
+  //     const mintAuthority = props.mintAccounts.data.get(address)?.mintAuthority;
 
-      if (!mintAuthority) {
-        return true; //We should never fail to pull the mint of an account.
-      }
+  //     if (!mintAuthority) {
+  //       return true; //We should never fail to pull the mint of an account.
+  //     }
 
-      if (mintAuthority === WORMHOLE_V1_MINT_AUTHORITY) {
-        return true; //This means the mint was created by the wormhole v1 contract, and we want to disallow its transfer.
-      }
+  //     if (mintAuthority === WORMHOLE_V1_MINT_AUTHORITY) {
+  //       return true; //This means the mint was created by the wormhole v1 contract, and we want to disallow its transfer.
+  //     }
 
-      return false;
-    },
-    [props.mintAccounts]
-  );
+  //     return false;
+  //   },
+  //   [props.mintAccounts]
+  // );
 
   const onChangeWrapper = useCallback(
     async (newValue: NFTParsedTokenAccount | null) => {
@@ -173,7 +173,7 @@ export default function SafecoinSourceTokenSelector(
         return Promise.resolve();
       }
       try {
-        v1 = isWormholev1(newValue.mintKey);
+        v1 = false // isWormholev1(newValue.mintKey);
       } catch (e) {
         //swallow for now
       }
@@ -187,7 +187,8 @@ export default function SafecoinSourceTokenSelector(
       onChange(newValue);
       return Promise.resolve();
     },
-    [isWormholev1, onChange]
+    [onChange]
+    // [isWormholev1, onChange]
   );
 
   const RenderComp = useCallback(
