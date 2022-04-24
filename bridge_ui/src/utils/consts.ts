@@ -203,7 +203,7 @@ export const TERRA_HOST =
       };
 export const ETH_BRIDGE_ADDRESS = getAddress(
   CLUSTER === "mainnet"
-    ? "0xb744c0008ac89C4a6BC69712A5f05Bda53B62D66"
+    ? "0x5887eBD6b9B84d9A9FA8254Bdef57972Fa8E360c"
     : CLUSTER === "testnet"
     ? "0xB3f7896945b136B69B71DAfF7DF4C7f0d32dC691"
     : "0xCea9f5B3e5bD8bc9eb97080BdB31e27aF88408C8"
@@ -217,7 +217,7 @@ export const ETH_NFT_BRIDGE_ADDRESS = getAddress(
 );
 export const ETH_TOKEN_BRIDGE_ADDRESS = getAddress(
   CLUSTER === "mainnet"
-    ? "0x6D4f9DdC559f10bc76Dd00a2A1f85e3251aaD134"
+    ? "0x25f2984b0175941825Bd398F366A04A8Cb125650"
     : CLUSTER === "testnet"
     ? "0x4aD72801246EB7b83D3F9af34214179245A1B4d4"
     : "0x4e5c6eC1af19222BAfb2FddDA1a2c09AACa2E4d3"
@@ -394,7 +394,7 @@ export const TERRA_SWAPRATE_URL =
 
 export const WETH_ADDRESS =
   CLUSTER === "mainnet"
-    ? "0xF622e6956B0eFe1C7cDA37c8cC2Cf63C098F4A6a"
+    ? "0x0ed9ba07E73df9b2b85C1a56B72e0de4626Dd6b0"
     : CLUSTER === "testnet"
     ? "0x2d17B129FAE6551CcBAAB77528b908E28c371C9D"
     : "0xA49Dce9A35cBd0281a5A0af78B331d767f8A79ED";
