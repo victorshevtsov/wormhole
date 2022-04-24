@@ -267,7 +267,7 @@ export const POLYGON_TOKEN_BRIDGE_ADDRESS = getAddress(
 
 export const SAFE_BRIDGE_ADDRESS =
   CLUSTER === "mainnet"
-    ? "brgiBrL5xxZKKtCzBJD49KwGuCSJameDgnrwSazjGUi"
+    ? "brgX3pPZhoKQRVBi9CrKUABc3zQMEUiE3kgA3Yup5Pm"
     : CLUSTER === "testnet"
     ? "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj"
     : "CB369Srn5zYuV1HKQg7WgxxjhcAy1aLH9UYth9jGTXJj";
