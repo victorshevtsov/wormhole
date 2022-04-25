@@ -34,6 +34,7 @@ use bridge::{
 };
 use primitive_types::U256;
 use safecoin_program::{
+    msg,
     account_info::AccountInfo,
     instruction::{
         AccountMeta,
@@ -129,25 +130,31 @@ pub fn transfer_native(
     accs: &mut TransferNative,
     data: TransferNativeData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** transfer_native 01");
+
     // Prevent transferring to the same chain.
     if data.target_chain == CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    msg!("*** DEBUG *** transfer_native 02");
 
     // Verify that the custody account is derived correctly
     let derivation_data: CustodyAccountDerivationData = (&*accs).into();
     accs.custody
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** transfer_native 03");
 
     // Verify mints
     if accs.from.mint != *accs.mint.info().key {
         return Err(TokenBridgeError::InvalidMint.into());
     }
+    msg!("*** DEBUG *** transfer_native 04");
 
     // Fee must be less than amount
     if data.fee > data.amount {
         return Err(InvalidFee.into());
     }
+    msg!("*** DEBUG *** transfer_native 05");
 
     // Verify that the token is not a wrapped token
     if let COption::Some(mint_authority) = accs.mint.mint_authority {
@@ -155,10 +162,12 @@ pub fn transfer_native(
             return Err(TokenBridgeError::TokenNotNative.into());
         }
     }
+    msg!("*** DEBUG *** transfer_native 06");
 
     if !accs.custody.is_initialized() {
         accs.custody
             .create(&(&*accs).into(), ctx, accs.payer.key, Exempt)?;
+        msg!("*** DEBUG *** transfer_native 07");
 
         let init_ix = safe_token::instruction::initialize_account(
             &safe_token::id(),
@@ -166,7 +175,10 @@ pub fn transfer_native(
             accs.mint.info().key,
             accs.custody_signer.key,
         )?;
+        msg!("*** DEBUG *** transfer_native 08");
+
         invoke_signed(&init_ix, ctx.accounts, &[])?;
+        msg!("*** DEBUG *** transfer_native 09");
     }
 
     let trunc_divisor = 10u64.pow(8.max(accs.mint.decimals as u32) - 8);
@@ -175,6 +187,7 @@ pub fn transfer_native(
     let fee: u64 = data.fee / trunc_divisor;
     // Untruncate the amount to drop the remainder so we don't  "burn" user's funds.
     let amount_trunc: u64 = amount * trunc_divisor;
+    msg!("*** DEBUG *** transfer_native 10");
 
     // Transfer tokens
     let transfer_ix = safe_token::instruction::transfer(
@@ -185,7 +198,10 @@ pub fn transfer_native(
         &[],
         amount_trunc,
     )?;
+    msg!("*** DEBUG *** transfer_native 11");
+
     invoke_seeded(&transfer_ix, ctx, &accs.authority_signer, None)?;
+    msg!("*** DEBUG *** transfer_native 12");
 
     // Pay fee
     let transfer_ix = safecoin_program::system_instruction::transfer(
@@ -193,7 +209,10 @@ pub fn transfer_native(
         accs.fee_collector.key,
         accs.bridge.config.fee,
     );
+    msg!("*** DEBUG *** transfer_native 13");
+
     invoke(&transfer_ix, ctx.accounts)?;
+    msg!("*** DEBUG *** transfer_native 14");
 
     // Post message
     let payload = PayloadTransfer {
@@ -204,6 +223,8 @@ pub fn transfer_native(
         to_chain: data.target_chain,
         fee: U256::from(fee),
     };
+    msg!("*** DEBUG *** transfer_native 15");
+
     let params = (
         bridge::instruction::Instruction::PostMessage,
         PostMessageData {
@@ -212,6 +233,7 @@ pub fn transfer_native(
             consistency_level: ConsistencyLevel::Finalized,
         },
     );
+    msg!("*** DEBUG *** transfer_native 16");
 
     let ix = Instruction::new_with_bytes(
         accs.config.wormhole_bridge,
@@ -228,7 +250,11 @@ pub fn transfer_native(
             AccountMeta::new_readonly(safecoin_program::sysvar::rent::ID, false),
         ],
     );
+    msg!("*** DEBUG *** transfer_native 17");
+
     invoke_seeded(&ix, ctx, &accs.emitter, None)?;
+
+    msg!("*** DEBUG *** transfer_native Ok");
 
     Ok(())
 }
@@ -297,30 +323,36 @@ pub fn transfer_wrapped(
     accs: &mut TransferWrapped,
     data: TransferWrappedData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** transfer_wrapped 01");
     // Prevent transferring to the same chain.
     if data.target_chain == CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    msg!("*** DEBUG *** transfer_wrapped 02");
 
     // Verify that the from account is owned by the from_owner
     if &accs.from.owner != accs.from_owner.key {
         return Err(WrongAccountOwner.into());
     }
+    msg!("*** DEBUG *** transfer_wrapped 03");
 
     // Verify mints
     if accs.mint.info().key != &accs.from.mint {
         return Err(TokenBridgeError::InvalidMint.into());
     }
+    msg!("*** DEBUG *** transfer_wrapped 04");
 
     // Fee must be less than amount
     if data.fee > data.amount {
         return Err(InvalidFee.into());
     }
+    msg!("*** DEBUG *** transfer_wrapped 05");
 
     // Verify that meta is correct
     let derivation_data: WrappedMetaDerivationData = (&*accs).into();
     accs.wrapped_meta
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** transfer_wrapped 06");
 
     // Burn tokens
     let burn_ix = safe_token::instruction::burn(
@@ -331,7 +363,10 @@ pub fn transfer_wrapped(
         &[],
         data.amount,
     )?;
+    msg!("*** DEBUG *** transfer_wrapped 07");
+
     invoke_seeded(&burn_ix, ctx, &accs.authority_signer, None)?;
+    msg!("*** DEBUG *** transfer_wrapped 08");
 
     // Pay fee
     let transfer_ix = safecoin_program::system_instruction::transfer(
@@ -339,8 +374,10 @@ pub fn transfer_wrapped(
         accs.fee_collector.key,
         accs.bridge.config.fee,
     );
+    msg!("*** DEBUG *** transfer_wrapped 09");
 
     invoke(&transfer_ix, ctx.accounts)?;
+    msg!("*** DEBUG *** transfer_wrapped 10");
 
     // Post message
     let payload = PayloadTransfer {
@@ -351,6 +388,8 @@ pub fn transfer_wrapped(
         to_chain: data.target_chain,
         fee: U256::from(data.fee),
     };
+    msg!("*** DEBUG *** transfer_wrapped 11");
+
     let params = (
         bridge::instruction::Instruction::PostMessage,
         PostMessageData {
@@ -359,6 +398,7 @@ pub fn transfer_wrapped(
             consistency_level: ConsistencyLevel::Finalized,
         },
     );
+    msg!("*** DEBUG *** transfer_wrapped 12");
 
     let ix = Instruction::new_with_bytes(
         accs.config.wormhole_bridge,
@@ -375,7 +415,10 @@ pub fn transfer_wrapped(
             AccountMeta::new_readonly(safecoin_program::sysvar::rent::ID, false),
         ],
     );
+    msg!("*** DEBUG *** transfer_wrapped 13");
+
     invoke_seeded(&ix, ctx, &accs.emitter, None)?;
 
+    msg!("*** DEBUG *** transfer_wrapped Ok");
     Ok(())
 }

@@ -30,6 +30,7 @@ use bridge::{
 };
 use primitive_types::U256;
 use safecoin_program::{
+    msg,
     account_info::AccountInfo,
     instruction::{
         AccountMeta,
@@ -125,19 +126,26 @@ pub fn attest_token(
     accs: &mut AttestToken,
     data: AttestTokenData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** attest_token 01");
+
     // Pay fee
     let transfer_ix = safecoin_program::system_instruction::transfer(
         accs.payer.key,
         accs.fee_collector.key,
         accs.bridge.config.fee,
     );
+    msg!("*** DEBUG *** attest_token 02");
 
     invoke(&transfer_ix, ctx.accounts)?;
+    msg!("*** DEBUG *** attest_token 03");
 
     // Enfoce wrapped meta to be uninitialized.
     let derivation_data: WrappedMetaDerivationData = (&*accs).into();
+    msg!("*** DEBUG *** attest_token 04");
+
     accs.wrapped_meta
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** attest_token 05");
 
     // Create Asset Metadata
     let mut payload = PayloadAssetMeta {
@@ -147,22 +155,29 @@ pub fn attest_token(
         symbol: "".to_string(),
         name: "".to_string(),
     };
+    msg!("*** DEBUG *** attest_token 06");
 
     // Assign metadata if an SPL Metadata account exists for the SPL token in question.
     if !accs.safe_metadata.data_is_empty() {
         let derivation_data: SplTokenMetaDerivationData = (&*accs).into();
+        msg!("*** DEBUG *** attest_token 07");
+
         accs.safe_metadata
             .verify_derivation(&safe_token_metadata::id(), &derivation_data)?;
+        msg!("*** DEBUG *** attest_token 08");
 
         if *accs.safe_metadata.owner != safe_token_metadata::id() {
             return Err(WrongAccountOwner.into());
         }
+        msg!("*** DEBUG *** attest_token 09");
 
         let metadata: Metadata =
             Metadata::from_account_info(accs.safe_metadata.info())?;
+        msg!("*** DEBUG *** attest_token 10");
         payload.name = metadata.data.name.clone();
         payload.symbol = metadata.data.symbol.clone();
     }
+    msg!("*** DEBUG *** attest_token 11");
 
     let params = (
         bridge::instruction::Instruction::PostMessage,
@@ -172,6 +187,7 @@ pub fn attest_token(
             consistency_level: ConsistencyLevel::Finalized,
         },
     );
+    msg!("*** DEBUG *** attest_token 12");
 
     let ix = Instruction::new_with_bytes(
         accs.config.wormhole_bridge,
@@ -188,7 +204,10 @@ pub fn attest_token(
             AccountMeta::new_readonly(safecoin_program::sysvar::rent::ID, false),
         ],
     );
+    msg!("*** DEBUG *** attest_token 13");
+
     invoke_seeded(&ix, ctx, &accs.emitter, None)?;
 
+    msg!("*** DEBUG *** attest_token Ok");
     Ok(())
 }

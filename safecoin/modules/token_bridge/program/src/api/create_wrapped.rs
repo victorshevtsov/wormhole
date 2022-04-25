@@ -20,6 +20,7 @@ use bridge::{
     CHAIN_ID_SAFECOIN,
 };
 use safecoin_program::{
+    msg,
     account_info::AccountInfo,
     program::invoke_signed,
     program_error::ProgramError,
@@ -103,6 +104,7 @@ pub fn create_wrapped(
     accs: &mut CreateWrapped,
     data: CreateWrappedData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** create_wrapped 01");
     use bstr::ByteSlice;
 
     // Do not process attestations sourced from the current chain.
@@ -113,21 +115,28 @@ pub fn create_wrapped(
     let derivation_data: WrappedDerivationData = (&*accs).into();
     accs.mint
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** create_wrapped 02");
 
     let meta_derivation_data: WrappedMetaDerivationData = (&*accs).into();
     accs.meta
         .verify_derivation(ctx.program_id, &meta_derivation_data)?;
+    msg!("*** DEBUG *** create_wrapped 03");
 
     let derivation_data: EndpointDerivationData = (&*accs).into();
     accs.chain_registration
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** create_wrapped 04");
 
     accs.vaa.verify(ctx.program_id)?;
+    msg!("*** DEBUG *** create_wrapped 05");
+
     accs.vaa.claim(ctx, accs.payer.key)?;
+    msg!("*** DEBUG *** create_wrapped 06");
 
     // Create mint account
     accs.mint
         .create(&((&*accs).into()), ctx, accs.payer.key, Exempt)?;
+    msg!("*** DEBUG *** create_wrapped 07");
 
     // Initialize mint
     let init_ix = safe_token::instruction::initialize_mint(
@@ -137,11 +146,15 @@ pub fn create_wrapped(
         None,
         min(8, accs.vaa.decimals), // Limit to 8 decimals, truncation is handled on the other side
     )?;
+    msg!("*** DEBUG *** create_wrapped 08");
+
     invoke_signed(&init_ix, ctx.accounts, &[])?;
+    msg!("*** DEBUG *** create_wrapped 09");
 
     // Create meta account
     accs.meta
         .create(&((&*accs).into()), ctx, accs.payer.key, Exempt)?;
+    msg!("*** DEBUG *** create_wrapped 10");
 
     // Initialize spl meta
     accs.safe_metadata.verify_derivation(
@@ -150,6 +163,7 @@ pub fn create_wrapped(
             mint: *accs.mint.info().key,
         },
     )?;
+    msg!("*** DEBUG *** create_wrapped 11");
 
     let mut name = accs.vaa.name.clone().as_bytes().to_vec();
     name.truncate(32 - 11);
@@ -157,12 +171,15 @@ pub fn create_wrapped(
     name.retain(|&c| c != '\u{FFFD}');
     let mut name: String = name.iter().collect();
     name += " (Wrapped)";
+    msg!("*** DEBUG *** create_wrapped 12 name: {:?}", name);
 
     let mut symbol = accs.vaa.symbol.clone().as_bytes().to_vec();
     symbol.truncate(10);
+
     let mut symbol: Vec<char> = symbol.chars().collect();
     symbol.retain(|&c| c != '\u{FFFD}');
     let symbol: String = symbol.iter().collect();
+    msg!("*** DEBUG *** create_wrapped 13 symbol: {:?}", symbol);
 
     let safe_token_metadata_ix = safe_token_metadata::instruction::create_metadata_accounts(
         safe_token_metadata::id(),
@@ -179,12 +196,16 @@ pub fn create_wrapped(
         false,
         true,
     );
+    msg!("*** DEBUG *** create_wrapped 14");
+
     invoke_seeded(&safe_token_metadata_ix, ctx, &accs.mint_authority, None)?;
+    msg!("*** DEBUG *** create_wrapped 15");
 
     // Populate meta account
     accs.meta.chain = accs.vaa.token_chain;
     accs.meta.token_address = accs.vaa.token_address;
     accs.meta.original_decimals = accs.vaa.decimals;
 
+    msg!("*** DEBUG *** create_wrapped Ok");
     Ok(())
 }

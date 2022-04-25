@@ -21,6 +21,7 @@ use bridge::{
     CHAIN_ID_SAFECOIN,
 };
 use safecoin_program::{
+    msg,
     account_info::AccountInfo,
     program::invoke_signed,
     program_error::ProgramError,
@@ -87,15 +88,19 @@ pub fn complete_native(
     accs: &mut CompleteNative,
     data: CompleteNativeData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** complete_native 01");
+
     // Verify the chain registration
     let derivation_data: EndpointDerivationData = (&*accs).into();
     accs.chain_registration
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** complete_native 02");
 
     // Verify that the custody account is derived correctly
     let derivation_data: CustodyAccountDerivationData = (&*accs).into();
     accs.custody
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** complete_native 03");
 
     // Verify mints
     if *accs.mint.info().key != accs.to.mint {
@@ -110,6 +115,7 @@ pub fn complete_native(
     if *accs.custody_signer.key != accs.custody.owner {
         return Err(WrongAccountOwner.into());
     }
+    msg!("*** DEBUG *** complete_native 04");
 
     // Verify VAA
     if accs.vaa.token_address != accs.mint.info().key.to_bytes() {
@@ -121,10 +127,14 @@ pub fn complete_native(
     if accs.vaa.to_chain != CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    msg!("*** DEBUG *** complete_native 05");
 
     // Prevent vaa double signing
     accs.vaa.verify(ctx.program_id)?;
+    msg!("*** DEBUG *** complete_native 06");
+
     accs.vaa.claim(ctx, accs.payer.key)?;
+    msg!("*** DEBUG *** complete_native 07");
 
     let mut amount = accs.vaa.amount.as_u64();
     let mut fee = accs.vaa.fee.as_u64();
@@ -134,6 +144,7 @@ pub fn complete_native(
         amount *= 10u64.pow((accs.mint.decimals - 8) as u32);
         fee *= 10u64.pow((accs.mint.decimals - 8) as u32);
     }
+    msg!("*** DEBUG *** complete_native 08");
 
     // Transfer tokens
     let transfer_ix = safe_token::instruction::transfer(
@@ -144,7 +155,10 @@ pub fn complete_native(
         &[],
         amount.checked_sub(fee).unwrap(),
     )?;
+    msg!("*** DEBUG *** complete_native 09");
+
     invoke_seeded(&transfer_ix, ctx, &accs.custody_signer, None)?;
+    msg!("*** DEBUG *** complete_native 10");
 
     // Transfer fees
     let transfer_ix = safe_token::instruction::transfer(
@@ -155,7 +169,11 @@ pub fn complete_native(
         &[],
         fee,
     )?;
+    msg!("*** DEBUG *** complete_native 11");
+
     invoke_seeded(&transfer_ix, ctx, &accs.custody_signer, None)?;
+
+    msg!("*** DEBUG *** complete_native Ok");
 
     Ok(())
 }
@@ -207,10 +225,13 @@ pub fn complete_wrapped(
     accs: &mut CompleteWrapped,
     data: CompleteWrappedData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** complete_wrapped 01");
+
     // Verify the chain registration
     let derivation_data: EndpointDerivationData = (&*accs).into();
     accs.chain_registration
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** complete_wrapped 02");
 
     // Verify mint
     accs.wrapped_meta.verify_derivation(
@@ -219,6 +240,8 @@ pub fn complete_wrapped(
             mint_key: *accs.mint.info().key,
         },
     )?;
+    msg!("*** DEBUG *** complete_wrapped 03");
+
     if accs.wrapped_meta.token_address != accs.vaa.token_address
         || accs.wrapped_meta.chain != accs.vaa.token_chain
     {
@@ -237,9 +260,11 @@ pub fn complete_wrapped(
     if accs.vaa.to_chain != CHAIN_ID_SAFECOIN {
         return Err(InvalidChain.into());
     }
+    msg!("*** DEBUG *** complete_wrapped 04");
 
     accs.vaa.verify(ctx.program_id)?;
     accs.vaa.claim(ctx, accs.payer.key)?;
+    msg!("*** DEBUG *** complete_wrapped 05");
 
     // Mint tokens
     let mint_ix = safe_token::instruction::mint_to(
@@ -254,7 +279,10 @@ pub fn complete_wrapped(
             .checked_sub(accs.vaa.fee.as_u64())
             .unwrap(),
     )?;
+    msg!("*** DEBUG *** complete_wrapped 06");
+
     invoke_seeded(&mint_ix, ctx, &accs.mint_authority, None)?;
+    msg!("*** DEBUG *** complete_wrapped 07");
 
     // Mint fees
     let mint_ix = safe_token::instruction::mint_to(
@@ -265,7 +293,11 @@ pub fn complete_wrapped(
         &[],
         accs.vaa.fee.as_u64(),
     )?;
+    msg!("*** DEBUG *** complete_wrapped 08");
+
     invoke_seeded(&mint_ix, ctx, &accs.mint_authority, None)?;
+
+    msg!("*** DEBUG *** complete_wrapped Ok");
 
     Ok(())
 }
