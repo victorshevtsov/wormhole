@@ -23,6 +23,7 @@ use bridge::{
     CHAIN_ID_SAFECOIN,
 };
 use safecoin_program::{
+    msg,
     account_info::AccountInfo,
     program::invoke_signed,
     program_error::ProgramError,
@@ -101,10 +102,19 @@ pub fn upgrade_contract(
     accs: &mut UpgradeContract,
     _data: UpgradeContractData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** upgrade_contract 01");
+
     verify_governance(&accs.vaa)?;
+
+    msg!("*** DEBUG *** upgrade_contract 02");
+
     accs.vaa.verify(ctx.program_id)?;
+    msg!("*** DEBUG *** upgrade_contract 03");
+
 
     accs.vaa.claim(ctx, accs.payer.key)?;
+    msg!("*** DEBUG *** upgrade_contract 04");
+
 
     let upgrade_ix = safecoin_program::bpf_loader_upgradeable::upgrade(
         ctx.program_id,
@@ -112,13 +122,17 @@ pub fn upgrade_contract(
         accs.upgrade_authority.key,
         accs.spill.key,
     );
+    msg!("*** DEBUG *** upgrade_contract 05");
 
     let seeds = accs
         .upgrade_authority
         .self_bumped_seeds(None, ctx.program_id);
+    msg!("*** DEBUG *** upgrade_contract 06");
+
     let seeds: Vec<&[u8]> = seeds.iter().map(|item| item.as_slice()).collect();
     let seeds = seeds.as_slice();
     invoke_signed(&upgrade_ix, ctx.accounts, &[seeds])?;
+    msg!("*** DEBUG *** upgrade_contract Ok");
 
     Ok(())
 }
@@ -153,21 +167,32 @@ pub fn register_chain(
     accs: &mut RegisterChain,
     data: RegisterChainData,
 ) -> Result<()> {
+    msg!("*** DEBUG *** register_chain 01");
+
     let derivation_data: EndpointDerivationData = (&*accs).into();
     accs.endpoint
         .verify_derivation(ctx.program_id, &derivation_data)?;
+    msg!("*** DEBUG *** register_chain 02");
 
     // Claim VAA
     verify_governance(&accs.vaa)?;
+    msg!("*** DEBUG *** register_chain 03");
+
     accs.vaa.verify(ctx.program_id)?;
+    msg!("*** DEBUG *** register_chain 04");
+
     accs.vaa.claim(ctx, accs.payer.key)?;
+    msg!("*** DEBUG *** register_chain 05");
 
     // Create endpoint
     accs.endpoint
         .create(&((&*accs).into()), ctx, accs.payer.key, Exempt)?;
+    msg!("*** DEBUG *** register_chain 06");
 
     accs.endpoint.chain = accs.vaa.chain;
     accs.endpoint.contract = accs.vaa.endpoint_address;
+
+    msg!("*** DEBUG *** register_chain Ok");
 
     Ok(())
 }
