@@ -6,6 +6,7 @@
 
 use borsh::BorshDeserialize;
 use safecoin_program::{
+    msg,
     pubkey::Pubkey,
     system_program,
     sysvar::{
@@ -190,24 +191,35 @@ impl<
     > Peel<'a, 'b, 'c> for Data<'b, T, IsInitialized>
 {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Data 01");
+
         if ctx.immutable && ctx.info().is_writable {
+            msg!("*** DEBUG *** impl Peel for Data 02");
+
             return Err(
                 SolitaireError::InvalidMutability(*ctx.info().key, ctx.info().is_writable).into(),
             );
         }
+        msg!("*** DEBUG *** impl Peel for Data 03");
 
         // If we're initializing the type, we should emit system/rent as deps.
         let (initialized, data): (bool, T) = match IsInitialized {
             AccountState::Uninitialized => {
                 if **ctx.info().lamports.borrow() != 0 {
+                    msg!("*** DEBUG *** impl Peel for Data 04");
+
                     return Err(SolitaireError::AlreadyInitialized(*ctx.info().key));
                 }
                 (false, T::default())
             }
             AccountState::Initialized => {
+                msg!("*** DEBUG *** impl Peel for Data 05");
+
                 (true, T::try_from_slice(&mut *ctx.info().data.borrow_mut())?)
             }
             AccountState::MaybeInitialized => {
+                msg!("*** DEBUG *** impl Peel for Data 06");
+
                 if **ctx.info().lamports.borrow() == 0 {
                     (false, T::default())
                 } else {
@@ -216,21 +228,29 @@ impl<
             }
         };
 
+        msg!("*** DEBUG *** impl Peel for Data 07");
+
         if initialized {
             match data.owner() {
                 AccountOwner::This => {
                     if ctx.info().owner != ctx.this {
+                        msg!("*** DEBUG *** impl Peel for Data 08");
+
                         return Err(SolitaireError::InvalidOwner(*ctx.info().owner));
                     }
                 }
                 AccountOwner::Other(v) => {
                     if *ctx.info().owner != v {
+                        msg!("*** DEBUG *** impl Peel for Data 09");
+
                         return Err(SolitaireError::InvalidOwner(*ctx.info().owner));
                     }
                 }
                 AccountOwner::Any => {}
             };
         }
+
+        msg!("*** DEBUG *** impl Peel for Data Ok");
 
         Ok(Data(Box::new(ctx.info().clone()), data))
     }
