@@ -24,6 +24,7 @@ use serde::{
     Serialize,
 };
 use safecoin_program::pubkey::Pubkey;
+use safecoin_program::msg;
 use solitaire::{
     processors::seeded::Seeded,
     trace,
@@ -117,9 +118,15 @@ impl<'a, 'b: 'a, 'c, T: DeserializePayload> Peel<'a, 'b, 'c> for PayloadMessage<
     where
         Self: Sized,
     {
+        msg!("*** DEBUG *** impl Peel for PayloadMessage 01");
+
         // Deserialize wrapped payload
         let data: Data<'b, PostedVAAData, { AccountState::Initialized }> = Data::peel(ctx)?;
+        msg!("*** DEBUG *** impl Peel for PayloadMessage 02");
+
         let payload = DeserializePayload::deserialize(&mut &data.payload[..])?;
+        msg!("*** DEBUG *** impl Peel for PayloadMessage Ok");
+
         Ok(PayloadMessage(data, payload))
     }
 

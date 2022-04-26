@@ -47,8 +47,12 @@ impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>, const Seed: &'static str> Peel<'a, 'b,
     for Derive<T, Seed>
 {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Derive 01");
+
         // Attempt to Derive Seed
         let (derived, bump) = Pubkey::find_program_address(&[Seed.as_ref()], ctx.this);
+        msg!("*** DEBUG *** impl Peel for Derive 02");
+
         match derived == *ctx.info().key {
             true => T::peel(ctx).map(|v| Derive(v)),
             _ => Err(SolitaireError::InvalidDerive(*ctx.info().key, derived).into()),
@@ -67,6 +71,8 @@ impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>, const Seed: &'static str> Peel<'a, 'b,
 /// Peel a Mutable key.
 impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for Mut<T> {
     fn peel<I>(mut ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Mut 01");
+
         ctx.immutable = false;
         match ctx.info().is_writable {
             true => T::peel(ctx).map(|v| Mut(v)),
@@ -87,6 +93,8 @@ impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for Mut<T> {
 
 impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for MaybeMut<T> {
     fn peel<I>(mut ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for MaybeMut 01");
+
         ctx.immutable = !ctx.info().is_writable;
         T::peel(ctx).map(|v| MaybeMut(v))
     }
@@ -103,6 +111,8 @@ impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for MaybeMut<T> {
 /// Peel a Signer.
 impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for Signer<T> {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Signer 01");
+
         match ctx.info().is_signer {
             true => T::peel(ctx).map(|v| Signer(v)),
             _ => Err(SolitaireError::InvalidSigner(*ctx.info().key).into()),
@@ -121,6 +131,8 @@ impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for Signer<T> {
 /// Expicitly depend upon the System account.
 impl<'a, 'b: 'a, 'c, T: Peel<'a, 'b, 'c>> Peel<'a, 'b, 'c> for System<T> {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for System 01");
+
         match true {
             true => T::peel(ctx).map(|v| System(v)),
             _ => panic!(),
@@ -142,6 +154,8 @@ where
     Var: SafecoinSysvar,
 {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Sysvar 01");
+
         match Var::check_id(ctx.info().key) {
             true => Ok(Sysvar(
                 ctx.info().clone(),
@@ -164,11 +178,17 @@ where
 /// calls here.
 impl<'a, 'b: 'a, 'c> Peel<'a, 'b, 'c> for Info<'b> {
     fn peel<I>(ctx: &'c mut Context<'a, 'b, 'c, I>) -> Result<Self> {
+        msg!("*** DEBUG *** impl Peel for Info 01");
+
         if ctx.immutable && ctx.info().is_writable {
+            msg!("*** DEBUG *** impl Peel for Info 02");
+
             return Err(
                 SolitaireError::InvalidMutability(*ctx.info().key, ctx.info().is_writable).into(),
             );
         }
+
+        msg!("*** DEBUG *** impl Peel for Info Ok");
 
         Ok(ctx.info().clone())
     }
