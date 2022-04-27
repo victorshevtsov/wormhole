@@ -32,12 +32,14 @@ safe-token-metadata = { path = "../token-metadata" }
 wasm-bindgen = { version = "0.2.78", features = ["serde-serialize"] }
 serde = { version = "1.0", features = ["derive"] }
 rand = { version = "0.7.3", optional = true }
+console_error_panic_hook = "0.1.7"
+web-sys = { version = "0.3.57", features = [ "console"] }
 
 [dev-dependencies]
 hex = "*"
 hex-literal = "0.3.1"
 libsecp256k1 = { version = "0.3.5", features = [] }
-safecoin-client = { path = "../../../../../Safecoin/client/", version = "=1.7.17" }
-safecoin-sdk = { path = "../../../../../Safecoin/sdk/", version = "=1.7.17" }
+safecoin-client = { path = "../../../../../Safecoin/client/" }
+safecoin-sdk = { path = "../../../../../Safecoin/sdk/" }
 safe-token = { path = "../../../../../safecoin-program-library/token/program/", features = [ "no-entrypoint" ] }
 safe-token-metadata = { path = "../token-metadata/", features = ["no-entrypoint"]  }

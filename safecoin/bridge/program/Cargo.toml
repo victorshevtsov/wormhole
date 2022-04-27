@@ -26,6 +26,7 @@ solitaire-client = { path = "../../solitaire/client", optional = true }
 solitaire = { path = "../../solitaire/program" }
 wasm-bindgen = { version = "0.2.78", features = ["serde-serialize"] }
 serde = { version = "1.0", features = ["derive"] }
+console_error_panic_hook = "0.1.7"
 
 [dev-dependencies]
 hex = "*"

@@ -1,3 +1,6 @@
+extern crate console_error_panic_hook;
+use std::panic;
+
 use safecoin_program::{
     instruction::Instruction,
     pubkey::Pubkey,
@@ -64,6 +67,8 @@ pub fn post_message_ix(
     msg: Vec<u8>,
     consistency: String,
 ) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let consistency_level = match consistency.as_str() {
         "CONFIRMED" => ConsistencyLevel::Confirmed,
         "FINALIZED" => ConsistencyLevel::Finalized,
@@ -89,6 +94,8 @@ pub fn post_vaa_ix(
     signature_set: String,
     vaa: Vec<u8>,
 ) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
     let vaa = PostVAAData {
         version: vaa.version,
@@ -112,6 +119,8 @@ pub fn post_vaa_ix(
 
 #[wasm_bindgen]
 pub fn update_guardian_set_ix(program_id: String, payer: String, vaa: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
     let payload =
@@ -136,6 +145,8 @@ pub fn update_guardian_set_ix(program_id: String, payer: String, vaa: Vec<u8>) -
 
 #[wasm_bindgen]
 pub fn set_fees_ix(program_id: String, payer: String, vaa: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
     let message_key = PostedVAA::<'_, { AccountState::Uninitialized }>::key(
@@ -156,6 +167,8 @@ pub fn set_fees_ix(program_id: String, payer: String, vaa: Vec<u8>) -> JsValue {
 
 #[wasm_bindgen]
 pub fn transfer_fees_ix(program_id: String, payer: String, vaa: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
     let payload = GovernancePayloadTransferFees::deserialize(&mut vaa.payload.as_slice()).unwrap();
@@ -183,6 +196,8 @@ pub fn upgrade_contract_ix(
     spill: String,
     vaa: Vec<u8>,
 ) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
     let spill = Pubkey::from_str(spill.as_str()).unwrap();
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
@@ -214,6 +229,8 @@ pub fn verify_signatures_ix(
     signature_set: String,
     vaa_data: Vec<u8>,
 ) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
     let payer = Pubkey::from_str(payer.as_str()).unwrap();
     let signature_set = Pubkey::from_str(signature_set.as_str()).unwrap();
@@ -310,6 +327,8 @@ pub fn verify_signatures_ix(
 
 #[wasm_bindgen]
 pub fn guardian_set_address(bridge: String, index: u32) -> Vec<u8> {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(bridge.as_str()).unwrap();
     let guardian_key = GuardianSet::<'_, { AccountState::Initialized }>::key(
         &GuardianSetDerivationData { index: index },
@@ -321,11 +340,15 @@ pub fn guardian_set_address(bridge: String, index: u32) -> Vec<u8> {
 
 #[wasm_bindgen]
 pub fn parse_guardian_set(data: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     JsValue::from_serde(&GuardianSetData::try_from_slice(data.as_slice()).unwrap()).unwrap()
 }
 
 #[wasm_bindgen]
 pub fn state_address(bridge: String) -> Vec<u8> {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(bridge.as_str()).unwrap();
     let bridge_key = Bridge::<'_, { AccountState::Initialized }>::key(None, &program_id);
 
@@ -334,11 +357,15 @@ pub fn state_address(bridge: String) -> Vec<u8> {
 
 #[wasm_bindgen]
 pub fn parse_state(data: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     JsValue::from_serde(&BridgeData::try_from_slice(data.as_slice()).unwrap()).unwrap()
 }
 
 #[wasm_bindgen]
 pub fn fee_collector_address(bridge: String) -> Vec<u8> {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(bridge.as_str()).unwrap();
     let bridge_key = FeeCollector::key(None, &program_id);
 
@@ -347,6 +374,8 @@ pub fn fee_collector_address(bridge: String) -> Vec<u8> {
 
 #[wasm_bindgen]
 pub fn claim_address(program_id: String, vaa: Vec<u8>) -> Vec<u8> {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     let program_id = Pubkey::from_str(program_id.as_str()).unwrap();
 
     let vaa = VAA::deserialize(vaa.as_slice()).unwrap();
@@ -363,10 +392,14 @@ pub fn claim_address(program_id: String, vaa: Vec<u8>) -> Vec<u8> {
 
 #[wasm_bindgen]
 pub fn parse_posted_message(data: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     JsValue::from_serde(&PostedVAAData::try_from_slice(data.as_slice()).unwrap().0).unwrap()
 }
 
 #[wasm_bindgen]
 pub fn parse_vaa(data: Vec<u8>) -> JsValue {
+    panic::set_hook(Box::new(console_error_panic_hook::hook));
+
     JsValue::from_serde(&VAA::deserialize(data.as_slice()).unwrap()).unwrap()
 }
