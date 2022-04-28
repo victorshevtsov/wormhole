@@ -15,8 +15,8 @@ RUN if [ -e /certs/cert.pem ]; then cp /certs/cert.pem /etc/ssl/certs/ca-certifi
 RUN cargo install wasm-pack --vers 0.9.1
 
 ENV RUST_LOG="solana_runtime::system_instruction_processor=trace,solana_runtime::message_processor=trace,solana_bpf_loader=debug,solana_rbpf=debug"
-ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="brgJsWwvhptdwD2cW9m8Gf257qXYb7DLWdXy8aWQ4vJ"
+ARG EMITTER_ADDRESS
+ARG BRIDGE_ADDRESS
 
 COPY bridge bridge
 COPY modules modules

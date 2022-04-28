@@ -14,46 +14,46 @@ COPY ./safecoin-program-library /usr/src/safecoin-program-library
 COPY ./wormhole/safecoin /usr/src/wormhole/safecoin
 
 ENV RUST_LOG="solana_runtime::system_instruction_processor=trace,solana_runtime::message_processor=trace,solana_bpf_loader=debug,solana_rbpf=debug"
-ENV EMITTER_ADDRESS="11111111111111111111111111111115"
-ENV BRIDGE_ADDRESS="brgX3pPZhoKQRVBi9CrKUABc3zQMEUiE3kgA3Yup5Pm"
+ARG EMITTER_ADDRESS
+ARG BRIDGE_ADDRESS
 
 WORKDIR /usr/src/wormhole/safecoin
 
 # Compile Wormhole
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_bridge,target=/usr/src/wormhole/safecoin/bridge/program/target \
-    cd bridge/program && wasm-pack build --target bundler -d bundler -- --features wasm
+    cd bridge/program && wasm-pack build --target bundler -d bundler --debug -- --features wasm
 
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_bridge,target=/usr/src/wormhole/safecoin/bridge/program/target \
-    cd bridge/program && wasm-pack build --target nodejs -d nodejs -- --features wasm
+    cd bridge/program && wasm-pack build --target nodejs -d nodejs --debug -- --features wasm
 
 # Compile Token Bridge
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_token_bridge,target=/usr/src/wormhole/safecoin/modules/token_bridge/program/target \
-    cd modules/token_bridge/program && wasm-pack build --target bundler -d bundler -- --features wasm
+    cd modules/token_bridge/program && wasm-pack build --target bundler -d bundler --debug -- --features wasm
 
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_token_bridge,target=/usr/src/wormhole/safecoin/modules/token_bridge/program/target \
-    cd modules/token_bridge/program && wasm-pack build --target nodejs -d nodejs -- --features wasm
+    cd modules/token_bridge/program && wasm-pack build --target nodejs -d nodejs --debug -- --features wasm
 
 # Compile Migration
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_migration,target=/usr/src/wormhole/safecoin/migration/target \
-    cd migration && wasm-pack build --target bundler -d bundler -- --features wasm
+    cd migration && wasm-pack build --target bundler -d bundler --debug -- --features wasm
 
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_migration,target=/usr/src/wormhole/safecoin/migration/target \
-    cd migration && wasm-pack build --target nodejs -d nodejs -- --features wasm
+    cd migration && wasm-pack build --target nodejs -d nodejs --debug -- --features wasm
 
 # Compile NFT Bridge
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_nft_bridge,target=/usr/src/wormhole/safecoin/modules/nft_bridge/target \
-    cd modules/nft_bridge/program && wasm-pack build --target bundler -d bundler -- --features wasm
+    cd modules/nft_bridge/program && wasm-pack build --target bundler -d bundler --debug -- --features wasm
 
 RUN --mount=type=cache,id=safecoin_cache,target=/root/.cache \
 	--mount=type=cache,id=safecoin_nft_bridge,target=/usr/src/wormhole/safecoin/modules/nft_bridge/target \
-    cd modules/nft_bridge/program && wasm-pack build --target nodejs -d nodejs -- --features wasm
+    cd modules/nft_bridge/program && wasm-pack build --target nodejs -d nodejs --debug -- --features wasm
 
 FROM scratch AS export
 
