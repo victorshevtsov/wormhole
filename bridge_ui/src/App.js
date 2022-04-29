@@ -174,7 +174,7 @@ function App() {
           <Link component={RouterLink} to="/" className={classes.brandLink}>
             <img
               src={Safebridge}
-              alt="Wormhole"
+              alt="SafeBridge"
               className={classes.wormholeIcon}
             />
             {/*<Typography className={clsx(classes.link, classes.brandText)}>
@@ -192,7 +192,7 @@ function App() {
               {isHomepage ? (
                 <>
                 {/* 
-                  <Tooltip title="View wormhole network stats">
+                  <Tooltip title="View SafeBridge network stats">
                     <IconButton
                       component={NavLink}
                       to="/stats"
@@ -235,7 +235,7 @@ function App() {
           <Hidden implementation="css" smUp>
             {isHomepage ? (
               <>{/*
-                <Tooltip title="View wormhole network stats">
+                <Tooltip title="View SafeBridge network stats">
                   <IconButton
                     component={NavLink}
                     to="/stats"

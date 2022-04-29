@@ -194,7 +194,7 @@ async function terra(
   //   const result = await postWithFees(
   //     wallet,
   //     [msg],
-  //     "Wormhole - Create Wrapped"
+  //     "SafeBidge - Create Wrapped"
   //   );
   //   dispatch(
   //     setCreateTx({ id: result.result.txhash, block: result.result.height })

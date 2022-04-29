@@ -38,7 +38,7 @@ function Send() {
   return (
     <>
       <StepDescription>
-        Transfer the NFT to the Wormhole Token Bridge.
+        Transfer the NFT to the NFT SafeBridge.
       </StepDescription>
       <KeyAndBalance chainId={sourceChain} />
       <Alert severity="info" variant="outlined">

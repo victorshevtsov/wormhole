@@ -127,7 +127,7 @@ function Send() {
   return (
     <>
       <StepDescription>
-        Transfer the tokens to the Wormhole Token Bridge.
+        Transfer the tokens to the SafeBridge Token Bridge.
       </StepDescription>
       <KeyAndBalance chainId={sourceChain} />
       <Alert severity="info" variant="outlined">

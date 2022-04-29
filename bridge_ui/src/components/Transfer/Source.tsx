@@ -136,7 +136,7 @@ function Source() {
     <>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ opacity: 0.7 }}>Select tokens to send through the Wormhole Bridge.</div>
+          <div style={{ opacity: 0.7 }}>Select tokens to send through the SafeBridge.</div>
           <div style={{ flexGrow: 1 }} />
           <div>
             <Button

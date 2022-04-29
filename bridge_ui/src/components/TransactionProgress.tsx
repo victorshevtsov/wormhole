@@ -102,7 +102,7 @@ export default function TransactionProgress({
         <Typography variant="body2" className={classes.message}>
           {blockDiff < expectedBlocks
             ? `Waiting for ${blockDiff} / ${expectedBlocks} confirmations on ${CHAINS_BY_ID[chainId].name}...`
-            : `Waiting for Wormhole Network consensus...`}
+            : `Waiting for SafeBridge Network consensus...`}
         </Typography>
       </div>
     );

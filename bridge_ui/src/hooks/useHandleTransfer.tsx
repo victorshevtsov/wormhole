@@ -327,7 +327,7 @@ async function terra(
   //   const result = await postWithFees(
   //     wallet,
   //     msgs,
-  //     "Wormhole - Initiate Transfer"
+  //     "SafeBidge - Initiate Transfer"
   //   );
 
   //   const info = await waitForTerraExecution(result);

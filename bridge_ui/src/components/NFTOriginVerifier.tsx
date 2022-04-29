@@ -222,7 +222,7 @@ export default function NFTOriginVerifier() {
       <Container maxWidth="sm">
         <Card className={classes.mainCard}>
           <Alert severity="info" variant="outlined">
-            This page allows you to find where a Wormhole-bridged NFT was
+            This page allows you to find where a SafeBridged NFT was
             originally minted so you can verify its authenticity.
           </Alert>
           <TextField

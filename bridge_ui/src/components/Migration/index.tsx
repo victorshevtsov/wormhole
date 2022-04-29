@@ -171,7 +171,7 @@ const MigrationRoot: React.FC<Migration> = (props) => {
       <Paper className={classes.mainPaper}>
         <Typography variant="h5">Migrate Assets</Typography>
         <Typography variant="subtitle2">
-          Convert assets from other bridges to Wormhole V2 tokens
+          Convert assets from other bridges to SafeBridge V2 tokens
         </Typography>
         <Divider className={classes.divider} />
         {content}

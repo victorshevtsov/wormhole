@@ -221,7 +221,7 @@ const ViewerLoader = () => {
   return (
     <div className={classes.wormholePositioner}>
       <Skeleton variant="rect" animation="wave" className={classes.skeleton} />
-      <img src={Wormhole} alt="Wormhole" className={classes.wormholeIcon} />
+      <img src={Wormhole} alt="SafeBridge" className={classes.wormholeIcon} />
     </div>
   );
 };

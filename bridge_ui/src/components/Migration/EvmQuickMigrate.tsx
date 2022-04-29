@@ -205,7 +205,7 @@ function EvmMigrationLineItem({
         </div>
         <div>
           <Typography variant="body2" color="textSecondary">
-            Wormhole Token
+            SafeBridge Token
           </Typography>
           <Typography className={classes.balance}>
             {poolInfo.data.fromWalletBalance}
@@ -340,7 +340,7 @@ export default function EvmQuickMigrate({ chainId }: { chainId: ChainId }) {
         {`This page allows you to convert certain wrapped tokens ${
           chainName ? "on " + chainName : ""
         } into
-        Wormhole V2 tokens.`}
+        SafeBridge V2 tokens.`}
       </Typography>
       <EthereumSignerKey />
       {!isReady ? (
@@ -354,7 +354,7 @@ export default function EvmQuickMigrate({ chainId }: { chainId: ChainId }) {
           <div className={!isLoading ? "" : classes.hidden}>
             <Typography>
               {hasEligibleAssets
-                ? "You have some assets that are eligible for migration! Click the 'Convert' button to swap them for Wormhole tokens."
+                ? "You have some assets that are eligible for migration! Click the 'Convert' button to swap them for SafeBridge tokens."
                 : "You don't have any assets eligible for migration."}
             </Typography>
             <div className={classes.spacer} />

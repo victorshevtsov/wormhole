@@ -180,7 +180,7 @@ export default function SafecoinSourceTokenSelector(
 
       if (v1) {
         Promise.reject(
-          "Wormhole v1 assets should not be transferred with this bridge."
+          "SafeBridge v1 assets should not be transferred with this bridge."
         );
       }
 

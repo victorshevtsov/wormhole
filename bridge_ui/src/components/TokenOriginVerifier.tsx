@@ -77,12 +77,12 @@ function PrimaryAssetInfomation({
   const metadata = useMetadata(originChain, tokenArray);
   const nativeContent = (
     <div>
-      <Typography>{`This is not a Wormhole wrapped token.`}</Typography>
+      <Typography>{`This is not a SafeBridge wrapped token.`}</Typography>
     </div>
   );
   const wrapped = (
     <div>
-      <Typography>{`This is wrapped by Wormhole! Here is the original token: `}</Typography>
+      <Typography>{`This is wrapped by SafeBridge! Here is the original token: `}</Typography>
       <div className={classes.flexBox}>
         <Typography>{`Chain: ${CHAINS_BY_ID[originChain].name}`}</Typography>
         <div>

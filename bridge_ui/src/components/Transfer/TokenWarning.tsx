@@ -27,7 +27,7 @@ function WormholeWrappedWarning() {
       <Typography component="div" className={classes.line}>
         The tokens you will receive are{" "}
         <Box fontWeight={900} display="inline">
-          Wormhole Wrapped Tokens
+          SafeBridge Wrapped Tokens
         </Box>{" "}
         and will need to be exchanged for native assets.
       </Typography>

@@ -121,7 +121,7 @@ export default function EvmTokenPicker(
       const migration = isMigrationEligible(account.publicKey);
       if (v1 === true && !migration) {
         return Promise.reject(
-          "Wormhole v1 assets cannot be transferred with this bridge."
+          "SafeBridge v1 assets cannot be transferred with this bridge."
         );
       }
       onChange(account);

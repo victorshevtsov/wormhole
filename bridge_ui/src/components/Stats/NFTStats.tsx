@@ -233,7 +233,7 @@ const NFTStats: React.FC<any> = () => {
           onClick={genRandomNumber}
           color="primary"
         >
-          Load Random Wormhole NFT
+          Load Random SafeBridge NFT
         </Button>
         <NFTViewer chainId={randomNft.chainId} value={randomNft} />
       </div>

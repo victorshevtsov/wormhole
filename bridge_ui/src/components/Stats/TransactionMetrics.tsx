@@ -130,10 +130,10 @@ const TransactionMetrics: React.FC<any> = () => {
       variant="subtitle1"
       className={clsx(classes.alignCenter, classes.typog)}
     >
-      To see metrics for the entire Wormhole Network (not just this bridge),
+      To see metrics for the entire SafeBridge Network (not just this bridge),
       check out the{" "}
       <Link href={WORMHOLE_EXPLORER_BASE} target="_blank">
-        Wormhole Network Explorer
+        SafeBridge Network Explorer
       </Link>
     </Typography>
   );

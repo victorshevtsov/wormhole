@@ -205,7 +205,7 @@ async function terra(
   //   const result = await postWithFees(
   //     wallet,
   //     [msg],
-  //     "Wormhole - Complete Transfer"
+  //     "SafeBidge - Complete Transfer"
   //   );
   //   dispatch(
   //     setRedeemTx({ id: result.result.txhash, block: result.result.height })

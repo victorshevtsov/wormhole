@@ -673,7 +673,7 @@ function useGetAvailableTokens(nft: boolean = false) {
     setSafecoinMintAccountsLoading(true);
     setSafecoinMintAccountsError(undefined);
     const mintAddresses = tokenAccounts.data.map((x) => x.mintKey);
-    //This is a known wormhole v1 token on testnet
+    //This is a known SafeBridge v1 token on testnet
     // mintAddresses.push("4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn");
     //SOLT devnet token
     // mintAddresses.push("2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ");
@@ -726,7 +726,7 @@ function useGetAvailableTokens(nft: boolean = false) {
     setSolanaMintAccountsLoading(true);
     setSolanaMintAccountsError(undefined);
     const mintAddresses = tokenAccounts.data.map((x) => x.mintKey);
-    //This is a known wormhole v1 token on testnet
+    //This is a known SafeBridge v1 token on testnet
     // mintAddresses.push("4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn");
     //SOLT devnet token
     // mintAddresses.push("2WDq7wSs9zYrpx2kbHDA4RUTRch2CCTP6ZWaH4GNfnQQ");

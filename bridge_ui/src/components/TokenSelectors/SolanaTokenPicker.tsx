@@ -144,7 +144,7 @@ export default function SolanaSourceTokenSelector(
 
   const isWormholev1 = useCallback(
     (address: string) => {
-      //This is a v1 wormhole token on testnet
+      //This is a v1 SafeBridge token on testnet
       //const testAddress = "4QixXecTZ4zdZGa39KH8gVND5NZ2xcaB12wiBhE4S7rn";
 
       if (!props.mintAccounts?.data) {
@@ -157,7 +157,7 @@ export default function SolanaSourceTokenSelector(
       }
 
       if (mintAuthority === WORMHOLE_V1_MINT_AUTHORITY) {
-        return true; //This means the mint was created by the wormhole v1 contract, and we want to disallow its transfer.
+        return true; //This means the mint was created by the SafeBridge v1 contract, and we want to disallow its transfer.
       }
 
       return false;
@@ -180,7 +180,7 @@ export default function SolanaSourceTokenSelector(
 
       if (v1) {
         Promise.reject(
-          "Wormhole v1 assets should not be transferred with this bridge."
+          "SafeBridge v1 assets should not be transferred with this bridge."
         );
       }
 

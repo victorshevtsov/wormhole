@@ -51,7 +51,7 @@ function Source() {
     <>
       <StepDescription>
         <div style={{ display: "flex", alignItems: "center" }}>
-          Select an NFT to send through the Wormhole NFT Bridge.
+          Select an NFT to send through the NFT SafeBridge.
           <div style={{ flexGrow: 1 }} />
           <div>
             <Button
