@@ -2267,10 +2267,10 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@safecoin/safe-token-registry@^0.2.293":
-  version "0.2.293"
-  resolved "https://registry.yarnpkg.com/@safecoin/safe-token-registry/-/safe-token-registry-0.2.293.tgz#b3d8849992956465467c97c3180f8386d178a1c4"
-  integrity sha512-Xme2Rux2n3opzDv4irEDMEpemXNgZ4h0tYJtO+odlKpVbtVhfyDJIn7hTjsY6Xv7dSBRsVzzp3Zk7uMrBgw3yw==
+"@safecoin/safe-token-registry@^0.2.294":
+  version "0.2.294"
+  resolved "https://registry.yarnpkg.com/@safecoin/safe-token-registry/-/safe-token-registry-0.2.294.tgz#fb0902f22ff875f5176266c32493c374c227de51"
+  integrity sha512-4wInDPx5oc6t5s29L9NhNxNIJPq0+isCP7BvpSUTXgFrlQHQV8bLiOzqtTxk0mjJ/jqq5/bwg3LAaWStvr4mOQ==
   dependencies:
     cross-fetch "3.0.6"
 
